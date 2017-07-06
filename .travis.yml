@@ -1,17 +1,45 @@
+dist: trusty
+
 sudo: false
+
 language: node_js
+
+services:
+  - redis
+
 matrix:
   include:
     - node_js: "8"
-      env: TEST_REDIS_URL=localhost
+      env:
+        - TAP_RCFILE=./.taprc
+        - TEST_REDIS_URL=localhost
+
     - node_js: "8"
+      env:
+        - TAP_RCFILE=./.taprc
+
     - node_js: "7"
+      env:
+        - TAP_RCFILE=./.taprc
+
     - node_js: "6"
+      env:
+        - TAP_RCFILE=./.taprc
+
     - node_js: "5"
+      env:
+        - TAP_ARGS=--strict
+        - TAP_RCFILE=./.taprc
+
     - node_js: "4"
+      env:
+        - TAP_ARGS=--strict
+        - TAP_RCFILE=./.taprc
+
 install:
   - npm install
   - if [ -n "$NPM_INSTALL_PACKAGES" ]; then npm install $NPM_INSTALL_PACKAGES; fi
+
 script:
   - npm run build
-  - npm run ${NPM_RUN_SCRIPT:-test}
+  - npm run ${NPM_RUN_SCRIPT:-test} -- $TAP_ARGS
