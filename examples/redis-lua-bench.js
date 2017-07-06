@@ -4,14 +4,15 @@
 
 'use strict'
 
+const ATTEMPTS = process.argv[2] || 1
+const INTERVAL = process.argv[3] || 60
+
 const fs = require('fs')
 const path = require('path')
 
 const Redis = require('ioredis')
 
 const lua = fs.readFileSync(path.join(__dirname, '../lib/sliding-window-rate-limiter.min.lua'), 'utf8')
-
-const ATTEMPTS = process.argv[2] || 1
 
 async function main () {
   const redis = new Redis()
@@ -22,14 +23,14 @@ async function main () {
   })
 
   const key = 'limiter'
-  const period = 60
+  const interval = INTERVAL
   const limit = ATTEMPTS
-  const ttl = 90
-  const reserv = 1
+  const ttl = INTERVAL * 2
+  const reserve = 1
 
   for (let i = 1; i <= ATTEMPTS; i++) {
-    const status = await redis.limiter(key, period, limit, ttl, reserv)
-    console.log(status)
+    const usage = await redis.limiter(key, interval, limit, ttl, reserve)
+    console.log(usage)
   }
 
   await redis.quit()

@@ -19,13 +19,13 @@ npm install sliding-window-rate-limiter
 ### Usage
 
 ```js
-const RateLimiter = require('sliding-window-rate-limiter')
+const Limiter = require('sliding-window-rate-limiter')
 ```
 
 #### constructor
 
 ```js
-const limiter = new RateLimiter(options)
+const limiter = new Limiter(options)
 ```
 
 _Options:_
@@ -40,7 +40,7 @@ _Options:_
 _Example:_
 
 ```js
-const limiter = new RateLimiter({
+const limiter = new Limiter({
   interval: 60,
   limit: 100
 })
@@ -77,25 +77,12 @@ Makes a reservation and returns current usage for `key`. Returns a negative
 number with current usage if the reservation can't be done because of limit.
 Throws an error if has occured.
 
-### Promise
-
-This module uses [any-promise](https://www.npmjs.com/package/any-promise) and
-any ES6 Promise library or polyfill is supported.
-
-Ie. [bluebird](https://www.npmjs.com/package/bluebird) can be used as Promise
-library for this module, if it is registered before.
-
-```js
-require('any-promise/register/bluebird')
-const PromiseReadable = require('promise-readable')
-```
-
 ### License
 
 Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Based on Lua script from https://github.com/3hedgehogs/inredis-ratelimiter
+Based on Lua script from https://github.com/3hedgehogs/inredis-Limiter
 
 Copyright (c) 2017 3hedgehogs
