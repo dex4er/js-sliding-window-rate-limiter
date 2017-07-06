@@ -1,0 +1,59 @@
+{
+  "name": "sliding-window-rate-limiter",
+  "version": "0.0.1",
+  "description": "Sliding window rate limiter with Redis 3.2 backend",
+  "main": "lib/sliding-window-rate-limiter.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dex4er/js-sliding-window-rate-limiter"
+  },
+  "keywords": [
+    "limiter",
+    "rate",
+    "redis",
+    "rolling",
+    "sliding"
+  ],
+  "author": "Piotr Roszatycki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dex4er/js-sliding-window-rate-limiter/issues"
+  },
+  "homepage": "http://github.com/dex4er/js-sliding-window-rate-limiter",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "ioredis": "^3.1.1"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "luamin": "^1.0.4",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.2",
+    "tap": "^10.5.1",
+    "tap-given": "^0.4.1"
+  },
+  "scripts": {
+    "build": "npm run minify",
+    "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua",
+    "prepublishOnly": "npm run minify",
+    "pretest": "standard --verbose | snazzy",
+    "test": "tap test/*.js",
+    "test:coverage": "npm test -- --coverage",
+    "test:coverage:watch": "npm run -s test:coverage -- -R min --coverage-report lcovonly && onchange '**/*.js' -- npm run -s test:coverage -- -R min --coverage-report lcovonly"
+  },
+  "standard": {
+    "globals": [
+      "And",
+      "Feature",
+      "Given",
+      "Scenario",
+      "Then",
+      "When"
+    ]
+  },
+  "nyc": {
+    "exclude": []
+  }
+}
