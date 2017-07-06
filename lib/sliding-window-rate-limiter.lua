@@ -21,6 +21,10 @@ redis.call("ZREMRANGEBYSCORE", key, "-inf", startwindow)
 local usage = tonumber(redis.call("ZCOUNT", key, 1, ts))
 
 if reserve then
+    if usage >= limit then
+        return -usage
+    end
+
     redis.call("ZADD", key, ts, ts)
     redis.call("EXPIRE", key, ttl)
     usage = tonumber(redis.call("ZCOUNT", key, 0, ts))
