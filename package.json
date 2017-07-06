@@ -30,6 +30,7 @@
     "chai": "^4.0.2",
     "chai-as-promised": "^7.1.1",
     "delay": "^2.0.0",
+    "dirty-chai": "^2.0.0",
     "luamin": "^1.0.4",
     "snazzy": "^7.0.0",
     "standard": "^10.0.2",

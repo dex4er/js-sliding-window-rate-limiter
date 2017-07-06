@@ -4,8 +4,7 @@ const t = require('tap')
 require('tap-given')(t)
 
 const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
+chai.use(require('chai-as-promised'))
 chai.should()
 
 Feature('Test sliding-window-rate-limiter module with promises', () => {
@@ -49,7 +48,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      limiter.redis.disconnect()
+      redis.disconnect()
     })
   })
 
@@ -92,7 +91,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      limiter.redis.disconnect()
+      redis.disconnect()
     })
   })
 
@@ -139,7 +138,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      limiter.redis.disconnect()
+      redis.disconnect()
     })
   })
 })
