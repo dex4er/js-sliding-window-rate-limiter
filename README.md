@@ -83,6 +83,12 @@ Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Based on Lua script from https://github.com/3hedgehogs/inredis-Limiter
+Based on Lua script from https://github.com/3hedgehogs/inredis-ratelimiter
 
 Copyright (c) 2017 3hedgehogs
+
+Inspired by ClassDojo blog note
+https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/
+and
+[`rolling-rate-limiter`](https://www.npmjs.com/package/rolling-rate-limiter)
+module.
