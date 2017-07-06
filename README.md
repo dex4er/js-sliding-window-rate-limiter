@@ -63,10 +63,6 @@ number with current usage. Throws an error if has occured.
 
 #### reserve
 
-Makes a reservation and returns current usage for `key`. Returns a negative
-number with current usage if the reservation can't be done because of limit.
-Throws an error if has occured.
-
 ```js
 const usage = async limiter.reserve(key)
 ```
@@ -76,6 +72,10 @@ or
 ```js
 limiter.reserve(key, function (err, usage) {})
 ```
+
+Makes a reservation and returns current usage for `key`. Returns a negative
+number with current usage if the reservation can't be done because of limit.
+Throws an error if has occured.
 
 ### Promise
 
