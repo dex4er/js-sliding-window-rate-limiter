@@ -19,53 +19,83 @@ npm install sliding-window-rate-limiter
 ### Usage
 
 ```js
-const Limiter = require('sliding-window-rate-limiter')
+const RateLimiter = require('sliding-window-rate-limiter')
 ```
 
-#### immediate
-
-Create timer
+#### constructor
 
 ```js
-const timer = timers.immediate(cb, [...args])
+const limiter = new RateLimiter(options)
 ```
 
-Remove timer
+_Options:_
+
+* `interval` is a number of seconds in a sliding window
+* `limit` is a number of maximum reservations in a window
+* `ttl` is an optional TTL for the key (default: `interval * 2`)
+* `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
+  or URL string to Redis server (default: new instance will be created with
+  default options of Redis client)
+
+_Example:_
 
 ```js
-timer.remove()
+const limiter = new RateLimiter({
+  interval: 60,
+  limit: 100
+})
 ```
 
-#### interval
-
-Create timer
+#### check
 
 ```js
-const timer = timers.interval(delay, cb, [...args])
+const usage = async limiter.check(key)
 ```
 
-Remove timer
+or
 
 ```js
-timer.remove()
+limiter.check(key, function (err, usage) {})
 ```
 
-#### timeout
+Checks current usage for `key`. If usage is above limit, it returns a negative
+number with current usage. Throws an error if has occured.
 
-Create timer
+#### reserve
+
+Makes a reservation and returns current usage for `key`. Returns a negative
+number with current usage if the reservation can't be done because of limit.
+Throws an error if has occured.
 
 ```js
-const timer = timers.timeout(delay, cb, [...args])
+const usage = async limiter.reserve(key)
 ```
 
-Remove timer
+or
 
 ```js
-timer.remove()
+limiter.reserve(key, function (err, usage) {})
+```
+
+### Promise
+
+This module uses [any-promise](https://www.npmjs.com/package/any-promise) and
+any ES6 Promise library or polyfill is supported.
+
+Ie. [bluebird](https://www.npmjs.com/package/bluebird) can be used as Promise
+library for this module, if it is registered before.
+
+```js
+require('any-promise/register/bluebird')
+const PromiseReadable = require('promise-readable')
 ```
 
 ### License
 
-Copyright (c) 2016-2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
+Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 [MIT](https://opensource.org/licenses/MIT)
+
+Based on Lua script from https://github.com/3hedgehogs/inredis-ratelimiter
+
+Copyright (c) 2017 3hedgehogs
