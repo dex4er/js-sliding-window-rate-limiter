@@ -54,10 +54,6 @@ class MockRedis {
         this.bucket.push(now)
         usage = this.bucket.length
       }
-    } else {
-      if (usage > limit) {
-        usage = -limit
-      }
     }
 
     if (callback) {

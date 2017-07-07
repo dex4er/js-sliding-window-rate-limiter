@@ -39,8 +39,40 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
       key = 'one-reservation:' + uuidv1()
     })
 
+    When('I check usage', done => {
+      limiter.usage(key, (err, value) => {
+        error = err
+        usage = value
+        done()
+      })
+    })
+
+    Then('there was no error', () => {
+      (error === null).should.be.true()
+    })
+
+    And('usage is zero', () => {
+      return usage.should.equal(0)
+    })
+
     When('I make one reservation', done => {
       limiter.reserve(key, (err, value) => {
+        error = err
+        usage = value
+        done()
+      })
+    })
+
+    Then('there was no error', () => {
+      (error === null).should.be.true()
+    })
+
+    And('usage is above zero', () => {
+      return usage.should.be.above(0)
+    })
+
+    When('I check usage', done => {
+      limiter.usage(key, (err, value) => {
         error = err
         usage = value
         done()
@@ -83,6 +115,22 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
       key = 'above-limit:' + uuidv1()
     })
 
+    When('I check usage', done => {
+      limiter.usage(key, (err, value) => {
+        error = err
+        usage = value
+        done()
+      })
+    })
+
+    Then('there was no error', () => {
+      (error === null).should.be.true()
+    })
+
+    And('usage is zero', () => {
+      return usage.should.equal(0)
+    })
+
     When('I make one reservation', done => {
       limiter.reserve(key, (err, value) => {
         error = err
@@ -115,6 +163,22 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
       return usage.should.be.below(0)
     })
 
+    When('I check usage', done => {
+      limiter.usage(key, (err, value) => {
+        error = err
+        usage = value
+        done()
+      })
+    })
+
+    Then('there was no error', () => {
+      (error === null).should.be.true()
+    })
+
+    And('usage is above zero', () => {
+      return usage.should.be.above(0)
+    })
+
     After('disconnect Redis', () => {
       redis.disconnect()
     })
@@ -141,6 +205,22 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
 
     And('key', () => {
       key = 'after-interval:' + uuidv1()
+    })
+
+    When('I check usage', done => {
+      limiter.usage(key, (err, value) => {
+        error = err
+        usage = value
+        done()
+      })
+    })
+
+    Then('there was no error', () => {
+      (error === null).should.be.true()
+    })
+
+    And('usage is zero', () => {
+      return usage.should.equal(0)
     })
 
     When('I make one reservation', done => {

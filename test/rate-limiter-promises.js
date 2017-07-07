@@ -39,8 +39,24 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       key = 'one-reservation:' + uuidv1()
     })
 
+    When('I check usage', () => {
+      promise = limiter.usage(key)
+    })
+
+    Then('usage is zero', () => {
+      return promise.should.eventually.equal(0)
+    })
+
     When('I make one reservation', () => {
       promise = limiter.reserve(key)
+    })
+
+    Then('usage is above zero', () => {
+      return promise.should.eventually.be.above(0)
+    })
+
+    When('I check usage', () => {
+      promise = limiter.usage(key)
     })
 
     Then('usage is above zero', () => {
@@ -74,6 +90,14 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       key = 'above-limit:' + uuidv1()
     })
 
+    When('I check usage', () => {
+      promise = limiter.usage(key)
+    })
+
+    Then('usage is zero', () => {
+      return promise.should.eventually.equal(0)
+    })
+
     When('I make one reservation', () => {
       promise = limiter.reserve(key)
     })
@@ -88,6 +112,14 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
     Then('usage is below zero', () => {
       return promise.should.eventually.be.below(0)
+    })
+
+    When('I check usage', () => {
+      promise = limiter.usage(key)
+    })
+
+    Then('usage is above zero', () => {
+      return promise.should.eventually.be.above(0)
     })
 
     After('disconnect Redis', () => {
