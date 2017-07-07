@@ -4,13 +4,14 @@
 
 'use strict'
 
-const ATTEMPTS = process.argv[2] || 1
-const INTERVAL = process.argv[3] || 60
+const ATTEMPTS = Number(process.argv[2]) || 1
+const INTERVAL = Number(process.argv[3]) || 60
 
 const Limiter = require('../lib/sliding-window-rate-limiter')
 
 function main () {
   const limiter = new Limiter({
+    host: process.env.REDIS_HOST,
     interval: INTERVAL,
     limit: ATTEMPTS
   })

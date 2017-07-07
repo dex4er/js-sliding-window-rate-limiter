@@ -14,6 +14,7 @@ const noop = () => {}
 
 async function main () {
   const redis = new Redis({
+    host: process.env.REDIS_HOST,
     lazyConnect: true
   })
   .on('error', noop)
