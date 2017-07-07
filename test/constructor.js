@@ -22,7 +22,7 @@ Feature('Test sliding-window-rate-limiter module constructor', () => {
     })
 
     Then('assertion error is thrown', () => {
-      error.should.be.an('error').with.property('code', 'ERR_ASSERTION')
+      error.should.has.property('message', 'false == true')
     })
   })
 
@@ -50,7 +50,7 @@ Feature('Test sliding-window-rate-limiter module constructor', () => {
       })
 
       Then('assertion error is thrown', () => {
-        error.should.be.an('error').with.property('code', 'ERR_ASSERTION')
+        error.should.has.property('message', 'false == true')
       })
     }
   })
@@ -79,7 +79,7 @@ Feature('Test sliding-window-rate-limiter module constructor', () => {
       })
 
       Then('assertion error is thrown', () => {
-        error.should.be.an('error').with.property('code', 'ERR_ASSERTION')
+        error.should.has.property('message', 'false == true')
       })
     }
   })
