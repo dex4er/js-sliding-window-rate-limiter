@@ -76,6 +76,16 @@ Makes a reservation and returns current usage for `key`. Returns a negative
 number with current usage if the reservation can't be done because of limit.
 Throws an error if has occurred.
 
+### Errors
+
+If `reserve` or `usage` methods returns an error:
+
+```
+ERR Error running script (call to f_8ff6a0f745b738fe1d9fa74079c4c13d032e9947): @user_script:1: user_script:1: attempt to call field \'replicate_commands\' (a nil value)
+```
+
+then check if Redis has proper version (>= 3.2.0).
+
 ### License
 
 Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
