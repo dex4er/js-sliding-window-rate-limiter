@@ -27,7 +27,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       redis = new Redis(TEST_REDIS_URL)
     })
 
-    Given('limiter object', () => {
+    And('limiter object', () => {
       limiter = new Limiter({
         limit: 1,
         interval: 1,
@@ -62,7 +62,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       redis = new Redis(TEST_REDIS_URL)
     })
 
-    Given('limiter object', () => {
+    And('limiter object', () => {
       limiter = new Limiter({
         limit: 1,
         interval: 1,
@@ -105,7 +105,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       redis = new Redis(TEST_REDIS_URL)
     })
 
-    Given('limiter object', () => {
+    And('limiter object', () => {
       limiter = new Limiter({
         limit: 1,
         interval: 1,

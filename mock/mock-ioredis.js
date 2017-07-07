@@ -1,5 +1,7 @@
 class MockRedis {
-  constructor () {
+  constructor (options) {
+    options = options || {}
+    this.host = options.host
     this.bucket = []
   }
 
