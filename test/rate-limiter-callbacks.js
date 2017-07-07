@@ -40,7 +40,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.usage(key, (err, value) => {
+      limiter.check(key, (err, value) => {
         error = err
         usage = value
         done()
@@ -72,7 +72,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.usage(key, (err, value) => {
+      limiter.check(key, (err, value) => {
         error = err
         usage = value
         done()
@@ -116,7 +116,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.usage(key, (err, value) => {
+      limiter.check(key, (err, value) => {
         error = err
         usage = value
         done()
@@ -164,7 +164,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.usage(key, (err, value) => {
+      limiter.check(key, (err, value) => {
         error = err
         usage = value
         done()
@@ -208,7 +208,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.usage(key, (err, value) => {
+      limiter.check(key, (err, value) => {
         error = err
         usage = value
         done()

@@ -40,7 +40,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.usage(key)
+      promise = limiter.check(key)
     })
 
     Then('usage is zero', () => {
@@ -56,7 +56,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.usage(key)
+      promise = limiter.check(key)
     })
 
     Then('usage is above zero', () => {
@@ -91,7 +91,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.usage(key)
+      promise = limiter.check(key)
     })
 
     Then('usage is zero', () => {
@@ -115,7 +115,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.usage(key)
+      promise = limiter.check(key)
     })
 
     Then('usage is above zero', () => {
