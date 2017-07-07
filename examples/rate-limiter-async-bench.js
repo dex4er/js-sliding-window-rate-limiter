@@ -4,15 +4,26 @@
 
 'use strict'
 
-const ATTEMPTS = process.argv[2] || 1
-const INTERVAL = process.argv[3] || 60
+const ATTEMPTS = Number(process.argv[2]) || 1
+const INTERVAL = Number(process.argv[3]) || 60
 
+const Redis = require('ioredis')
 const Limiter = require('../lib/sliding-window-rate-limiter')
 
+const noop = () => {}
+
 async function main () {
+  const redis = new Redis({
+    lazyConnect: true
+  })
+  .on('error', noop)
+
+  await redis.connect()
+
   const limiter = new Limiter({
     interval: INTERVAL,
-    limit: ATTEMPTS
+    limit: ATTEMPTS,
+    redis
   })
 
   const key = 'limiter'
