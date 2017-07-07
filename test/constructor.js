@@ -8,8 +8,6 @@ chai.use(require('dirty-chai'))
 chai.should()
 
 Feature('Test sliding-window-rate-limiter module constructor', () => {
-  const MockRedis = require('../mock/mock-ioredis')
-
   const Limiter = require('../lib/sliding-window-rate-limiter')
 
   Scenario('Limiter object without options', () => {
