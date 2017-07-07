@@ -9,8 +9,7 @@ local key     = KEYS[1]
 
 local interval = tonumber(ARGV[1]) -- seconds
 local limit    = tonumber(ARGV[2]) -- number
-local ttl      = tonumber(ARGV[3]) -- seconds
-local reserve  = (ARGV[4] ~= '0')  -- 0 or 1
+local reserve  = (ARGV[3] ~= '0')  -- 0 or 1
 
 -- script effects replication is available since Redis 3.2
 redis.replicate_commands()
@@ -29,7 +28,7 @@ if reserve then
     end
 
     redis.call("ZADD", key, ts, ts)
-    redis.call("EXPIRE", key, ttl)
+    redis.call("EXPIRE", key, interval)
     usage = tonumber(redis.call("ZCOUNT", key, 0, ts))
 end
 

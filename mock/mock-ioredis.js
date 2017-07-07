@@ -8,7 +8,7 @@ class MockRedis {
   disconnect () {}
 
   // naive implementation of limiter
-  limiter (key, interval, limit, ttl, reserve, callback) {
+  limiter (key, interval, limit, reserve, callback) {
     const now = new Date().getTime()
 
     this.bucket = this.bucket.filter(ts => now - ts < interval * 1000 /* ms */)

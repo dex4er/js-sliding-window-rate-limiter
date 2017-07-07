@@ -32,7 +32,6 @@ _Options:_
 
 * `interval` is a number of seconds in a sliding window
 * `limit` is a number of maximum reservations in a window
-* `ttl` is an optional TTL for the key (default: `interval * 2`)
 * `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (default: new instance will be created with
   default options of Redis client)
@@ -59,7 +58,7 @@ limiter.check(key, function (err, usage) {})
 ```
 
 Checks current usage for `key`. If usage is above limit, it returns a negative
-number with current usage. Throws an error if has occured.
+number with current usage. Throws an error if has occurred.
 
 #### reserve
 
@@ -75,7 +74,7 @@ limiter.reserve(key, function (err, usage) {})
 
 Makes a reservation and returns current usage for `key`. Returns a negative
 number with current usage if the reservation can't be done because of limit.
-Throws an error if has occured.
+Throws an error if has occurred.
 
 ### License
 
