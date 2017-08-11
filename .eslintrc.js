@@ -1,9 +1,14 @@
-// npm i -g eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard eslint-plugin-tap-given
+// npm i -g eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard
 
 module.exports = {
   'extends': 'standard',
-  'plugins': [ 'tap-given' ],
-  'env': {
-    'tap-given/tap-given': true
+  'globals': {
+    'And': true,
+    'After': true,
+    'Feature': true,
+    'Given': true,
+    'Scenario': true,
+    'Then': true,
+    'When': true
   }
 }
