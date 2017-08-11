@@ -10,5 +10,8 @@ module.exports = {
     'Scenario': true,
     'Then': true,
     'When': true
+  },
+  'rules': {
+    'indent': ['error', 2, {'MemberExpression': 0}]
   }
 }
