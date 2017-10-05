@@ -17,6 +17,7 @@ Feature('Test sliding-window-rate-limiter module error with promises', () => {
     let limiter
     let promise
     let redis
+    const defaultLimit = 1
 
     Given('mock redis connection', () => {
       redis = new MockRedis()
@@ -24,7 +25,6 @@ Feature('Test sliding-window-rate-limiter module error with promises', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -35,7 +35,7 @@ Feature('Test sliding-window-rate-limiter module error with promises', () => {
     })
 
     When('I try to make one reservation', () => {
-      promise = limiter.reserve(key)
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('reservation is rejected', () => {
