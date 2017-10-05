@@ -7,9 +7,9 @@
 
 local key     = KEYS[1]
 
-local interval = tonumber(ARGV[1]) -- seconds
-local limit    = tonumber(ARGV[2]) -- number
-local mode  = tonumber(ARGV[3])  -- 0: check, 1: reserve, 2: cancel
+local mode  = tonumber(ARGV[1])  -- 0: check, 1: reserve, 2: cancel
+local interval = tonumber(ARGV[2]) -- seconds
+local limit    = tonumber(ARGV[3]) -- number
 local toRemove = tonumber(ARGV[4])
 
 -- script effects replication is available since Redis 3.2
@@ -24,7 +24,7 @@ redis.call("ZREMRANGEBYSCORE", key, "-inf", startwindow)
 local usage = tonumber(redis.call("ZCOUNT", key, 1, ts))
 
 if mode == 2 then
-    redus.call("ZREM", key, toRemove)
+    redis.call("ZREM", key, toRemove)
     usage = tonumber(redis.call("ZCOUNT", key, 0, ts))
 elseif mode == 1 then
     if usage >= limit then
