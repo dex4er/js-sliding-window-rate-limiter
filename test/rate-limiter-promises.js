@@ -196,22 +196,24 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       key = 'after-interval:' + uuidv1()
     })
 
-    When('I make one reservation', async () => {
-      reservationToken = await limiter.reserve(key, defaultLimit)
+    When('I make one reservation', () => {
+      const reservationTokenPromise = limiter.reserve(key, defaultLimit)
+      reservationTokenPromise.then((resolvedReservationToken) => {
+        reservationToken = resolvedReservationToken
+      })
+      return reservationTokenPromise
     })
 
-    Then('usage is above zero', async () => {
-      const reserved = await limiter.check(key, defaultLimit)
-      reserved.should.be.above(0)
+    Then('usage is above zero', () => {
+      return limiter.check(key, defaultLimit).should.eventually.be.above(0)
     })
 
-    When('canceling reservation', async () => {
-      await limiter.cancel(key, defaultLimit, reservationToken)
+    When('canceling reservation', () => {
+      return limiter.cancel(key, defaultLimit, reservationToken)
     })
 
     Then('there should be no reservations', async () => {
-      const reserved = await limiter.check(key, defaultLimit)
-      reserved.should.be.equal(0)
+      return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
     })
 
     After('disconnect Redis', () => {
