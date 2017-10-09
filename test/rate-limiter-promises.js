@@ -212,7 +212,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       return limiter.cancel(key, defaultLimit, reservationToken)
     })
 
-    Then('there should be no reservations', async () => {
+    Then('there should be no reservations', () => {
       return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
     })
 
