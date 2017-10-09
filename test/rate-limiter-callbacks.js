@@ -22,6 +22,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     let limiter
     let redis
     let usage
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -29,7 +30,6 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -40,7 +40,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.check(key, (err, value) => {
+      limiter.check(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -56,7 +56,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I make one reservation', done => {
-      limiter.reserve(key, (err, value) => {
+      limiter.reserve(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -72,7 +72,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.check(key, (err, value) => {
+      limiter.check(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -98,6 +98,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     let limiter
     let redis
     let usage
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -105,7 +106,6 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -116,7 +116,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.check(key, (err, value) => {
+      limiter.check(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -132,7 +132,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I make one reservation', done => {
-      limiter.reserve(key, (err, value) => {
+      limiter.reserve(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -148,7 +148,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I try to make another above limit', done => {
-      limiter.reserve(key, (err, value) => {
+      limiter.reserve(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -164,7 +164,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.check(key, (err, value) => {
+      limiter.check(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -190,6 +190,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     let limiter
     let redis
     let usage
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -197,7 +198,6 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -208,7 +208,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I check usage', done => {
-      limiter.check(key, (err, value) => {
+      limiter.check(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -224,7 +224,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     When('I make one reservation', done => {
-      limiter.reserve(key, (err, value) => {
+      limiter.reserve(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
@@ -244,7 +244,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     And('I try to make another above limit', done => {
-      limiter.reserve(key, (err, value) => {
+      limiter.reserve(key, defaultLimit, (err, value) => {
         error = err
         usage = value
         done()
