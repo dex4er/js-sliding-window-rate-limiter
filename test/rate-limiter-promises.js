@@ -16,8 +16,41 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
   const uuidv1 = require('uuid/v1')
 
   const Limiter = require('../lib/sliding-window-rate-limiter')
+  const SafeLimiter = require('../lib/safe-sliding-window-rate-limiter')
 
   Scenario('Make one reservation', () => {
+    oneReservationScenario(Limiter)
+  })
+
+  Scenario('Make one reservation with safe operations adapter', () => {
+    oneReservationScenario(SafeLimiter)
+  })
+
+  Scenario('Make one reservation and another above limit', () => {
+    exceedLimitScenario(Limiter)
+  })
+
+  Scenario('Make one reservation and another above limit with safe operations adapter', () => {
+    exceedLimitScenario(SafeLimiter)
+  })
+
+  Scenario('Make one reservation and another after interval', () => {
+    reservationAfterInterval(Limiter)
+  })
+
+  Scenario('Make one reservation and another after interval with safe operations adapter', () => {
+    reservationAfterInterval(SafeLimiter)
+  })
+
+  Scenario('Cancel reservation', () => {
+    cancelScenario(Limiter)
+  })
+
+  Scenario('Cancel reservation with safe operations adapter', () => {
+    cancelScenario(SafeLimiter)
+  })
+
+  function oneReservationScenario (Limiter) {
     let key
     let limiter
     let promise
@@ -66,9 +99,9 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
 
-  Scenario('Make one reservation and another above limit', () => {
+  function exceedLimitScenario (Limiter) {
     let key
     let limiter
     let promise
@@ -125,9 +158,9 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
 
-  Scenario('Make one reservation and another after interval', () => {
+  function reservationAfterInterval (Limiter) {
     let key
     let limiter
     let promise
@@ -172,9 +205,9 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
 
-  Scenario('Cancel reservation', () => {
+  function cancelScenario (Limiter) {
     let key
     let limiter
     let redis
@@ -219,5 +252,5 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
 })

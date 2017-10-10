@@ -15,8 +15,41 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
   const uuidv1 = require('uuid/v1')
 
   const Limiter = require('../lib/sliding-window-rate-limiter')
+  const SafeLimiter = require('../lib/safe-sliding-window-rate-limiter')
 
   Scenario('Make one reservation', () => {
+    oneReservationScenario(Limiter)
+  })
+
+  Scenario('Make one reservation with safe operations adapter', () => {
+    oneReservationScenario(SafeLimiter)
+  })
+
+  Scenario('Make one reservation and another above limit', () => {
+    exceededLimitScenario(Limiter)
+  })
+
+  Scenario('Make one reservation and another above limit with safe operations adapter', () => {
+    exceededLimitScenario(SafeLimiter)
+  })
+
+  Scenario('Make one reservation and another after interval', () => {
+    reservationAfterIntervalScenario(Limiter)
+  })
+
+  Scenario('Make one reservation and another after interval with safe operations adapter', () => {
+    reservationAfterIntervalScenario(SafeLimiter)
+  })
+
+  Scenario('Cancel reservation', () => {
+    cancelScenario(Limiter)
+  })
+
+  Scenario('Cancel reservation with safe operations adapter', () => {
+    cancelScenario(SafeLimiter)
+  })
+
+  function oneReservationScenario (Limiter) {
     let error
     let key
     let limiter
@@ -90,9 +123,9 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
 
-  Scenario('Make one reservation and another above limit', () => {
+  function exceededLimitScenario (Limiter) {
     let error
     let key
     let limiter
@@ -182,9 +215,9 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
 
-  Scenario('Make one reservation and another after interval', () => {
+  function reservationAfterIntervalScenario (Limiter) {
     let error
     let key
     let limiter
@@ -258,5 +291,69 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     After('disconnect Redis', () => {
       redis.disconnect()
     })
-  })
+  }
+
+  function cancelScenario (Limiter) {
+    let key
+    let limiter
+    let redis
+    const defaultLimit = 1
+    let reservationToken
+    let error
+
+    Given('redis connection', () => {
+      redis = new Redis(TEST_REDIS_URL)
+    })
+
+    And('limiter object', () => {
+      limiter = new Limiter({
+        interval: 5,
+        redis: redis
+      })
+    })
+
+    And('key', () => {
+      key = 'after-interval:' + uuidv1()
+    })
+
+    When('I make one reservation', (done) => {
+      limiter.reserve(key, defaultLimit, (err, resolvedReservationToken) => {
+        error = err;
+        (error === null).should.be.true()
+        reservationToken = resolvedReservationToken
+        done()
+      })
+    })
+
+    Then('usage is above zero', (done) => {
+      limiter.check(key, defaultLimit, (err, checkedValue) => {
+        error = err;
+        (error === null).should.be.true()
+        checkedValue.should.be.above(0)
+        done()
+      })
+    })
+
+    When('canceling reservation', (done) => {
+      limiter.cancel(key, defaultLimit, reservationToken, (err, result) => {
+        error = err;
+        (error === null).should.be.true()
+        result.should.be.at.least(0)
+        done()
+      })
+    })
+
+    Then('there should be no reservations', (done) => {
+      limiter.check(key, defaultLimit, (err, checkedUsage) => {
+        error = err;
+        (error === null).should.be.true()
+        checkedUsage.should.be.equal(0)
+        done()
+      })
+    })
+
+    After('disconnect Redis', () => {
+      redis.disconnect()
+    })
+  }
 })
