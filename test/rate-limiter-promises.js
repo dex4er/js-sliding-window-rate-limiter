@@ -22,6 +22,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     let limiter
     let promise
     let redis
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -29,7 +30,6 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -40,7 +40,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.check(key)
+      promise = limiter.check(key, defaultLimit)
     })
 
     Then('usage is zero', () => {
@@ -48,7 +48,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I make one reservation', () => {
-      promise = limiter.reserve(key)
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('usage is above zero', () => {
@@ -56,7 +56,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.check(key)
+      promise = limiter.check(key, defaultLimit)
     })
 
     Then('usage is above zero', () => {
@@ -73,6 +73,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     let limiter
     let promise
     let redis
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -80,7 +81,6 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -91,7 +91,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.check(key)
+      promise = limiter.check(key, defaultLimit)
     })
 
     Then('usage is zero', () => {
@@ -99,7 +99,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I make one reservation', () => {
-      promise = limiter.reserve(key)
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('usage is above zero', () => {
@@ -107,7 +107,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I try to make another above limit', () => {
-      promise = limiter.reserve(key)
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('usage is below zero', () => {
@@ -115,7 +115,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I check usage', () => {
-      promise = limiter.check(key)
+      promise = limiter.check(key, defaultLimit)
     })
 
     Then('usage is above zero', () => {
@@ -132,6 +132,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     let limiter
     let promise
     let redis
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -139,7 +140,6 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
     And('limiter object', () => {
       limiter = new Limiter({
-        limit: 1,
         interval: 1,
         redis: redis
       })
@@ -150,7 +150,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     When('I make one reservation', () => {
-      promise = limiter.reserve(key)
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('usage is above zero', () => {
@@ -162,11 +162,58 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     And('I try to make another above limit', () => {
-      promise = limiter.reserve(key)
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('usage is above zero', () => {
       return promise.should.eventually.be.above(0)
+    })
+
+    After('disconnect Redis', () => {
+      redis.disconnect()
+    })
+  })
+
+  Scenario('Cancel reservation', () => {
+    let key
+    let limiter
+    let redis
+    const defaultLimit = 1
+    let reservationToken
+
+    Given('redis connection', () => {
+      redis = new Redis(TEST_REDIS_URL)
+    })
+
+    And('limiter object', () => {
+      limiter = new Limiter({
+        interval: 5,
+        redis: redis
+      })
+    })
+
+    And('key', () => {
+      key = 'after-interval:' + uuidv1()
+    })
+
+    When('I make one reservation', () => {
+      const reservationTokenPromise = limiter.reserve(key, defaultLimit)
+      reservationTokenPromise.then((resolvedReservationToken) => {
+        reservationToken = resolvedReservationToken
+      })
+      return reservationTokenPromise
+    })
+
+    Then('usage is above zero', () => {
+      return limiter.check(key, defaultLimit).should.eventually.be.above(0)
+    })
+
+    When('canceling reservation', () => {
+      return limiter.cancel(key, defaultLimit, reservationToken)
+    })
+
+    Then('there should be no reservations', () => {
+      return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
     })
 
     After('disconnect Redis', () => {

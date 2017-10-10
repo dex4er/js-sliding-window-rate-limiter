@@ -40,21 +40,20 @@ _Example:_
 
 ```js
 const limiter = new Limiter({
-  interval: 60,
-  limit: 100
+  interval: 60
 })
 ```
 
 #### check
 
 ```js
-const usage = async limiter.check(key)
+const usage = async limiter.check(key, limit)
 ```
 
 or
 
 ```js
-limiter.check(key, function (err, usage) {})
+limiter.check(key, limit, function (err, usage) {})
 ```
 
 Checks current usage for `key`. If usage is above limit, it returns a negative
@@ -63,13 +62,13 @@ number with current usage. Throws an error if has occurred.
 #### reserve
 
 ```js
-const usage = async limiter.reserve(key)
+const usage = async limiter.reserve(key, limit)
 ```
 
 or
 
 ```js
-limiter.reserve(key, function (err, usage) {})
+limiter.reserve(key, limit, function (err, usage) {})
 ```
 
 Makes a reservation and returns current usage for `key`. Returns a negative
