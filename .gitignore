@@ -1,7 +1,13 @@
+*-ts.js
+
 *.tgz
+
+ts-node-*
 
 /coverage/
 /node_modules/
+
+/package-lock.json
 
 /.nyc_output/
 
@@ -9,3 +15,4 @@
 /.tern-project
 
 /.idea
+/.vscode

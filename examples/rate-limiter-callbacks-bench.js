@@ -12,28 +12,31 @@ const Limiter = require('../lib/sliding-window-rate-limiter')
 function main () {
   const limiter = new Limiter({
     host: process.env.REDIS_HOST,
-    interval: INTERVAL,
-    limit: ATTEMPTS
+    interval: INTERVAL
   })
 
   const key = 'limiter'
 
   let i = 1
 
-  const end = () => {
+  const afterEnd = () => {
     limiter.redis.quit()
   }
 
-  const step = (err, usage) => {
-    if (err) {
-      throw err
-    } else {
-      console.log(usage)
-    }
-    limiter.reserve(key, i++ <= ATTEMPTS ? step : end)
+  const afterCheck = (err, usage) => {
+    if (err) throw err
+    console.log(usage)
+    limiter.reserve(key, ATTEMPTS, i++ <= ATTEMPTS ? afterReserve : afterEnd)
   }
 
-  limiter.reserve(key, step)
+  const afterReserve = (err, ts) => {
+    if (err) {
+      throw err
+    }
+    limiter.check(key, ATTEMPTS, afterCheck)
+  }
+
+  limiter.check(key, ATTEMPTS, afterCheck)
 }
 
 main()
