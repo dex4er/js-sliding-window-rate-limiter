@@ -7,15 +7,18 @@ class MockRedis {
     options = options || {}
     this.host = options.host
     this.bucket = []
+    this.connected = true
   }
 
   defineCommand (command, options) {}
 
-  disconnect () {}
+  disconnect () {
+    this.connected = false
+  }
 
   // naive implementation of limiter
   limiter (key, mode, interval, limit, toRemove, callback) {
-    if (key === 'error') {
+    if (key === 'error' || !this.connected) {
       const sha1sum = crypto.createHash('sha1').update(String(Math.random())).digest('hex')
 
       const error = Object.assign(new Error(`ERR Error running script (call to f_${sha1sum}): @user_script:1: user_script:1: attempt to call field 'replicate_commands' (a nil value) `), {
