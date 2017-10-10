@@ -43,7 +43,7 @@
   },
   "scripts": {
     "build": "npm run minify",
-    "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua",
+    "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f lib/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
     "pretest": "standard --verbose | snazzy",
     "test": "tap test/*.js",

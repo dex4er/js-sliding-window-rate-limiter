@@ -25,7 +25,7 @@ local usage = tonumber(redis.call("ZCOUNT", key, 1, ts))
 
 if mode == 2 then
     local removed = tonumber(redis.call("ZREM", key, tsremove))
-    usage -= removed
+    usage = usage + removed
 elseif mode == 1 then
     if usage >= limit then
         return -usage
