@@ -107,6 +107,11 @@ ERR Error running script (call to f_8ff6a0f745b738fe1d9fa74079c4c13d032e9947): @
 
 then check if Redis has proper version (>= 3.2.0).
 
+### Lua
+
+Minified script is sent to Redis server by default. Full script can be sent
+instead when `DEBUG_LUA` environment variable is set.
+
 ### License
 
 Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
