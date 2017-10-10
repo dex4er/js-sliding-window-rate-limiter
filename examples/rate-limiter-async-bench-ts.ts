@@ -1,23 +1,21 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
-// Usage: time node examples/rate-limiter-async-bench.js 10000 >/dev/null
-
-'use strict'
+// Usage: time ts-node examples/rate-limiter-async-bench-ts.ts 10000 >/dev/null
 
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
-const Redis = require('ioredis')
-const Limiter = require('../lib/sliding-window-rate-limiter').SlidingWindowRateLimiter
+import * as Redis from 'ioredis'
+import { SlidingWindowRateLimiter as Limiter } from '../lib/sliding-window-rate-limiter'
 
-const noop = () => {}
+const noop = () => {/*noop*/}
 
 async function main () {
   const redis = new Redis({
     host: process.env.REDIS_HOST,
     lazyConnect: true,
-    showFriendlyErrorStack: true
-  })
+    showFriendlyErrorStack: true // see: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20459
+  } as Redis.RedisOptions)
   .on('error', noop)
 
   await redis.connect()
@@ -32,7 +30,7 @@ async function main () {
   for (let i = 1; i <= ATTEMPTS; i++) {
     await limiter.reserve(key, ATTEMPTS)
     const usage = await limiter.check(key, ATTEMPTS)
-    console.log(usage)
+    console.info(usage)
   }
 
   await limiter.redis.quit()

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Usage: time node examples/redis-lua-bench.js 10000 >/dev/null
+// Usage: time node examples/redis-lua-bench 10000 >/dev/null
 
 'use strict'
 
@@ -24,13 +24,17 @@ async function main () {
     numberOfKeys: 1
   })
 
+  const MODE_CHECK = 0
+  const MODE_RESERVE = 1
+
   const key = 'limiter'
   const interval = INTERVAL
   const limit = ATTEMPTS
-  const reserve = 1
+  const ts = 0 // not important
 
   for (let i = 1; i <= ATTEMPTS; i++) {
-    const usage = await redis.limiter(key, interval, limit, reserve)
+    await redis.limiter(key, MODE_RESERVE, interval, limit, ts)
+    const usage = await redis.limiter(key, MODE_CHECK, interval, limit, ts)
     console.log(usage)
   }
 

@@ -45,4 +45,4 @@ script:
   - npm run build
   - npm run ${NPM_RUN_SCRIPT:-test} -- $TAP_ARGS
   - node_modules/.bin/tsc
-  - node_modules/.bin/tslint -p .
+  - node_modules/.bin/tslint -t stylish -p .
