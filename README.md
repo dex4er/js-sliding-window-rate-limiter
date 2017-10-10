@@ -19,8 +19,15 @@ npm install sliding-window-rate-limiter
 ### Usage
 
 ```js
-const Limiter = require('sliding-window-rate-limiter')
+const Limiter = require('sliding-window-rate-limiter').SlidingWindowRateLimiter
 ```
+
+_Typescript:_
+
+```ts
+import { SlidingWindowRateLimiter as Limiter } from 'sliding-window-rate-limiter'
+```
+
 
 #### constructor
 
@@ -31,7 +38,6 @@ const limiter = new Limiter(options)
 _Options:_
 
 * `interval` is a number of seconds in a sliding window
-* `limit` is a number of maximum reservations in a window
 * `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (default: new instance will be created with
   default options of Redis client)
@@ -47,13 +53,13 @@ const limiter = new Limiter({
 #### check
 
 ```js
-const usage = async limiter.check(key, limit)
+const usage = await limiter.check(key, limit)
 ```
 
 or
 
 ```js
-limiter.check(key, limit, function (err, usage) {})
+limiter.check(key, limit, (err, usage) => {})
 ```
 
 Checks current usage for `key`. If usage is above limit, it returns a negative
@@ -62,17 +68,33 @@ number with current usage. Throws an error if has occurred.
 #### reserve
 
 ```js
-const usage = async limiter.reserve(key, limit)
+const ts = await limiter.reserve(key, limit)
 ```
 
 or
 
 ```js
-limiter.reserve(key, limit, function (err, usage) {})
+limiter.reserve(key, limit, (err, ts) => {})
 ```
 
-Makes a reservation and returns current usage for `key`. Returns a negative
+Makes a reservation and returns reserved timestamp as `ts`. Returns a negative
 number with current usage if the reservation can't be done because of limit.
+Throws an error if has occurred.
+
+#### cancel
+
+```js
+const usage = await limiter.cancel(key, limit, ts)
+```
+
+or
+
+```js
+limiter.reserve(key, limit, (err, usage) => {})
+```
+
+Cancels a reservation for timestamp `ts` and returns current usage for `key`.
+Returns a negative number with current usage if the usage is above the limit.
 Throws an error if has occurred.
 
 ### Errors
