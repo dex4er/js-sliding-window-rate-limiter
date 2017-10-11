@@ -29,11 +29,11 @@
   },
   "devDependencies": {
     "@types/ioredis": "0.0.25",
-    "chai": "^4.0.2",
-    "ioredis": "^3.1.4",
+    "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "delay": "^2.0.0",
     "dirty-chai": "^2.0.1",
+    "ioredis": "^3.1.4",
     "luamin": "^1.0.4",
     "snazzy": "^7.0.0",
     "standard": "^10.0.3",
