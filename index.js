@@ -1,1 +1,4 @@
-module.exports = require('./lib/sliding-window-rate-limiter')
+module.exports = {
+  SlidingWindowRateLimiter: require('./lib/sliding-window-rate-limiter'),
+  SafeSlidingWindowRateLimiter: require('./lib/safe-sliding-window-rate-limiter')
+}
