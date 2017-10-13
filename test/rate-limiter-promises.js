@@ -218,9 +218,15 @@ for (const backend of ['Memory', 'Redis']) {
       const defaultLimit = 1
       let reservationToken
 
-      Given('redis connection', () => {
-        redis = new Redis(TEST_REDIS_URL)
-      })
+      if (backend === 'Redis') {
+        Given('redis connection', () => {
+          redis = new Redis(TEST_REDIS_URL)
+        })
+      } else {
+        Given('undefined redis option', () => {
+          redis = undefined
+        })
+      }
 
       And('limiter object', () => {
         limiter = SlidingWindowRateLimiter.createLimiter({
