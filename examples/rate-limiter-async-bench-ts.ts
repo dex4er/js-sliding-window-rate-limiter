@@ -5,22 +5,26 @@
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
+const REDIS_HOST = process.env.REDIS_HOST
+
 import * as Redis from 'ioredis'
-import { SlidingWindowRateLimiter as Limiter } from '../lib/sliding-window-rate-limiter'
+import * as SlidingWindowRateLimiter from '../lib/sliding-window-rate-limiter'
 
 const noop = () => {/*noop*/}
 
 async function main () {
-  const redis = new Redis({
+  const redis = REDIS_HOST && new Redis({
     host: process.env.REDIS_HOST,
     lazyConnect: true,
     showFriendlyErrorStack: true // see: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20459
   } as Redis.RedisOptions)
   .on('error', noop)
 
-  await redis.connect()
+  if (redis) {
+    await redis.connect()
+  }
 
-  const limiter = new Limiter({
+  const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
     redis
   })
@@ -33,7 +37,9 @@ async function main () {
     console.info(usage)
   }
 
-  await limiter.redis.quit()
+  if (redis) {
+    await redis.quit()
+  }
 }
 
 main().catch(console.error)

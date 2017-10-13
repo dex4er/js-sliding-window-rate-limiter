@@ -7,10 +7,10 @@ const chai = require('chai')
 chai.use(require('chai-as-promised'))
 chai.should()
 
-Feature('Test sliding-window-rate-limiter module error with promises', () => {
+Feature('Test sliding-window-rate-limiter module error with promises with Redis backend', () => {
   const MockRedis = require('../mock/mock-ioredis')
 
-  const Limiter = require('../lib/sliding-window-rate-limiter')
+  const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
 
   Scenario('Make one reservation', () => {
     let key
@@ -24,7 +24,7 @@ Feature('Test sliding-window-rate-limiter module error with promises', () => {
     })
 
     And('limiter object', () => {
-      limiter = new Limiter({
+      limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
         redis: redis
       })
@@ -40,6 +40,10 @@ Feature('Test sliding-window-rate-limiter module error with promises', () => {
 
     Then('reservation is rejected', () => {
       return promise.should.rejectedWith(Error, /ERR Error running script/)
+    })
+
+    After('destroy limiter', () => {
+      limiter.destroy()
     })
   })
 })

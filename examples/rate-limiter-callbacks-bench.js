@@ -7,20 +7,43 @@
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
-const Limiter = require('../lib/sliding-window-rate-limiter')
+const REDIS_HOST = process.env.REDIS_HOST
+
+const Redis = require('ioredis')
+const createLimiter = require('../lib/sliding-window-rate-limiter').createLimiter
+
+const noop = () => {}
 
 function main () {
-  const limiter = new Limiter({
+  const redis = REDIS_HOST && new Redis({
     host: process.env.REDIS_HOST,
-    interval: INTERVAL
+    lazyConnect: true,
+    showFriendlyErrorStack: true
   })
+  .on('error', noop)
 
   const key = 'limiter'
 
+  let limiter
   let i = 1
 
+  const afterConnect = (err) => {
+    if (err) throw err
+    limiter = createLimiter({
+      host: process.env.REDIS_HOST,
+      interval: INTERVAL,
+      redis
+    })
+
+    limiter.check(key, ATTEMPTS, afterCheck)
+  }
+
   const afterEnd = () => {
-    limiter.redis.quit()
+    limiter.destroy()
+
+    if (redis) {
+      redis.quit()
+    }
   }
 
   const afterCheck = (err, usage) => {
@@ -36,7 +59,11 @@ function main () {
     limiter.check(key, ATTEMPTS, afterCheck)
   }
 
-  limiter.check(key, ATTEMPTS, afterCheck)
+  if (redis) {
+    redis.connect(afterConnect)
+  } else {
+    afterConnect()
+  }
 }
 
 main()

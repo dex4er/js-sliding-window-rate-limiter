@@ -6,10 +6,10 @@ require('tap-given')(t)
 const chai = require('chai')
 chai.should()
 
-Feature('Test sliding-window-rate-limiter module error with callbacks', () => {
+Feature('Test sliding-window-rate-limiter module error with callbacks with Redis backend', () => {
   const MockRedis = require('../mock/mock-ioredis')
 
-  const Limiter = require('../lib/sliding-window-rate-limiter')
+  const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
 
   Scenario('Make one reservation', () => {
     let error
@@ -23,7 +23,7 @@ Feature('Test sliding-window-rate-limiter module error with callbacks', () => {
     })
 
     And('limiter object', () => {
-      limiter = new Limiter({
+      limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
         redis: redis
       })
@@ -42,6 +42,10 @@ Feature('Test sliding-window-rate-limiter module error with callbacks', () => {
 
     Then('reply error occured', () => {
       error.should.be.an('error').with.property('name', 'ReplyError')
+    })
+
+    After('destroy limiter', () => {
+      limiter.destroy()
     })
   })
 })

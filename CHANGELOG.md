@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.0 2017-10-12
+
+  * `SlidingWindowRateLimiter.createLimiter` is a factory method which returns
+    proper backed based on options.
+  * Use Redis-less backend if `redis` option is not defined.
+
 ## v0.1.0 2017-10-10
 
   * `limit` is a argument of methods.

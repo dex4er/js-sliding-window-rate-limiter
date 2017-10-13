@@ -2,13 +2,13 @@
 
 [![Build Status](https://secure.travis-ci.org/dex4er/js-sliding-window-rate-limiter.svg)](http://travis-ci.org/dex4er/js-sliding-window-rate-limiter) [![Coverage Status](https://coveralls.io/repos/github/dex4er/js-sliding-window-rate-limiter/badge.svg)](https://coveralls.io/github/dex4er/js-sliding-window-rate-limiter) [![npm](https://img.shields.io/npm/v/sliding-window-rate-limiter.svg)](https://www.npmjs.com/package/sliding-window-rate-limiter)
 
-Sliding window rate limiter with Redis 3.2 backend.
+Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
 
 ### Requirements
 
 This module requires ES6 with Node >= 4.
 
-Redis >= 3.2.0 is required.
+Redis >= 3.2.0 is required for Redis backend.
 
 ### Installation
 
@@ -19,33 +19,31 @@ npm install sliding-window-rate-limiter
 ### Usage
 
 ```js
-const Limiter = require('sliding-window-rate-limiter').SlidingWindowRateLimiter
+const SlidingWindowRateLimiter = require('sliding-window-rate-limiter')
 ```
 
 _Typescript:_
 
 ```ts
-import { SlidingWindowRateLimiter as Limiter } from 'sliding-window-rate-limiter'
+import * as SlidingWindowRateLimiter from 'sliding-window-rate-limiter'
 ```
-
 
 #### constructor
 
 ```js
-const limiter = new Limiter(options)
+const limiter = SlidingWindowRateLimiter.createLimiter(options)
 ```
 
 _Options:_
 
 * `interval` is a number of seconds in a sliding window
 * `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
-  or URL string to Redis server (default: new instance will be created with
-  default options of Redis client)
+  or URL string to Redis server (only for Redis backend)
 
 _Example:_
 
 ```js
-const limiter = new Limiter({
+const limiter = SlidingWindowRateLimiter.createLimiter({
   interval: 60
 })
 ```
@@ -96,6 +94,14 @@ limiter.reserve(key, limit, (err, usage) => {})
 Cancels a reservation for timestamp `ts` and returns current usage for `key`.
 Returns a negative number with current usage if the usage is above the limit.
 Throws an error if has occurred.
+
+#### destroy
+
+```js
+limiter.destroy()
+```
+
+Frees resources used by limiter (timers and connections).
 
 ### Errors
 
