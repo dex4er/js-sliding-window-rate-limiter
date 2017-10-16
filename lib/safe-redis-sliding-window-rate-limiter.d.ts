@@ -8,7 +8,7 @@ export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWi
   safe: true
 }
 
-export declare class SafeSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter {
+export declare class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter {
   constructor (options: SafeRedisSlidingWindowRateLimiterOptions)
 
   onConnectionLost (callback: (error: Error) => any): void

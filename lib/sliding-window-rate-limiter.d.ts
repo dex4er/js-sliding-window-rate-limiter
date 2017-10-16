@@ -1,7 +1,10 @@
 import { MemorySlidingWindowRateLimiter, MemorySlidingWindowRateLimiterOptions } from './memory-sliding-window-rate-limiter'
 import { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } from './redis-sliding-window-rate-limiter'
 
-import { SafeRedisSlidingWindowRateLimiterOptions } from './safe-redis-sliding-window-rate-limiter'
+import {
+  SafeRedisSlidingWindowRateLimiter,
+  SafeRedisSlidingWindowRateLimiterOptions
+} from './safe-redis-sliding-window-rate-limiter'
 export { MemorySlidingWindowRateLimiter, MemorySlidingWindowRateLimiterOptions } from './memory-sliding-window-rate-limiter'
 export { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } from './redis-sliding-window-rate-limiter'
 
@@ -27,6 +30,6 @@ export declare interface SlidingWindowRateLimiterBackend {
 
 export function createLimiter (options: MemorySlidingWindowRateLimiterOptions): MemorySlidingWindowRateLimiter
 export function createLimiter (options: RedisSlidingWindowRateLimiterOptions): RedisSlidingWindowRateLimiter
-export function createLimiter (options: SafeRedisSlidingWindowRateLimiterOptions): SafeRedisSlidingWindowRateLimiterOptions
+export function createLimiter (options: SafeRedisSlidingWindowRateLimiterOptions): SafeRedisSlidingWindowRateLimiter
 
 export default createLimiter
