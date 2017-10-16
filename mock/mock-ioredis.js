@@ -6,7 +6,7 @@ class MockRedis {
   constructor (options) {
     options = options || {}
     this.host = options.host
-    this.bucket = []
+    this.buckets = {}
     this.connected = true
   }
 
@@ -16,8 +16,16 @@ class MockRedis {
     this.connected = false
   }
 
+  quit () {
+    this.disconnect()
+  }
+
   // naive implementation of limiter
   limiter (key, mode, interval, limit, toRemove, callback) {
+    if (!this.buckets[key]) {
+      this.buckets[key] = []
+    }
+
     if (key === 'error' || !this.connected) {
       const sha1sum = crypto.createHash('sha1').update(String(Math.random())).digest('hex')
 
@@ -47,21 +55,21 @@ class MockRedis {
 
     const now = new Date().getTime()
 
-    this.bucket = this.bucket.filter(ts => now - ts < interval * 1000 /* ms */)
+    this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000 /* ms */)
 
     let result, usage
 
-    result = usage = this.bucket.length
+    result = usage = this.buckets[key].length
 
     if (mode === 2) {
-      const index = this.bucket.indexOf(toRemove)
-      this.bucket.splice(index, 1)
-      result = usage = this.bucket.length
+      const index = this.buckets[key].indexOf(toRemove)
+      this.buckets[key].splice(index, 1)
+      result = usage = this.buckets[key].length
     } else if (mode === 1) {
       if (usage >= limit) {
         result = usage = -limit
       } else {
-        this.bucket.push(now)
+        this.buckets[key].push(now)
         result = now
       }
     }
