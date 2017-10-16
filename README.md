@@ -6,7 +6,7 @@ Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
 
 ### Requirements
 
-This module requires ES6 with Node >= 4.
+This module requires ES6 with Node >= 4. For Node < 5 `--harmony` flag is required.
 
 Redis >= 3.2.0 is required for Redis backend.
 
@@ -39,12 +39,26 @@ _Options:_
 * `interval` is a number of seconds in a sliding window
 * `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (only for Redis backend)
+* `safe`: `true` (only for SafeRedis backend)
+* `reconnectTimeout` is a time (milliseconds) to reconnect to Redis server
+  after connection failure (only for SafeRedis backend, default value: 2000
+  milliseconds)
 
 _Example:_
 
 ```js
 const limiter = SlidingWindowRateLimiter.createLimiter({
   interval: 60
+})
+```
+
+or
+
+```js
+const limiter = SlidingWindowRateLimiter.createLimiter({
+  interval: 60,
+  redis: new Redis({ host: 'redis-server' }),
+  safe: true
 })
 ```
 
@@ -113,36 +127,23 @@ ERR Error running script (call to f_8ff6a0f745b738fe1d9fa74079c4c13d032e9947): @
 
 then check if Redis has proper version (>= 3.2.0).
 
-### Safe Limiter
+### Backends
 
-There is also possibility to use extended version of limiter, which behaves gracefully, when redis service is unavailable for any reason. Safe limiter has the same interface as presented below. (methods reserve, cancel, check) In case of redis connection failure, Safe Limiter will always return positive response.
+#### Memory
 
-Usage is similar to standard usage described below:
+This backend holds all data in memory.
 
-```js
-const Limiter = require('sliding-window-rate-limiter').SafeSlidingWindowRateLimiter
-```
+#### Redis
 
-_Typescript:_
+This backend requires Redis 3.2 to work. Main advantage is that the state of
+limiter can be shared between many clients.
 
-```ts
-import { SafeSlidingWindowRateLimiter as Limiter } from 'sliding-window-rate-limiter'
-```
+#### SafeRedis
 
-Constructor of SafeLimiter accepts same options object as base limiter, with one optional extension:
-
-* ``reconnectTimeout - time (in milliseconds) after which limiter tries to connect with redis after connection failure (default value: 2000 milliseconds)
-
-SafeLimiter extends interface of limiter with method allowing to handle redis connection failures:
-
-```js
- const limiter = SafeLimiter(options)
- const failHandler = (error) => {
-    logger.log(error)
- }
- limiter.onConnectionLost(failHandler) // adding fail handler
- limiter.removeConnectionLostListener(failHandler) // unbinding fail handler
-```
+There is extended version of limiter, which behaves gracefully, when Redis
+server is unavailable for any reason. In case of Redis connection failure,
+SafeRedis backend will always return positive response, and will try to
+reconnect to Redis server after `reconnectTimeout`.
 
 ### Lua
 

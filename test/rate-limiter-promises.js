@@ -16,228 +16,189 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
   const delay = require('delay')
   const uuidv1 = require('uuid/v1')
 
-  const memoryBackendOptions = {interval: 1}
-  const redisBackendOptions = {redis, interval: 1}
-  const safeRedisBackendOptions = {safe: true, redis, interval: 1}
-  const limiterFactory = require('./../lib/sliding-window-rate-limiter')
-
-  Scenario('Make one reservation - redis backend', () => {
-    oneReservationScenario(redisBackendOptions)
-  })
-
-  Scenario('Make one reservation and another above limit - redis backend', () => {
-    exceededLimitScenario(redisBackendOptions)
-  })
-
-  Scenario('Make one reservation and another after interval - redis backend', () => {
-    reservationAfterIntervalScenario(redisBackendOptions)
-  })
-
-  Scenario('Cancel reservation - redis backend', () => {
-    cancelScenario(redisBackendOptions)
-  })
-
-  Scenario('Make one reservation - safe redis backend', () => {
-    oneReservationScenario(safeRedisBackendOptions)
-  })
-
-  Scenario('Make one reservation and another above limit - safe redis backend', () => {
-    exceededLimitScenario(safeRedisBackendOptions)
-  })
-
-  Scenario('Make one reservation and another after interval - safe redis backend', () => {
-    reservationAfterIntervalScenario(safeRedisBackendOptions)
-  })
-
-  Scenario('Cancel reservation - safe redis backend', () => {
-    cancelScenario(safeRedisBackendOptions)
-  })
-
-  Scenario('Make one reservation - memory backend', () => {
-    oneReservationScenario(memoryBackendOptions)
-  })
-
-  Scenario('Make one reservation and another above limit - memory backend', () => {
-    exceededLimitScenario(memoryBackendOptions)
-  })
-
-  Scenario('Make one reservation and another after interval - memory backend', () => {
-    reservationAfterIntervalScenario(memoryBackendOptions)
-  })
-
-  Scenario('Cancel reservation - memory backend', () => {
-    cancelScenario(memoryBackendOptions)
-  })
-
-  function oneReservationScenario (options) {
-    let key
-    let limiter
-    let promise
-    const defaultLimit = 1
-
-    And('limiter object', () => {
-      limiter = limiterFactory.createLimiter(options)
-    })
-
-    And('key', () => {
-      key = 'one-reservation:' + uuidv1()
-    })
-
-    When('I check usage', () => {
-      promise = limiter.check(key, defaultLimit)
-    })
-
-    Then('usage is zero', () => {
-      return promise.should.eventually.equal(0)
-    })
-
-    When('I make one reservation', () => {
-      promise = limiter.reserve(key, defaultLimit)
-    })
-
-    Then('usage is above zero', () => {
-      return promise.should.eventually.be.above(0)
-    })
-
-    When('I check usage', () => {
-      promise = limiter.check(key, defaultLimit)
-    })
-
-    Then('usage is above zero', () => {
-      return promise.should.eventually.be.above(0)
-    })
-
-    After('disconnect Redis', () => {
-      limiter.destroy()
-    })
+  const limiterBackendOptions = {
+    'Memory': { interval: 1 },
+    'Redis': { redis, interval: 1 },
+    'SafeRedis': { safe: true, redis, interval: 1 }
   }
 
-  function exceededLimitScenario (options) {
-    let key
-    let limiter
-    let promise
-    const defaultLimit = 1
+  const limiterFactoryClass = require('./../lib/sliding-window-rate-limiter')
 
-    And('limiter object', () => {
-      limiter = limiterFactory.createLimiter(options)
-    })
+  for (const backend of Object.keys(limiterBackendOptions)) {
+    Scenario(`Make one reservation - ${backend} backend`, () => {
+      let key
+      let limiter
+      let promise
+      const defaultLimit = 1
+      const options = limiterBackendOptions[backend]
 
-    And('key', () => {
-      key = 'above-limit:' + uuidv1()
-    })
-
-    When('I check usage', () => {
-      promise = limiter.check(key, defaultLimit)
-    })
-
-    Then('usage is zero', () => {
-      return promise.should.eventually.equal(0)
-    })
-
-    When('I make one reservation', () => {
-      promise = limiter.reserve(key, defaultLimit)
-    })
-
-    Then('usage is above zero', () => {
-      return promise.should.eventually.be.above(0)
-    })
-
-    When('I try to make another above limit', () => {
-      promise = limiter.reserve(key, defaultLimit)
-    })
-
-    Then('usage is below zero', () => {
-      return promise.should.eventually.be.below(0)
-    })
-
-    When('I check usage', () => {
-      promise = limiter.check(key, defaultLimit)
-    })
-
-    Then('usage is above zero', () => {
-      return promise.should.eventually.be.above(0)
-    })
-
-    After('disconnect Redis', () => {
-      limiter.destroy()
-    })
-  }
-
-  function reservationAfterIntervalScenario (options) {
-    let key
-    let limiter
-    let promise
-    const defaultLimit = 1
-
-    And('limiter object', () => {
-      limiter = limiterFactory.createLimiter(options)
-    })
-
-    And('key', () => {
-      key = 'after-interval:' + uuidv1()
-    })
-
-    When('I make one reservation', () => {
-      promise = limiter.reserve(key, defaultLimit)
-    })
-
-    Then('usage is above zero', () => {
-      return promise.should.eventually.be.above(0)
-    })
-
-    When('I wait more than interval', () => {
-      return delay(2000 /* ms */)
-    })
-
-    And('I try to make another above limit', () => {
-      promise = limiter.reserve(key, defaultLimit)
-    })
-
-    Then('usage is above zero', () => {
-      return promise.should.eventually.be.above(0)
-    })
-
-    After('disconnect Redis', () => {
-      limiter.destroy()
-    })
-  }
-
-  function cancelScenario (options) {
-    let key
-    let limiter
-    const defaultLimit = 1
-    let reservationToken
-
-    And('limiter object', () => {
-      limiter = limiterFactory.createLimiter(options)
-    })
-
-    And('key', () => {
-      key = 'after-interval:' + uuidv1()
-    })
-
-    When('I make one reservation', () => {
-      const reservationTokenPromise = limiter.reserve(key, defaultLimit)
-      reservationTokenPromise.then((resolvedReservationToken) => {
-        reservationToken = resolvedReservationToken
+      Given('limiter object', () => {
+        limiter = limiterFactoryClass.createLimiter(options)
       })
-      return reservationTokenPromise
+
+      And('key', () => {
+        key = 'one-reservation:' + uuidv1()
+      })
+
+      When('I check usage', () => {
+        promise = limiter.check(key, defaultLimit)
+      })
+
+      Then('usage is zero', () => {
+        return promise.should.eventually.equal(0)
+      })
+
+      When('I make one reservation', () => {
+        promise = limiter.reserve(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        return promise.should.eventually.be.above(0)
+      })
+
+      When('I check usage', () => {
+        promise = limiter.check(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        return promise.should.eventually.be.above(0)
+      })
+
+      After('disconnect Redis', () => {
+        limiter.destroy()
+      })
     })
 
-    Then('usage is above zero', () => {
-      return limiter.check(key, defaultLimit).should.eventually.be.above(0)
+    Scenario(`Make one reservation and another above limit - ${backend} backend`, () => {
+      let key
+      let limiter
+      let promise
+      const defaultLimit = 1
+      const options = limiterBackendOptions[backend]
+
+      Given('limiter object', () => {
+        limiter = limiterFactoryClass.createLimiter(options)
+      })
+
+      And('key', () => {
+        key = 'above-limit:' + uuidv1()
+      })
+
+      When('I check usage', () => {
+        promise = limiter.check(key, defaultLimit)
+      })
+
+      Then('usage is zero', () => {
+        return promise.should.eventually.equal(0)
+      })
+
+      When('I make one reservation', () => {
+        promise = limiter.reserve(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        return promise.should.eventually.be.above(0)
+      })
+
+      When('I try to make another above limit', () => {
+        promise = limiter.reserve(key, defaultLimit)
+      })
+
+      Then('usage is below zero', () => {
+        return promise.should.eventually.be.below(0)
+      })
+
+      When('I check usage', () => {
+        promise = limiter.check(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        return promise.should.eventually.be.above(0)
+      })
+
+      After('disconnect Redis', () => {
+        limiter.destroy()
+      })
     })
 
-    When('canceling reservation', () => {
-      return limiter.cancel(key, defaultLimit, reservationToken)
+    Scenario('Make one reservation and another after interval - redis backend', () => {
+      let key
+      let limiter
+      let promise
+      const defaultLimit = 1
+      const options = limiterBackendOptions[backend]
+
+      And('limiter object', () => {
+        limiter = limiterFactoryClass.createLimiter(options)
+      })
+
+      And('key', () => {
+        key = 'after-interval:' + uuidv1()
+      })
+
+      When('I make one reservation', () => {
+        promise = limiter.reserve(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        return promise.should.eventually.be.above(0)
+      })
+
+      When('I wait more than interval', () => {
+        return delay(2000 /* ms */)
+      })
+
+      And('I try to make another above limit', () => {
+        promise = limiter.reserve(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        return promise.should.eventually.be.above(0)
+      })
+
+      After('disconnect Redis', () => {
+        limiter.destroy()
+      })
     })
 
-    Then('there should be no reservations', () => {
-      return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
-    })
+    Scenario(`Cancel reservation - ${backend} backend`, () => {
+      let key
+      let limiter
+      let reservationToken
+      const defaultLimit = 1
+      const options = limiterBackendOptions[backend]
 
-    After('disconnect Redis', () => {
-      limiter.destroy()
+      And('limiter object', () => {
+        limiter = limiterFactoryClass.createLimiter(options)
+      })
+
+      And('key', () => {
+        key = 'after-interval:' + uuidv1()
+      })
+
+      When('I make one reservation', () => {
+        const reservationTokenPromise = limiter.reserve(key, defaultLimit)
+        reservationTokenPromise.then((resolvedReservationToken) => {
+          reservationToken = resolvedReservationToken
+        })
+        return reservationTokenPromise
+      })
+
+      Then('usage is above zero', () => {
+        return limiter.check(key, defaultLimit).should.eventually.be.above(0)
+      })
+
+      When('canceling reservation', () => {
+        return limiter.cancel(key, defaultLimit, reservationToken)
+      })
+
+      Then('there should be no reservations', () => {
+        return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+      })
+
+      After('disconnect Redis', () => {
+        limiter.destroy()
+      })
     })
   }
 

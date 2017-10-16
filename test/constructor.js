@@ -33,7 +33,7 @@ for (const backend of ['Memory', 'Redis', 'SafeRedis']) {
       }
 
       if (backend === 'SafeRedis') {
-        Given('safe flag', () => {
+        And('safe flag', () => {
           safe = true
         })
       }

@@ -1,12 +1,10 @@
 import { MemorySlidingWindowRateLimiter, MemorySlidingWindowRateLimiterOptions } from './memory-sliding-window-rate-limiter'
 import { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } from './redis-sliding-window-rate-limiter'
+import { SafeRedisSlidingWindowRateLimiter, SafeRedisSlidingWindowRateLimiterOptions } from './safe-redis-sliding-window-rate-limiter'
 
-import {
-  SafeRedisSlidingWindowRateLimiter,
-  SafeRedisSlidingWindowRateLimiterOptions
-} from './safe-redis-sliding-window-rate-limiter'
 export { MemorySlidingWindowRateLimiter, MemorySlidingWindowRateLimiterOptions } from './memory-sliding-window-rate-limiter'
 export { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } from './redis-sliding-window-rate-limiter'
+export { SafeRedisSlidingWindowRateLimiter, SafeRedisSlidingWindowRateLimiterOptions } from './safe-redis-sliding-window-rate-limiter'
 
 export interface SlidingWindowRateLimiterOptions {
   interval?: number

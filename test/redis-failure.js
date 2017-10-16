@@ -21,9 +21,9 @@ Feature('Limiter safe operations extension', () => {
     let redis
     let limiter
     let key
-    const defaultLimit = 1
     let ts
     let errors = []
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
@@ -77,10 +77,10 @@ Feature('Limiter safe operations extension', () => {
     let redis
     let limiter
     let key
-    const defaultLimit = 1
     let ts
     let failures = []
     let error
+    const defaultLimit = 1
 
     Given('redis connection', () => {
       redis = new Redis(TEST_REDIS_URL)
