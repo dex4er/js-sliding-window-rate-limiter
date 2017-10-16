@@ -16,8 +16,8 @@ async function main () {
   const redis = REDIS_HOST && new Redis({
     host: process.env.REDIS_HOST,
     lazyConnect: true,
-    showFriendlyErrorStack: true // see: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/20459
-  } as Redis.RedisOptions)
+    showFriendlyErrorStack: true
+  })
   .on('error', noop)
 
   if (redis) {
