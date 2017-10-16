@@ -4,11 +4,13 @@ import { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } f
 export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWindowRateLimiterOptions {
   safe?: true
   reconnectTimeout?: number
+  defaultResponse?: number
 }
 
 export declare class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter implements SlidingWindowRateLimiterBackend {
   readonly options: SafeRedisSlidingWindowRateLimiterOptions
   readonly reconnectTimeout: number
+  readonly defaultResponse: number
 
   constructor (options?: SafeRedisSlidingWindowRateLimiterOptions)
 

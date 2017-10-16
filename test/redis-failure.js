@@ -51,7 +51,7 @@ Feature('Limiter safe operations extension', () => {
     })
 
     Then('check method should not throw any errors', () => {
-      return limiter.check(key, defaultLimit).should.eventually.be.above(0)
+      return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
     })
 
     And('reserve method should not throw any errors', () => {
@@ -65,7 +65,7 @@ Feature('Limiter safe operations extension', () => {
     })
 
     And('cancel method should not throw any errors', () => {
-      return limiter.cancel(key, defaultLimit, ts).should.eventually.be.above(0)
+      return limiter.cancel(key, defaultLimit, ts).should.eventually.be.equal(0)
     })
 
     And('one error event fired', () => {
@@ -111,7 +111,7 @@ Feature('Limiter safe operations extension', () => {
       limiter.check(key, defaultLimit, (err, successResponse) => {
         error = err;
         (error === null).should.be.true()
-        successResponse.should.be.above(0)
+        successResponse.should.be.equal(0)
         done()
       })
     })
@@ -130,7 +130,7 @@ Feature('Limiter safe operations extension', () => {
       limiter.cancel(key, defaultLimit, ts, (err, successResponse) => {
         error = err;
         (error === null).should.be.true()
-        successResponse.should.be.above(0)
+        successResponse.should.be.equal(0)
         done()
       })
     })
