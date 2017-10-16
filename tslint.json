@@ -3,10 +3,9 @@
     "tslint:recommended",
     "tslint-config-standard"
   ],
-  "jsRules": {},
   "rules": {
     "interface-name": false,
-    "max-line-length": [true, 300],
+    "max-line-length": false,
     "no-console": [true, "log"]
   }
 }

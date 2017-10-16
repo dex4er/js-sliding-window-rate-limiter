@@ -1,9 +1,14 @@
 {
   "name": "sliding-window-rate-limiter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
+<<<<<<< HEAD
   "main": "index.js",
   "types": "index.d.ts",
+=======
+  "main": "lib/sliding-window-rate-limiter.js",
+  "typings": "lib/sliding-window-rate-limiter.d.ts",
+>>>>>>> upstream/master
   "repository": {
     "type": "git",
     "url": "https://github.com/dex4er/js-sliding-window-rate-limiter"
@@ -25,11 +30,12 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "eslint": "^4.8.0",
-    "eslint-plugin-node": "^5.2.0"
+    "eslint": "^4.9.0",
+    "eslint-plugin-node": "^5.2.0",
+    "ioredis": "^3.1.4"
   },
   "devDependencies": {
-    "@types/ioredis": "0.0.25",
+    "@types/ioredis": "0.0.26",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "delay": "^2.0.0",
