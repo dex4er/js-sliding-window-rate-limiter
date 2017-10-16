@@ -61,7 +61,7 @@ Feature('Limiter safe operations extension', () => {
         ts = result
       })
 
-      return promise.should.eventually.be.equal(SafeLimiter.SafeSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
+      return promise.should.eventually.be.equal(SafeLimiter.SafeRedisSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
     })
 
     And('cancel method should not throw any errors', () => {
@@ -121,7 +121,7 @@ Feature('Limiter safe operations extension', () => {
         error = err;
         (error === null).should.be.true()
         ts = successResponse
-        successResponse.should.be.equal(SafeLimiter.SafeSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
+        successResponse.should.be.equal(SafeLimiter.SafeRedisSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
         done()
       })
     })
