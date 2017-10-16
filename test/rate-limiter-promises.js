@@ -11,61 +11,55 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
   const TEST_REDIS_URL = process.env.TEST_REDIS_URL
   const redisModule = TEST_REDIS_URL ? 'ioredis' : '../mock/mock-ioredis'
   const Redis = require(redisModule)
+  const redis = new Redis(TEST_REDIS_URL)
 
   const delay = require('delay')
   const uuidv1 = require('uuid/v1')
 
-  const Limiter = require('../lib/sliding-window-rate-limiter')
-  const SafeLimiter = require('../lib/safe-sliding-window-rate-limiter')
+  const redisBackendOptions = {redis, interval: 1}
+  const memoryBackendOptions = {interval: 1}
+  const limiterFactory = require('./../lib/sliding-window-rate-limiter')
 
-  Scenario('Make one reservation', () => {
-    oneReservationScenario(Limiter)
+  Scenario('Make one reservation - redis backend', () => {
+    oneReservationScenario(redisBackendOptions)
   })
 
-  Scenario('Make one reservation with safe operations adapter', () => {
-    oneReservationScenario(SafeLimiter)
+  Scenario('Make one reservation and another above limit - redis backend', () => {
+    exceededLimitScenario(redisBackendOptions)
   })
 
-  Scenario('Make one reservation and another above limit', () => {
-    exceedLimitScenario(Limiter)
+  Scenario('Make one reservation and another after interval - redis backend', () => {
+    reservationAfterIntervalScenario(redisBackendOptions)
   })
 
-  Scenario('Make one reservation and another above limit with safe operations adapter', () => {
-    exceedLimitScenario(SafeLimiter)
+  Scenario('Cancel reservation - redis backend', () => {
+    cancelScenario(redisBackendOptions)
   })
 
-  Scenario('Make one reservation and another after interval', () => {
-    reservationAfterInterval(Limiter)
+  Scenario('Make one reservation - memory backend', () => {
+    oneReservationScenario(memoryBackendOptions)
   })
 
-  Scenario('Make one reservation and another after interval with safe operations adapter', () => {
-    reservationAfterInterval(SafeLimiter)
+  Scenario('Make one reservation and another above limit - memory backend', () => {
+    exceededLimitScenario(memoryBackendOptions)
   })
 
-  Scenario('Cancel reservation', () => {
-    cancelScenario(Limiter)
+  Scenario('Make one reservation and another after interval - memory backend', () => {
+    reservationAfterIntervalScenario(memoryBackendOptions)
   })
 
-  Scenario('Cancel reservation with safe operations adapter', () => {
-    cancelScenario(SafeLimiter)
+  Scenario('Cancel reservation - memory backend', () => {
+    cancelScenario(memoryBackendOptions)
   })
 
-  function oneReservationScenario (Limiter) {
+  function oneReservationScenario (options) {
     let key
     let limiter
     let promise
-    let redis
     const defaultLimit = 1
 
-    Given('redis connection', () => {
-      redis = new Redis(TEST_REDIS_URL)
-    })
-
     And('limiter object', () => {
-      limiter = new Limiter({
-        interval: 1,
-        redis: redis
-      })
+      limiter = limiterFactory.createLimiter(options)
     })
 
     And('key', () => {
@@ -97,26 +91,18 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      redis.disconnect()
+      limiter.destroy()
     })
   }
 
-  function exceedLimitScenario (Limiter) {
+  function exceededLimitScenario (options) {
     let key
     let limiter
     let promise
-    let redis
     const defaultLimit = 1
 
-    Given('redis connection', () => {
-      redis = new Redis(TEST_REDIS_URL)
-    })
-
     And('limiter object', () => {
-      limiter = new Limiter({
-        interval: 1,
-        redis: redis
-      })
+      limiter = limiterFactory.createLimiter(options)
     })
 
     And('key', () => {
@@ -156,26 +142,18 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      redis.disconnect()
+      limiter.destroy()
     })
   }
 
-  function reservationAfterInterval (Limiter) {
+  function reservationAfterIntervalScenario (options) {
     let key
     let limiter
     let promise
-    let redis
     const defaultLimit = 1
 
-    Given('redis connection', () => {
-      redis = new Redis(TEST_REDIS_URL)
-    })
-
     And('limiter object', () => {
-      limiter = new Limiter({
-        interval: 1,
-        redis: redis
-      })
+      limiter = limiterFactory.createLimiter(options)
     })
 
     And('key', () => {
@@ -203,26 +181,18 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      redis.disconnect()
+      limiter.destroy()
     })
   }
 
-  function cancelScenario (Limiter) {
+  function cancelScenario (options) {
     let key
     let limiter
-    let redis
     const defaultLimit = 1
     let reservationToken
 
-    Given('redis connection', () => {
-      redis = new Redis(TEST_REDIS_URL)
-    })
-
     And('limiter object', () => {
-      limiter = new Limiter({
-        interval: 5,
-        redis: redis
-      })
+      limiter = limiterFactory.createLimiter(options)
     })
 
     And('key', () => {
@@ -250,7 +220,11 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
 
     After('disconnect Redis', () => {
-      redis.disconnect()
+      limiter.destroy()
     })
   }
+
+  After('disconnect redis', () => {
+    redis.quit()
+  })
 })
