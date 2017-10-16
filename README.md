@@ -113,6 +113,37 @@ ERR Error running script (call to f_8ff6a0f745b738fe1d9fa74079c4c13d032e9947): @
 
 then check if Redis has proper version (>= 3.2.0).
 
+### Safe Limiter
+
+There is also possibility to use extended version of limiter, which behaves gracefully, when redis service is unavailable for any reason. Safe limiter has the same interface as presented below. (methods reserve, cancel, check) In case of redis connection failure, Safe Limiter will always return positive response.
+
+Usage is similar to standard usage described below:
+
+```js
+const Limiter = require('sliding-window-rate-limiter').SafeSlidingWindowRateLimiter
+```
+
+_Typescript:_
+
+```ts
+import { SafeSlidingWindowRateLimiter as Limiter } from 'sliding-window-rate-limiter'
+```
+
+Constructor of SafeLimiter accepts same options object as base limiter, with one optional extension:
+
+* ``reconnectTimeout - time (in milliseconds) after which limiter tries to connect with redis after connection failure (default value: 2000 milliseconds)
+
+SafeLimiter extends interface of limiter with method allowing to handle redis connection failures:
+
+```js
+ const limiter = SafeLimiter(options)
+ const failHandler = (error) => {
+    logger.log(error)
+ }
+ limiter.onConnectionLost(failHandler) // adding fail handler
+ limiter.removeConnectionLostListener(failHandler) // unbinding fail handler
+```
+
 ### Lua
 
 Minified script is sent to Redis server by default. Full script can be sent

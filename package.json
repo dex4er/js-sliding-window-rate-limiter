@@ -35,12 +35,16 @@
     "chai-as-promised": "^7.1.1",
     "delay": "^2.0.0",
     "dirty-chai": "^2.0.1",
+    "ioredis": "^3.1.4",
     "luamin": "^1.0.4",
     "snazzy": "^7.0.0",
     "standard": "^10.0.3",
     "tap": "^10.7.2",
     "tap-given": "^0.6.0",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "tslint": "^5.7.0",
+    "tslint-config-standard": "^6.0.1",
+    "typescript": "^2.5.3"
   },
   "scripts": {
     "build": "npm run minify",
