@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events'
 import { Redis } from 'ioredis'
 
 import { SlidingWindowRateLimiterBackend, SlidingWindowRateLimiterOptions } from './sliding-window-rate-limiter'
@@ -6,7 +7,7 @@ export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateL
   redis?: Redis | string
 }
 
-export class RedisSlidingWindowRateLimiter implements SlidingWindowRateLimiterBackend {
+export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly options: RedisSlidingWindowRateLimiterOptions
   readonly interval: number
   readonly redis: Redis

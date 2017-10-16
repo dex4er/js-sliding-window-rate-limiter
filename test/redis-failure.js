@@ -41,8 +41,8 @@ Feature('Limiter safe operations extension', () => {
     })
 
     And('failure listener', () => {
-      limiter.onConnectionLost((error) => {
-        errors.push(error)
+      limiter.on('error', (err) => {
+        errors.push(err)
       })
     })
 
@@ -98,8 +98,8 @@ Feature('Limiter safe operations extension', () => {
     })
 
     And('failure listener', () => {
-      limiter.onConnectionLost((error) => {
-        failures.push(error)
+      limiter.on('error', (err) => {
+        failures.push(err)
       })
     })
 
