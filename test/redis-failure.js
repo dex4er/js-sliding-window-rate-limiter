@@ -8,7 +8,7 @@ chai.use(require('chai-as-promised'))
 chai.use(require('dirty-chai'))
 chai.should()
 
-const SafeLimiter = require('../lib/safe-sliding-window-rate-limiter')
+const SafeLimiter = require('../lib/safe-redis-sliding-window-rate-limiter')
 
 Feature('Limiter safe operations extension', () => {
   const TEST_REDIS_URL = process.env.TEST_REDIS_URL
@@ -61,7 +61,7 @@ Feature('Limiter safe operations extension', () => {
         ts = result
       })
 
-      return promise.should.eventually.be.a('string')
+      return promise.should.eventually.be.equal(SafeLimiter.SafeSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
     })
 
     And('cancel method should not throw any errors', () => {
@@ -121,7 +121,7 @@ Feature('Limiter safe operations extension', () => {
         error = err;
         (error === null).should.be.true()
         ts = successResponse
-        successResponse.should.be.a('string')
+        successResponse.should.be.equal(SafeLimiter.SafeSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
         done()
       })
     })

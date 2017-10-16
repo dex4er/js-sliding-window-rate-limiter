@@ -16,8 +16,9 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
   const delay = require('delay')
   const uuidv1 = require('uuid/v1')
 
-  const redisBackendOptions = {redis, interval: 1}
   const memoryBackendOptions = {interval: 1}
+  const redisBackendOptions = {redis, interval: 1}
+  const safeRedisBackendOptions = {safe: true, redis, interval: 1}
   const limiterFactory = require('./../lib/sliding-window-rate-limiter')
 
   Scenario('Make one reservation - redis backend', () => {
@@ -34,6 +35,22 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
   Scenario('Cancel reservation - redis backend', () => {
     cancelScenario(redisBackendOptions)
+  })
+
+  Scenario('Make one reservation - safe redis backend', () => {
+    oneReservationScenario(safeRedisBackendOptions)
+  })
+
+  Scenario('Make one reservation and another above limit - safe redis backend', () => {
+    exceededLimitScenario(safeRedisBackendOptions)
+  })
+
+  Scenario('Make one reservation and another after interval - safe redis backend', () => {
+    reservationAfterIntervalScenario(safeRedisBackendOptions)
+  })
+
+  Scenario('Cancel reservation - safe redis backend', () => {
+    cancelScenario(safeRedisBackendOptions)
   })
 
   Scenario('Make one reservation - memory backend', () => {
