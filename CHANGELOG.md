@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0 2017-10-16
+
+  * New `SafeRedis` backend.
+
 ## v0.2.0 2017-10-12
 
   * `SlidingWindowRateLimiter.createLimiter` is a factory method which returns
