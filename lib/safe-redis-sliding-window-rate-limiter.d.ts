@@ -14,11 +14,11 @@ export declare class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindo
 
   constructor (options?: SafeRedisSlidingWindowRateLimiterOptions)
 
-  addListener(event: 'error', listener: (err: Error) => void): this;
-  emit(event: 'error', error: Error): boolean;
-  on(event: 'error', listener: (err: Error) => void): this;
-  once(event: 'error', listener: (err: Error) => void): this;
-  prependListener(event: 'error', listener: (err: Error) => void): this;
-  prependOnceListener(event: 'error', listener: (err: Error) => void): this;
-  listeners(event: 'error'): Array<(err: Error) => void>;
+  addListener (event: 'error', listener: (err: Error) => void): this;
+  emit (event: 'error', error: Error): boolean;
+  on (event: 'error', listener: (err: Error) => void): this;
+  once (event: 'error', listener: (err: Error) => void): this;
+  prependListener (event: 'error', listener: (err: Error) => void): this;
+  prependOnceListener (event: 'error', listener: (err: Error) => void): this;
+  listeners (event: 'error'): Array<(err: Error) => void>;
 }

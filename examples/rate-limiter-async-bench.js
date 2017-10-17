@@ -28,8 +28,10 @@ async function main () {
 
   const limiter = createLimiter({
     interval: INTERVAL,
-    redis
+    redis,
+    safe: true
   })
+  .on('error', noop)
 
   const key = 'limiter'
 

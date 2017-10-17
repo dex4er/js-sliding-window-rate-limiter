@@ -22,6 +22,8 @@ Feature('Limiter safe operations extension', () => {
     let limiter
     let key
     let ts
+    let usage1
+    let usage2
     let errors = []
     const defaultLimit = 1
 
@@ -40,35 +42,49 @@ Feature('Limiter safe operations extension', () => {
       key = 'redis-failure:' + uuidv1()
     })
 
-    And('failure listener', () => {
+    And('error listener', () => {
       limiter.on('error', (err) => {
         errors.push(err)
       })
     })
 
-    When('disconnect redis', () => {
+    When('Redis is disconnected', () => {
       return redis.disconnect()
     })
 
-    Then('check method should not throw any errors', () => {
-      return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+    And('check method is called', async () => {
+      usage1 = await limiter.check(key, defaultLimit)
     })
 
-    And('reserve method should not throw any errors', () => {
-      const promise = limiter.reserve(key, defaultLimit)
-
-      promise.then((result) => {
-        ts = result
-      })
-
-      return promise.should.eventually.be.equal(SafeLimiter.SafeRedisSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
+    And('one error event was fired', () => {
+      errors.length.should.equals(1)
     })
 
-    And('cancel method should not throw any errors', () => {
-      return limiter.cancel(key, defaultLimit, ts).should.eventually.be.equal(0)
+    Then('check method should return default usage', () => {
+      usage1.should.equals(0)
     })
 
-    And('one error event fired', () => {
+    When('reserve method is called', async () => {
+      ts = await limiter.reserve(key, defaultLimit)
+    })
+
+    Then('reserve method should return default timestamp', () => {
+      ts.should.equals(0)
+    })
+
+    And('one error event was fired', () => {
+      errors.length.should.equals(1)
+    })
+
+    When('cancel method is called', async () => {
+      usage2 = await limiter.cancel(key, defaultLimit, ts)
+    })
+
+    Then('cancel method should return default usage', () => {
+      usage2.should.equals(0)
+    })
+
+    And('one error event was fired', () => {
       errors.length.should.equals(1)
     })
   })
@@ -79,7 +95,8 @@ Feature('Limiter safe operations extension', () => {
     let key
     let ts
     let failures = []
-    let error
+    let usage1
+    let usage2
     const defaultLimit = 1
 
     Given('redis connection', () => {
@@ -97,45 +114,64 @@ Feature('Limiter safe operations extension', () => {
       key = 'redis-failure:' + uuidv1()
     })
 
-    And('failure listener', () => {
+    And('error listener', () => {
       limiter.on('error', (err) => {
         failures.push(err)
       })
     })
 
-    When('disconnect redis', () => {
+    When('Redis is disconnected', () => {
       return redis.disconnect()
     })
 
-    Then('check method should not throw any errors', (done) => {
-      limiter.check(key, defaultLimit, (err, successResponse) => {
-        error = err;
-        (error === null).should.be.true()
-        successResponse.should.be.equal(0)
+    And('check method is called', (done) => {
+      limiter.check(key, defaultLimit, (err, response) => {
+        if (!err) {
+          usage1 = response
+        }
         done()
       })
     })
 
-    And('reserve method should not throw any errors', (done) => {
-      limiter.reserve(key, defaultLimit, (err, successResponse) => {
-        error = err;
-        (error === null).should.be.true()
-        ts = successResponse
-        successResponse.should.be.equal(SafeLimiter.SafeRedisSlidingWindowRateLimiter.SUCCESS_RESERVATION_TOKEN)
+    Then('check method should return default usage', () => {
+      usage1.should.equals(0)
+    })
+
+    And('one error event was fired', () => {
+      failures.length.should.equals(1)
+    })
+
+    When('reserve method is called', (done) => {
+      limiter.reserve(key, defaultLimit, (err, response) => {
+        if (!err) {
+          ts = response
+        }
         done()
       })
     })
 
-    And('cancel method should not throw any errors', (done) => {
-      limiter.cancel(key, defaultLimit, ts, (err, successResponse) => {
-        error = err;
-        (error === null).should.be.true()
-        successResponse.should.be.equal(0)
+    Then('reserve method should return default timestamp', () => {
+      ts.should.equals(0)
+    })
+
+    And('one error event was fired', () => {
+      failures.length.should.equals(1)
+    })
+
+    When('cancel method is called', (done) => {
+      limiter.cancel(key, defaultLimit, ts, (err, response) => {
+        if (!err) {
+          usage2 = response
+        }
         done()
       })
     })
 
-    And('one connection_fail event fired', () => {
+    Then('check method should return default usage', () => {
+      usage2.should.equals(0)
+    })
+
+    And('one error event was fired', () => {
       failures.length.should.equals(1)
     })
   })

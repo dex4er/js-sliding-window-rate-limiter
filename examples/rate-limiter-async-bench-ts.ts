@@ -26,8 +26,10 @@ async function main () {
 
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
-    redis
+    redis,
+    safe: true
   })
+  .on('error', noop)
 
   const key = 'limiter'
 
