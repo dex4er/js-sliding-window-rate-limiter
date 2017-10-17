@@ -63,8 +63,7 @@ class MockRedis {
 
     if (mode === 2) {
       const index = this.buckets[key].indexOf(toRemove)
-      this.buckets[key].splice(index, 1)
-      result = usage = this.buckets[key].length
+      result = this.buckets[key].splice(index, 1).length
     } else if (mode === 1) {
       if (usage >= limit) {
         result = usage = -limit

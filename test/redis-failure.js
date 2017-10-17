@@ -159,7 +159,7 @@ Feature('Limiter safe operations extension', () => {
     })
 
     When('cancel method is called', (done) => {
-      limiter.cancel(key, defaultLimit, ts, (err, response) => {
+      limiter.cancel(key, ts, (err, response) => {
         if (!err) {
           usage2 = response
         }

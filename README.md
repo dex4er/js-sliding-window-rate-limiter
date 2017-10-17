@@ -98,18 +98,18 @@ Throws an error if has occurred.
 #### cancel
 
 ```js
-const usage = await limiter.cancel(key, limit, ts)
+const canceled = await limiter.cancel(key, ts)
 ```
 
 or
 
 ```js
-limiter.reserve(key, limit, (err, usage) => {})
+limiter.cancel(key, (err, canceled) => {})
 ```
 
-Cancels a reservation for timestamp `ts` and returns current usage for `key`.
-Returns a negative number with current usage if the usage is above the limit.
-Throws an error if has occurred.
+Cancels a reservation for timestamp `ts` and returns number of canceled
+timestamps. It is a zero if no timestamp previously was reserved or it was
+expired.
 
 #### destroy
 

@@ -1,8 +1,10 @@
 # Changelog
 
-## v0.3.0 2017-10-16
+## v0.3.0 2017-10-17
 
   * New `SafeRedis` backend.
+  * Method `cancel` returns the number of canceled reservations and doesn't
+    have `limit` argument anymore.
 
 ## v0.2.0 2017-10-12
 

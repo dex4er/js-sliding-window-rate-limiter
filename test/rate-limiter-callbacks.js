@@ -248,10 +248,12 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
 
     Scenario(`Cancel reservation - ${backend} backend`, () => {
+      let canceled
+      let error
       let key
       let limiter
       let reservationToken
-      let error
+      let usage
       const defaultLimit = 1
       const options = limiterBackendOptions[backend]
 
@@ -264,39 +266,67 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
       })
 
       When('I make one reservation', (done) => {
-        limiter.reserve(key, defaultLimit, (err, resolvedReservationToken) => {
-          error = err;
-          (error === null).should.be.true()
-          reservationToken = resolvedReservationToken
+        limiter.reserve(key, defaultLimit, (err, result) => {
+          error = err
+          reservationToken = result
           done()
         })
       })
 
-      Then('usage is above zero', (done) => {
-        limiter.check(key, defaultLimit, (err, checkedValue) => {
-          error = err;
-          (error === null).should.be.true()
-          checkedValue.should.be.above(0)
+      Then('there was no error', () => {
+        (error === null).should.be.true()
+      })
+
+      And('reservation token is correct', () => {
+        reservationToken.should.be.above(0)
+      })
+
+      When('I check usage', (done) => {
+        limiter.check(key, defaultLimit, (err, result) => {
+          error = err
+          usage = result
           done()
         })
       })
 
-      When('canceling reservation', (done) => {
-        limiter.cancel(key, defaultLimit, reservationToken, (err, result) => {
-          error = err;
-          (error === null).should.be.true()
-          result.should.be.at.least(0)
+      Then('usage is above zero', () => {
+        usage.should.be.above(0)
+      })
+
+      When('I cancel reservation', (done) => {
+        limiter.cancel(key, reservationToken, (err, result) => {
+          error = err
+          canceled = result
           done()
         })
       })
 
-      Then('there should be no reservations', (done) => {
-        limiter.check(key, defaultLimit, (err, checkedUsage) => {
-          error = err;
-          (error === null).should.be.true()
-          checkedUsage.should.be.equal(0)
+      Then('reservation is canceled', () => {
+        canceled.should.equals(1)
+      })
+
+      When('I check usage', (done) => {
+        limiter.check(key, defaultLimit, (err, result) => {
+          error = err
+          usage = result
           done()
         })
+      })
+
+      Then('usage is zero', () => {
+        usage.should.be.equals(0)
+      })
+
+      When('I cancel canceled reservation', (done) => {
+        limiter.cancel(key, reservationToken, (err, result) => {
+          error = err
+          canceled = result
+          done()
+        })
+      })
+
+      Then('reservation was already canceled', () => {
+        canceled.should.equals(0)
       })
 
       After('destroy limiter', () => {
@@ -305,7 +335,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     })
   }
 
-  After('quit redis', () => {
+  After('disconnect Redis', () => {
     redis.quit()
   })
 })

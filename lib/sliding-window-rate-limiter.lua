@@ -24,8 +24,8 @@ redis.call("ZREMRANGEBYSCORE", key, "-inf", startwindow)
 local usage = tonumber(redis.call("ZCOUNT", key, 1, ts)) or 0
 
 if mode == 2 then
-    local removed = tonumber(redis.call("ZREM", key, tscancel)) or 0
-    usage = usage - removed
+    local canceled = tonumber(redis.call("ZREM", key, tscancel)) or 0
+    return canceled
 elseif mode == 1 then
     if usage >= limit then
         return -usage

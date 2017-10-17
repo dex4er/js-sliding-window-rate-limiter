@@ -20,8 +20,8 @@ export declare interface SlidingWindowRateLimiterBackend {
   check (key: string, limit: number): Promise<number>
   check (key: string, limit: number, callback: (error: Error | null, usage: number) => void): void
 
-  cancel (key: string, limit: number, ts: number): Promise<number>
-  cancel (key: string, limit: number, ts: number, callback: (error: Error | null, usage: number) => void): void
+  cancel (key: string, ts: number): Promise<number>
+  cancel (key: string, ts: number, callback: (error: Error | null, usage: number) => void): void
 
   destroy (): void
 }

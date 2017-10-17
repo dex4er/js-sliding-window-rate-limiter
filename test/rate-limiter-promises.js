@@ -64,7 +64,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return promise.should.eventually.be.above(0)
       })
 
-      After('disconnect Redis', () => {
+      After('destroy limiter', () => {
         limiter.destroy()
       })
     })
@@ -116,7 +116,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return promise.should.eventually.be.above(0)
       })
 
-      After('disconnect Redis', () => {
+      After('destroy limiter', () => {
         limiter.destroy()
       })
     })
@@ -156,7 +156,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return promise.should.eventually.be.above(0)
       })
 
-      After('disconnect Redis', () => {
+      After('destroy limiter', () => {
         limiter.destroy()
       })
     })
@@ -184,25 +184,37 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return reservationTokenPromise
       })
 
-      Then('usage is above zero', () => {
+      Then('reservation token is correct', () => {
+        reservationToken.should.be.above(0)
+      })
+
+      And('usage is above zero', () => {
         return limiter.check(key, defaultLimit).should.eventually.be.above(0)
       })
 
-      When('canceling reservation', () => {
-        return limiter.cancel(key, defaultLimit, reservationToken)
+      When('I cancel reservation', () => {
+        return limiter.cancel(key, reservationToken).should.eventually.equal(1)
       })
 
       Then('there should be no reservations', () => {
         return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
       })
 
-      After('disconnect Redis', () => {
+      When('I cancel already canceled reservation', () => {
+        return limiter.cancel(key, reservationToken).should.eventually.equal(0)
+      })
+
+      Then('there should be no reservations', () => {
+        return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+      })
+
+      After('destroy limiter', () => {
         limiter.destroy()
       })
     })
   }
 
-  After('disconnect redis', () => {
+  After('disconnect Redis', () => {
     redis.quit()
   })
 })
