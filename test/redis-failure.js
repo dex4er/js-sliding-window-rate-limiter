@@ -22,8 +22,6 @@ Feature('Limiter safe operations extension', () => {
     let limiter
     let key
     let ts
-    let usage1
-    let usage2
     let errors = []
     const defaultLimit = 1
 
@@ -52,51 +50,39 @@ Feature('Limiter safe operations extension', () => {
       return redis.disconnect()
     })
 
-    And('check method is called', async () => {
-      usage1 = await limiter.check(key, defaultLimit)
+    And('check method is called', () => {
+      return limiter.check(key, defaultLimit).should.eventually.equal(0)
     })
 
-    And('one error event was fired', () => {
+    Then('one error event was fired', () => {
       errors.length.should.equals(1)
     })
 
-    Then('check method should return default usage', () => {
-      usage1.should.equals(0)
+    When('reserve method is called', () => {
+      return limiter.reserve(key, defaultLimit).should.eventually.equal(0)
     })
 
-    When('reserve method is called', async () => {
-      ts = await limiter.reserve(key, defaultLimit)
-    })
-
-    Then('reserve method should return default timestamp', () => {
-      ts.should.equals(0)
-    })
-
-    And('one error event was fired', () => {
+    Then('one error event was fired', () => {
       errors.length.should.equals(1)
     })
 
-    When('cancel method is called', async () => {
-      usage2 = await limiter.cancel(key, defaultLimit, ts)
+    When('cancel method is called', () => {
+      return limiter.cancel(key, ts).should.eventually.equal(0)
     })
 
-    Then('cancel method should return default usage', () => {
-      usage2.should.equals(0)
-    })
-
-    And('one error event was fired', () => {
+    Then('one error event was fired', () => {
       errors.length.should.equals(1)
     })
   })
 
   Scenario('Operations with callbacks interface', () => {
+    let canceled
     let redis
     let limiter
     let key
     let ts
     let failures = []
-    let usage1
-    let usage2
+    let usage
     const defaultLimit = 1
 
     Given('redis connection', () => {
@@ -127,14 +113,14 @@ Feature('Limiter safe operations extension', () => {
     And('check method is called', (done) => {
       limiter.check(key, defaultLimit, (err, response) => {
         if (!err) {
-          usage1 = response
+          usage = response
         }
         done()
       })
     })
 
     Then('check method should return default usage', () => {
-      usage1.should.equals(0)
+      usage.should.equals(0)
     })
 
     And('one error event was fired', () => {
@@ -161,14 +147,14 @@ Feature('Limiter safe operations extension', () => {
     When('cancel method is called', (done) => {
       limiter.cancel(key, ts, (err, response) => {
         if (!err) {
-          usage2 = response
+          canceled = response
         }
         done()
       })
     })
 
-    Then('check method should return default usage', () => {
-      usage2.should.equals(0)
+    Then('reservation was canceled', () => {
+      canceled.should.equals(0)
     })
 
     And('one error event was fired', () => {
