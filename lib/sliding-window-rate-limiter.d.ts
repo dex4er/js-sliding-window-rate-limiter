@@ -6,13 +6,15 @@ export { MemorySlidingWindowRateLimiter, MemorySlidingWindowRateLimiterOptions }
 export { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } from './redis-sliding-window-rate-limiter'
 export { SafeRedisSlidingWindowRateLimiter, SafeRedisSlidingWindowRateLimiterOptions } from './safe-redis-sliding-window-rate-limiter'
 
+type s = number
+
 export interface SlidingWindowRateLimiterOptions {
-  interval?: number
+  interval?: s
 }
 
 export declare interface SlidingWindowRateLimiterBackend {
   readonly options: SlidingWindowRateLimiterOptions
-  readonly interval: number
+  readonly interval: s
 
   reserve (key: string, limit: number): Promise<number>
   reserve (key: string, limit: number, callback: (error: Error | null, ts: number) => void): void

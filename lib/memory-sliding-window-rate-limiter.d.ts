@@ -2,11 +2,13 @@ import { EventEmitter } from 'events'
 
 import { SlidingWindowRateLimiterBackend, SlidingWindowRateLimiterOptions } from './sliding-window-rate-limiter'
 
+type s = number
+
 export type MemorySlidingWindowRateLimiterOptions = SlidingWindowRateLimiterOptions
 
 export class MemorySlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly options: MemorySlidingWindowRateLimiterOptions
-  readonly interval: number
+  readonly interval: s
 
   constructor (options?: MemorySlidingWindowRateLimiterOptions)
 

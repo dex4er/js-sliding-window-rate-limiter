@@ -3,13 +3,15 @@ import { Redis } from 'ioredis'
 
 import { SlidingWindowRateLimiterBackend, SlidingWindowRateLimiterOptions } from './sliding-window-rate-limiter'
 
+type s = number
+
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterOptions {
   redis?: Redis | string
 }
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly options: RedisSlidingWindowRateLimiterOptions
-  readonly interval: number
+  readonly interval: s
   readonly redis: Redis
 
   constructor (options?: RedisSlidingWindowRateLimiterOptions)
