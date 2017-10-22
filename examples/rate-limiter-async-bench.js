@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-// Usage: time node examples/rate-limiter-async-bench.js 10000 >/dev/null
+// Usage: time ts-node examples/rate-limiter-async-bench-ts.ts 10000 >/dev/null
 
-'use strict'
+const delay = require('delay')
 
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
@@ -10,41 +10,54 @@ const INTERVAL = Number(process.argv[3]) || 60
 const REDIS_HOST = process.env.REDIS_HOST
 
 const Redis = require('ioredis')
-const createLimiter = require('../lib/sliding-window-rate-limiter').createLimiter
-
-const noop = () => {}
+const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
 
 async function main () {
   const redis = REDIS_HOST && new Redis({
+    enableOfflineQueue: true,
+    enableReadyCheck: true,
     host: process.env.REDIS_HOST,
     lazyConnect: true,
+    retryStrategy: (times) => false,
     showFriendlyErrorStack: true
   })
-  .on('error', noop)
+  .on('error', console.error)
+
+  const limiter = SlidingWindowRateLimiter.createLimiter({
+    interval: INTERVAL,
+    redis,
+    safe: true
+  })
+  .on('error', (err) => {
+    console.error(err)
+    if (redis) {
+      void redis.connect()
+    }
+  })
+
+  const key = 'limiter'
 
   if (redis) {
     await redis.connect()
   }
 
-  const limiter = createLimiter({
-    interval: INTERVAL,
-    redis,
-    safe: true
-  })
-  .on('error', noop)
-
-  const key = 'limiter'
-
   for (let i = 1; i <= ATTEMPTS; i++) {
     await limiter.reserve(key, ATTEMPTS)
     const usage = await limiter.check(key, ATTEMPTS)
-    console.log(usage)
+    console.info(usage)
+    if (!usage) {
+      await delay(1000) // slow down because limiter is not available
+    }
   }
 
   limiter.destroy()
 
   if (redis) {
-    await redis.quit()
+    try {
+      await redis.quit()
+    } catch (e) {
+      redis.disconnect()
+    }
   }
 }
 
