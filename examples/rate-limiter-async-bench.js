@@ -2,7 +2,8 @@
 
 // Usage: time ts-node examples/rate-limiter-async-bench-ts.ts 10000 >/dev/null
 
-const delay = require('delay')
+const { promisify } = require('util')
+const delay = promisify(setTimeout)
 
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60

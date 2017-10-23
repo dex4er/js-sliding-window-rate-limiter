@@ -2,7 +2,8 @@
 
 // Usage: time ts-node examples/rate-limiter-async-bench-ts.ts 10000 >/dev/null
 
-import delay = require('delay')
+import { promisify } from 'util'
+const delay = promisify(setTimeout)
 
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
@@ -21,7 +22,12 @@ async function main () {
     retryStrategy: (times) => false,
     showFriendlyErrorStack: true
   })
-  .on('error', console.error)
+  .on('error', (err) => {
+    console.error(err)
+    if (redis && !['connecting', 'connect', 'ready'].includes(redis.status)) {
+      void redis.connect()
+    }
+  })
 
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
@@ -30,9 +36,6 @@ async function main () {
   })
   .on('error', (err) => {
     console.error(err)
-    if (redis) {
-      void redis.connect()
-    }
   })
 
   const key = 'limiter'
