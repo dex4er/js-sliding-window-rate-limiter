@@ -17,7 +17,7 @@ async function main () {
   const redis = new Redis({
     enableOfflineQueue: true,
     enableReadyCheck: true,
-    host: process.env.REDIS_HOST,
+    host: REDIS_HOST,
     lazyConnect: true,
     retryStrategy: (times) => false,
     showFriendlyErrorStack: true
