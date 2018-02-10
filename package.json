@@ -38,13 +38,16 @@
     "standard": "^10.0.3",
     "tap": "^10.7.2",
     "tap-given": "^0.6.0",
+    "tslint": "^5.9.1",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.7.1",
     "uuid": "^3.1.0"
   },
   "scripts": {
     "build": "npm run minify",
     "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f lib/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
-    "pretest": "standard --verbose | snazzy",
+    "pretest": "standard --verbose | snazzy && tsc --noEmit --pretty && tslint -t stylish -p .",
     "test": "tap test/*.js",
     "test:coverage": "npm test -- --coverage",
     "test:coverage:watch": "npm run -s test:coverage -- -R min --coverage-report lcovonly && onchange '**/*.js' -- npm run -s test:coverage -- -R min --coverage-report lcovonly",

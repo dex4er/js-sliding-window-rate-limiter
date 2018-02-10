@@ -7,12 +7,14 @@ ts-node-*
 /coverage/
 /node_modules/
 
-/package-lock.json
-
 /.nyc_output/
 
 /.tags
 /.tern-project
+
+/package-lock.json
+/yarn.lock
+/yarn-error.log
 
 /.idea
 /.vscode
