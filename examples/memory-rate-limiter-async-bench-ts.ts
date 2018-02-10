@@ -7,7 +7,7 @@ const INTERVAL = Number(process.argv[3]) || 60
 
 import * as SlidingWindowRateLimiter from '../lib/sliding-window-rate-limiter'
 
-async function main () {
+async function main (): Promise<void> {
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL
   })
@@ -26,4 +26,4 @@ async function main () {
   limiter.destroy()
 }
 
-main().catch(console.error)
+void main().catch(console.error)

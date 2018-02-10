@@ -6,11 +6,11 @@ require('tap-given')(t)
 const chai = require('chai')
 chai.should()
 
+const MockRedis = require('../mock/mock-ioredis')
+
+const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
+
 Feature('Test sliding-window-rate-limiter module error with callbacks with Redis backend', () => {
-  const MockRedis = require('../mock/mock-ioredis')
-
-  const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
-
   Scenario('Make one reservation', () => {
     let error
     let key

@@ -7,14 +7,14 @@ const chai = require('chai')
 chai.use(require('chai-as-promised'))
 chai.should()
 
+const delay = require('delay')
+const uuidv1 = require('uuid/v1')
+
 Feature('Test sliding-window-rate-limiter module with promises', () => {
   const TEST_REDIS_URL = process.env.TEST_REDIS_URL
   const redisModule = TEST_REDIS_URL ? 'ioredis' : '../mock/mock-ioredis'
   const Redis = require(redisModule)
   const redis = new Redis(TEST_REDIS_URL)
-
-  const delay = require('delay')
-  const uuidv1 = require('uuid/v1')
 
   const limiterBackendOptions = {
     'Memory': { interval: 1 },

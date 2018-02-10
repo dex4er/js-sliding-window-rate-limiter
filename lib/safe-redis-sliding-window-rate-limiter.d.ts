@@ -22,3 +22,5 @@ export declare class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindo
   prependOnceListener (event: 'error', listener: (err: Error) => void): this;
   listeners (event: 'error'): Array<(err: Error) => void>;
 }
+
+export default SafeRedisSlidingWindowRateLimiter

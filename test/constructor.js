@@ -13,10 +13,10 @@ const backendClasses = {
   SafeRedis: require('../lib/safe-redis-sliding-window-rate-limiter')
 }
 
+const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
+
 for (const backend of ['Memory', 'Redis', 'SafeRedis']) {
   Feature(`Test sliding-window-rate-limiter module constructor with ${backend} backend`, () => {
-    const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
-
     let limiter
     let redis
     let safe = false

@@ -10,12 +10,12 @@ chai.should()
 
 const SafeLimiter = require('../lib/safe-redis-sliding-window-rate-limiter')
 
+const uuidv1 = require('uuid/v1')
+
 Feature('Limiter safe operations extension', () => {
   const TEST_REDIS_URL = process.env.TEST_REDIS_URL
   const redisModule = TEST_REDIS_URL ? 'ioredis' : '../mock/mock-ioredis'
   const Redis = require(redisModule)
-
-  const uuidv1 = require('uuid/v1')
 
   Scenario('Operations with promises interface', () => {
     let redis

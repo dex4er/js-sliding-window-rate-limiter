@@ -10,16 +10,16 @@ const INTERVAL = Number(process.argv[3]) || 60
 
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
 
-import * as Redis from 'ioredis'
+import Redis from 'ioredis'
 import * as SlidingWindowRateLimiter from '../lib/sliding-window-rate-limiter'
 
-async function main () {
+async function main (): Promise<void> {
   const redis = new Redis({
     enableOfflineQueue: true,
     enableReadyCheck: true,
     host: REDIS_HOST,
     lazyConnect: false,
-    retryStrategy: (times) => 1000,
+    retryStrategy: (_times) => 1000,
     showFriendlyErrorStack: true
   })
   .on('error', (err) => {
@@ -54,4 +54,4 @@ async function main () {
   }
 }
 
-main().catch(console.error)
+void main().catch(console.error)

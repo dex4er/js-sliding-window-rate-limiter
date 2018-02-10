@@ -7,11 +7,11 @@ const chai = require('chai')
 chai.use(require('chai-as-promised'))
 chai.should()
 
+const MockRedis = require('../mock/mock-ioredis')
+
+const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
+
 Feature('Test sliding-window-rate-limiter module error with promises with Redis backend', () => {
-  const MockRedis = require('../mock/mock-ioredis')
-
-  const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
-
   Scenario('Make one reservation', () => {
     let key
     let limiter

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.0 2018-02-10
+
+* Typescript: support `esModuleInterop` compiler option.
+
 ## v0.3.0 2017-10-17
 
 * New `SafeRedis` backend.
