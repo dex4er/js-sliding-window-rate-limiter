@@ -2,23 +2,23 @@
 
 ## v0.3.0 2017-10-17
 
-  * New `SafeRedis` backend.
-  * Method `cancel` returns the number of canceled reservations and doesn't
-    have `limit` argument anymore.
+* New `SafeRedis` backend.
+* Method `cancel` returns the number of canceled reservations and doesn't
+  have `limit` argument anymore.
 
 ## v0.2.0 2017-10-12
 
-  * `SlidingWindowRateLimiter.createLimiter` is a factory method which returns
-    proper backed based on options.
-  * Use Redis-less backend if `redis` option is not defined.
+* `SlidingWindowRateLimiter.createLimiter` is a factory method which returns
+  proper backed based on options.
+* Use Redis-less backend if `redis` option is not defined.
 
 ## v0.1.0 2017-10-10
 
-  * `limit` is a argument of methods.
-  * New method `cancel`.
-  * Exports also as a class and namespace and the default.
-  * Typescript typings.
+* `limit` is a argument of methods.
+* New method `cancel`.
+* Exports also as a class and namespace and the default.
+* Typescript typings.
 
 ## v0.0.1 2017-07-07
 
-  * Initial release
+* Initial release

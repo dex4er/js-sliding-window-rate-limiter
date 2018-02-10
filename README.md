@@ -1,22 +1,22 @@
-## sliding-window-rate-limiter
+# sliding-window-rate-limiter
 
 [![Build Status](https://secure.travis-ci.org/dex4er/js-sliding-window-rate-limiter.svg)](http://travis-ci.org/dex4er/js-sliding-window-rate-limiter) [![Coverage Status](https://coveralls.io/repos/github/dex4er/js-sliding-window-rate-limiter/badge.svg)](https://coveralls.io/github/dex4er/js-sliding-window-rate-limiter) [![npm](https://img.shields.io/npm/v/sliding-window-rate-limiter.svg)](https://www.npmjs.com/package/sliding-window-rate-limiter)
 
 Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
 
-### Requirements
+## Requirements
 
 This module requires ES6 with Node >= 4. For Node < 5 `--harmony` flag is required.
 
 Redis >= 3.2.0 is required for Redis backend.
 
-### Installation
+## Installation
 
 ```shell
 npm install sliding-window-rate-limiter
 ```
 
-### Usage
+## Usage
 
 ```js
 const SlidingWindowRateLimiter = require('sliding-window-rate-limiter')
@@ -28,7 +28,7 @@ _Typescript:_
 import * as SlidingWindowRateLimiter from 'sliding-window-rate-limiter'
 ```
 
-#### constructor
+### constructor
 
 ```js
 const limiter = SlidingWindowRateLimiter.createLimiter(options)
@@ -64,7 +64,7 @@ const limiter = SlidingWindowRateLimiter.createLimiter({
 })
 ```
 
-#### check
+### check
 
 ```js
 const usage = await limiter.check(key, limit)
@@ -79,7 +79,7 @@ limiter.check(key, limit, (err, usage) => {})
 Checks current usage for `key`. If usage is above limit, it returns a negative
 number with current usage. Throws an error if has occurred.
 
-#### reserve
+### reserve
 
 ```js
 const ts = await limiter.reserve(key, limit)
@@ -95,7 +95,7 @@ Makes a reservation and returns reserved timestamp as `ts`. Returns a negative
 number with current usage if the reservation can't be done because of limit.
 Throws an error if has occurred.
 
-#### cancel
+### cancel
 
 ```js
 const canceled = await limiter.cancel(key, ts)
@@ -111,7 +111,7 @@ Cancels a reservation for timestamp `ts` and returns number of canceled
 timestamps. It is a zero if no timestamp previously was reserved or it was
 expired.
 
-#### destroy
+### destroy
 
 ```js
 limiter.destroy()
@@ -119,42 +119,42 @@ limiter.destroy()
 
 Frees resources used by limiter (timers and connections).
 
-### Errors
+## Errors
 
 If `reserve` or `usage` methods returns an error:
 
-```
+```console
 ERR Error running script (call to f_8ff6a0f745b738fe1d9fa74079c4c13d032e9947): @user_script:1: user_script:1: attempt to call field \'replicate_commands\' (a nil value)
 ```
 
 then check if Redis has proper version (>= 3.2.0).
 
-### Backends
+## Backends
 
-#### Memory
+### Memory
 
 This backend holds all data in memory.
 
-#### Redis
+### Redis
 
 This backend requires Redis 3.2 to work. Main advantage is that the state of
 limiter can be shared between many clients.
 
-#### SafeRedis
+### SafeRedis
 
 There is extended version of limiter, which behaves gracefully, when Redis
 server is unavailable for any reason. In case of Redis connection failure,
 SafeRedis backend will always return positive response (`defaultResponse`
 value), and will try to reconnect to Redis server after `reconnectTimeout`.
 
-### Lua
+## Lua
 
 Minified script is sent to Redis server by default. Full script can be sent
 instead when `DEBUG_LUA` environment variable is set.
 
-### License
+## License
 
-Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
+Copyright (c) 2017-2018 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 [MIT](https://opensource.org/licenses/MIT)
 
@@ -163,7 +163,6 @@ Based on Lua script from https://github.com/3hedgehogs/inredis-ratelimiter
 Copyright (c) 2017 3hedgehogs
 
 Inspired by ClassDojo blog note
-https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/
-and
+https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/ and
 [`rolling-rate-limiter`](https://www.npmjs.com/package/rolling-rate-limiter)
 module.
