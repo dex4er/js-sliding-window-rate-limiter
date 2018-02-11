@@ -4,6 +4,7 @@
     "tslint-config-standard"
   ],
   "rules": {
+    "await-promise": [true, "Bluebird", "Promise", "PromiseLike"],
     "interface-name": false,
     "max-line-length": false,
     "no-console": [true, "log"]
