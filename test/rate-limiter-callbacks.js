@@ -21,7 +21,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
     'SafeRedis': { safe: true, redis, interval: 1 }
   }
 
-  const limiterFactoryClass = require('./../lib/sliding-window-rate-limiter')
+  const limiterFactoryClass = require('../dist/sliding-window-rate-limiter')
 
   for (const backend of Object.keys(limiterBackendOptions)) {
     Scenario(`Make one reservation - ${backend} backend`, () => {

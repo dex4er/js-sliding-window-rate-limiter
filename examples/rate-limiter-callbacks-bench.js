@@ -10,7 +10,7 @@ const INTERVAL = Number(process.argv[3]) || 60
 const REDIS_HOST = process.env.REDIS_HOST
 
 const Redis = require('ioredis')
-const createLimiter = require('../lib/sliding-window-rate-limiter').createLimiter
+const createLimiter = require('../dist/sliding-window-rate-limiter').createLimiter
 
 const noop = () => {}
 

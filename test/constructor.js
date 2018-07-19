@@ -8,12 +8,12 @@ chai.use(require('dirty-chai'))
 chai.should()
 
 const backendClasses = {
-  Memory: require('../lib/memory-sliding-window-rate-limiter'),
-  Redis: require('../lib/redis-sliding-window-rate-limiter'),
-  SafeRedis: require('../lib/safe-redis-sliding-window-rate-limiter')
+  Memory: require('../dist/memory-sliding-window-rate-limiter'),
+  Redis: require('../dist/redis-sliding-window-rate-limiter'),
+  SafeRedis: require('../dist/safe-redis-sliding-window-rate-limiter')
 }
 
-const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
+const SlidingWindowRateLimiter = require('../dist/sliding-window-rate-limiter')
 
 for (const backend of ['Memory', 'Redis', 'SafeRedis']) {
   Feature(`Test sliding-window-rate-limiter module constructor with ${backend} backend`, () => {

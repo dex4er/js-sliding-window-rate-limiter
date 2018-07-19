@@ -8,7 +8,7 @@ chai.use(require('chai-as-promised'))
 chai.use(require('dirty-chai'))
 chai.should()
 
-const SafeLimiter = require('../lib/safe-redis-sliding-window-rate-limiter')
+const SafeLimiter = require('../dist/safe-redis-sliding-window-rate-limiter')
 
 const uuidv1 = require('uuid/v1')
 
