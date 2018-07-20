@@ -52,8 +52,9 @@
     "ts-node": "^7.0.0"
   },
   "scripts": {
-    "build": "npm run minify",
-    "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f lib/sliding-window-rate-limiter.lua",
+    "tsc": "tsc",
+    "build": "npm run tsc && npm run minify",
+    "minify": "luamin -f src/sliding-window-rate-limiter.lua > dist/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
     "pretest": "standard --verbose | snazzy && tsc --noEmit --pretty && tslint -t stylish -p .",
     "test:coverage": "npm test -- --coverage",

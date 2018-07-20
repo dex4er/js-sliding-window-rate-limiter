@@ -1,135 +1,67 @@
-'use strict'
-
-const EventEmitter = require('events').EventEmitter
-
-/**
- * @interface MemorySlidingWindowRateLimiterOptions
- * @implements SlidingWindowRateLimiterOptions
- */
-
-/**
- * @class
- * @implements SlidingWindowRateLimiterBackend
- * @param {MemorySlidingWindowRateLimiterOptions} [options]
- * @property {number} interval - seconds
- */
-class MemorySlidingWindowRateLimiter extends EventEmitter {
-  constructor (options) {
-    super()
-
-    options = options || {}
-
-    this.interval = Number(options.interval) || 60
-
-    this._buckets = {}
-    this._timers = {}
-  }
-
-  /**
-   * @callback ResultCallback
-   * @param {Error | null} err
-   * @param {number} result
-   */
-
-  /**
-   * @param {string} key
-   * @param {number} limit
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  check (key, limit, callback) {
-    this._bucketExpireNow(key)
-
-    const usage = this._buckets[key].length
-
-    if (usage > limit) {
-      return this._returnResult(-limit, callback)
-    } else {
-      return this._returnResult(usage, callback)
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const base_sliding_window_rate_limiter_1 = require("./base-sliding-window-rate-limiter");
+class MemorySlidingWindowRateLimiter extends base_sliding_window_rate_limiter_1.BaseSlidingWindowRateLimiter {
+    constructor(options = {}) {
+        super(options);
+        this.buckets = {};
+        this.timers = {};
+        this.interval = Number(options.interval) || 60;
     }
-  }
-
-  /**
-   * @async
-   * @param {string} key
-   * @param {number} limit
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  reserve (key, limit, callback) {
-    const now = this._bucketExpireNow(key)
-
-    const usage = this._buckets[key].length
-
-    if (usage >= limit) {
-      return this._returnResult(-limit, callback)
-    } else {
-      this._buckets[key].push(now)
-
-      if (this._timers[key]) {
-        clearTimeout(this._timers[key])
-      }
-      this._timers[key] = setTimeout(() => {
-        delete this._buckets[key]
-        delete this._timers[key]
-      }, this.interval * 1000 /* ms */)
-
-      return this._returnResult(now, callback)
+    static returnResult(result, callback) {
+        if (callback) {
+            return callback(null, result);
+        }
+        else {
+            return Promise.resolve(result);
+        }
     }
-  }
-
-  /**
-   * @param {string} key
-   * @param {number} ts
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  cancel (key, ts, callback) {
-    this._bucketExpireNow(key)
-
-    let canceled = 0
-
-    const position = this._buckets[key].indexOf(ts)
-
-    if (~position) {
-      canceled = this._buckets[key].splice(position, 1).length
+    check(key, limit, callback) {
+        this.bucketExpireNow(key);
+        const usage = this.buckets[key].length;
+        if (usage > limit) {
+            return MemorySlidingWindowRateLimiter.returnResult(-limit, callback);
+        }
+        else {
+            return MemorySlidingWindowRateLimiter.returnResult(usage, callback);
+        }
     }
-
-    return this._returnResult(canceled, callback)
-  }
-
-  destroy () {
-    for (const key of Object.keys(this._timers)) {
-      clearTimeout(this._timers[key])
+    reserve(key, limit, callback) {
+        const now = this.bucketExpireNow(key);
+        const usage = this.buckets[key].length;
+        if (usage >= limit) {
+            return MemorySlidingWindowRateLimiter.returnResult(-limit, callback);
+        }
+        else {
+            this.buckets[key].push(now);
+            if (this.timers[key]) {
+                clearTimeout(this.timers[key]);
+            }
+            this.timers[key] = setTimeout(() => {
+                delete this.buckets[key];
+                delete this.timers[key];
+            }, this.interval * 1000 /* ms */);
+            return MemorySlidingWindowRateLimiter.returnResult(now, callback);
+        }
     }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @returns {number}
-   */
-  _bucketExpireNow (key) {
-    const now = new Date().getTime()
-    this._buckets[key] = this._buckets[key] ? this._buckets[key].filter(ts => now - ts < this.interval * 1000 /* ms */) : []
-    return now
-  }
-
-  /**
-   * @private
-   * @param {number} result
-   * @param {ResultCallback} [callback]
-   * @returns Promise<number> | void
-   */
-  _returnResult (result, callback) {
-    if (callback) {
-      return callback(null, result)
-    } else {
-      return Promise.resolve(result)
+    cancel(key, ts, callback) {
+        this.bucketExpireNow(key);
+        let canceled = 0;
+        const position = this.buckets[key].indexOf(ts);
+        if (position !== -1) {
+            canceled = this.buckets[key].splice(position, 1).length;
+        }
+        return MemorySlidingWindowRateLimiter.returnResult(canceled, callback);
     }
-  }
+    async destroy() {
+        for (const key of Object.keys(this.timers)) {
+            clearTimeout(this.timers[key]);
+        }
+    }
+    bucketExpireNow(key) {
+        const now = new Date().getTime();
+        this.buckets[key] = this.buckets[key] ? this.buckets[key].filter((ts) => now - ts < this.interval * 1000 /* ms */) : [];
+        return now;
+    }
 }
-
-MemorySlidingWindowRateLimiter.SlidingWindowRateLimiter = MemorySlidingWindowRateLimiter
-
-module.exports = MemorySlidingWindowRateLimiter
+exports.MemorySlidingWindowRateLimiter = MemorySlidingWindowRateLimiter;

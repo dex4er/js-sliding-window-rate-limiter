@@ -1,111 +1,50 @@
-'use strict'
-
-const EventEmitter = require('events').EventEmitter
-const fs = require('fs')
-const Redis = require('ioredis')
-const path = require('path')
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(require("fs"));
+const ioredis_1 = __importDefault(require("ioredis"));
+const path_1 = __importDefault(require("path"));
+const base_sliding_window_rate_limiter_1 = require("./base-sliding-window-rate-limiter");
 const lua = process.env.DEBUG_LUA
-  ? fs.readFileSync(path.join(__dirname, '../lib/sliding-window-rate-limiter.lua'), 'utf8')
-  : fs.readFileSync(path.join(__dirname, '../lib/sliding-window-rate-limiter.min.lua'), 'utf8')
-
-const MODE_CHECK = 0
-const MODE_RESERVE = 1
-const MODE_CANCEL = 2
-
-/**
- * @interface RedisSlidingWindowRateLimiterOptions
- * @implements SlidingWindowRateLimiterOptions
- * @property {Redis | string} [redis]
- */
-
-/**
- * @class
- * @extends EventEmitter
- * @implements SlidingWindowRateLimiterBackend
- * @param {RedisSlidingWindowRateLimiterOptions} [options]
- * @property {number} interval - seconds
- * @property {Redis} redis
- */
-class RedisSlidingWindowRateLimiter extends EventEmitter {
-  constructor (options) {
-    super()
-
-    options = options || {}
-
-    this.options = options
-    this.interval = Number(options.interval) || 60
-
-    if (!options.redis || typeof options.redis === 'string') {
-      this.redis = new Redis(options.redis)
-    } else {
-      this.redis = options.redis
+    ? fs_1.default.readFileSync(path_1.default.join(__dirname, './sliding-window-rate-limiter.lua'), 'utf8')
+    : fs_1.default.readFileSync(path_1.default.join(__dirname, './sliding-window-rate-limiter.min.lua'), 'utf8');
+const MODE_CHECK = 0;
+const MODE_RESERVE = 1;
+const MODE_CANCEL = 2;
+class RedisSlidingWindowRateLimiter extends base_sliding_window_rate_limiter_1.BaseSlidingWindowRateLimiter {
+    constructor(options = {}) {
+        super(options);
+        this.options = options;
+        this.interval = Number(options.interval) || 60;
+        if (!options.redis || typeof options.redis === 'string') {
+            this.redis = new ioredis_1.default(options.redis);
+        }
+        else {
+            this.redis = options.redis;
+        }
+        this.redis.defineCommand('limiter', {
+            lua,
+            numberOfKeys: 1
+        });
     }
-
-    this.redis.defineCommand('limiter', {
-      lua,
-      numberOfKeys: 1
-    })
-  }
-
-  /**
-   * @callback ResultCallback
-   * @param {Error | null} err
-   * @param {number} result
-   */
-
-  /**
-   * @param {string} key
-   * @param {number} limit
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  check (key, limit, callback) {
-    return this._limiter(key, MODE_CHECK, this.interval, limit, 0, callback)
-  }
-
-  /**
-   * @param {string} key
-   * @param {number} limit
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  reserve (key, limit, callback) {
-    return this._limiter(key, MODE_RESERVE, this.interval, limit, 0, callback)
-  }
-
-  /**
-   * @param {string} key
-   * @param {number} ts
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  cancel (key, ts, callback) {
-    return this._limiter(key, MODE_CANCEL, this.interval, 0, ts, callback)
-  }
-
-  destroy () {
-    if (!this.options.redis || typeof this.options.redis === 'string') {
-      console.log(this.redis)
-      this.redis.quit()
+    check(key, limit, callback) {
+        return this.limiter(key, MODE_CHECK, this.interval, limit, 0, callback);
     }
-  }
-
-  /**
-   * @private
-   * @param {string} key
-   * @param {number} mode - 0: check 1: reserve 2: cancel reservation
-   * @param {number} interval
-   * @param {number} limit
-   * @param {number} ts
-   * @param {ResultCallback} callback
-   * @returns {Promise<number> | void}
-   */
-  _limiter (key, mode, interval, limit, ts, callback) {
-    return this.redis.limiter(key, mode, interval, limit, ts, callback)
-  }
+    reserve(key, limit, callback) {
+        return this.limiter(key, MODE_RESERVE, this.interval, limit, 0, callback);
+    }
+    cancel(key, ts, callback) {
+        return this.limiter(key, MODE_CANCEL, this.interval, 0, ts, callback);
+    }
+    async destroy() {
+        if (!this.options.redis || typeof this.options.redis === 'string') {
+            await this.redis.quit();
+        }
+    }
+    limiter(key, mode, interval, limit, ts, callback) {
+        return this.redis.limiter(key, mode, interval, limit, ts, callback);
+    }
 }
-
-RedisSlidingWindowRateLimiter.RedisSlidingWindowRateLimiter = RedisSlidingWindowRateLimiter
-
-module.exports = RedisSlidingWindowRateLimiter
+exports.RedisSlidingWindowRateLimiter = RedisSlidingWindowRateLimiter;

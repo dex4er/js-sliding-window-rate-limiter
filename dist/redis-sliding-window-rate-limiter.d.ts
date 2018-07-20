@@ -1,31 +1,19 @@
-import { EventEmitter } from 'events'
-import { Redis } from 'ioredis'
-
-import { SlidingWindowRateLimiterBackend, SlidingWindowRateLimiterOptions } from './sliding-window-rate-limiter'
-
-type s = number
-
-export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterOptions {
-  redis?: Redis | string
+import Redis from 'ioredis';
+import { BaseSlidingWindowRateLimiter, LimiterResult, ResultCallback } from './base-sliding-window-rate-limiter';
+export interface ExtendedRedis extends Redis.Redis {
+    limiter: (key: string, mode: number, interval: number, limit: number, ts: number, callback?: ResultCallback) => LimiterResult;
 }
-
-export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
-  readonly options: RedisSlidingWindowRateLimiterOptions
-  readonly interval: s
-  readonly redis: Redis
-
-  constructor (options?: RedisSlidingWindowRateLimiterOptions)
-
-  check (key: string, limit: number): Promise<number>
-  check (key: string, limit: number, callback: (error: Error | null, usage: number) => void): void
-
-  reserve (key: string, limit: number): Promise<number>
-  reserve (key: string, limit: number, callback: (error: Error | null, ts: number) => void): void
-
-  cancel (key: string, ts: number): Promise<number>
-  cancel (key: string, ts: number, callback: (error: Error | null, canceled: number) => void): void
-
-  destroy (): void
+export interface RedisSlidingWindowRateLimiterOptions {
+    redis?: ExtendedRedis | string;
+    interval?: number;
 }
-
-export default RedisSlidingWindowRateLimiter
+export declare class RedisSlidingWindowRateLimiter extends BaseSlidingWindowRateLimiter<RedisSlidingWindowRateLimiterOptions> {
+    protected interval: number;
+    protected redis: ExtendedRedis;
+    constructor(options?: RedisSlidingWindowRateLimiterOptions);
+    check(key: string, limit: number, callback?: ResultCallback): LimiterResult;
+    reserve(key: string, limit: number, callback?: ResultCallback): LimiterResult;
+    cancel(key: string, ts: number, callback?: ResultCallback): LimiterResult;
+    destroy(): Promise<void>;
+    private limiter;
+}

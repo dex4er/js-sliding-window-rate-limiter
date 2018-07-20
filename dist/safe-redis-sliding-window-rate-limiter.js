@@ -1,156 +1,81 @@
-'use strict'
-
-const RedisSlidingWindowRateLimiter = require('./redis-sliding-window-rate-limiter').RedisSlidingWindowRateLimiter
-
-const ERROR_EVENT = 'error'
-
-/**
- * @interface SafeRedisSlidingWindowRateLimiterOptions
- * @implements RedisSlidingWindowRateLimiterOptions
- * @property {true} [safe]
- * @property {number} [reconnectTimeout]
- * @property {number} [defaultResponse]
- */
-
-/**
- * @class
- * @extends RedisSlidingWindowRateLimiter
- * @implements SlidingWindowRateLimiterBackend
- * @param {SafeRedisSlidingWindowRateLimiterOptions} [options]
- * @property {number} reconnectTimeout
- * @property {number} [defaultResponse]
- */
-class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter {
-  constructor (options) {
-    super(options)
-
-    this.reconnectTimeout = Number(options.reconnectTimeout) || 2000
-    this.defaultResponse = Number(options.defaultResponse) || 0
-
-    this._redisServiceAvailable = true
-    this._reconnectTimer = null
-  }
-
-  /**
-   * @callback ResultCallback
-   * @param {Error | null} err
-   * @param {number} result
-   */
-
-  /**
-   * @param {string} key
-   * @param {number} limit
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  check (key, limit, callback) {
-    return this._handleOperation('check', key, limit, callback)
-  }
-
-  /**
-   * @param {string} key
-   * @param {number} limit
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  reserve (key, limit, callback) {
-    return this._handleOperation('reserve', key, limit, callback)
-  }
-
-  /**
-   * @param {string} key
-   * @param {number} ts
-   * @param {ResultCallback} [callback]
-   * @returns {Promise<number> | void}
-   */
-  cancel (key, ts, callback) {
-    return this._handleOperation('cancel', key, ts, callback)
-  }
-
-  /**
-   * @private
-   * @param {string} operationName
-   * @param {string} key
-   * @param {number} operationArg
-   * @param {ResultCallback} callback
-   */
-  _handleOperation (operationName, key, operationArg, callback) {
-    if (callback) {
-      if (this._redisServiceAvailable) {
-        return super[operationName](key, operationArg, this._callbackErrorHandler(callback, this.defaultResponse))
-      } else {
-        return callback(null, this.defaultResponse)
-      }
-    } else {
-      if (this._redisServiceAvailable) {
-        return this._promiseErrorHandler(super[operationName](key, operationArg), this.defaultResponse)
-      } else {
-        return Promise.resolve(this.defaultResponse)
-      }
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const redis_sliding_window_rate_limiter_1 = require("./redis-sliding-window-rate-limiter");
+const ERROR_EVENT = 'error';
+class SafeRedisSlidingWindowRateLimiter extends redis_sliding_window_rate_limiter_1.RedisSlidingWindowRateLimiter {
+    constructor(options) {
+        super(options);
+        this.reconnectTimeout = Number(options.reconnectTimeout) || 2000;
+        this.defaultResponse = Number(options.defaultResponse) || 0;
+        this.redisServiceAvailable = true;
     }
-  }
-
-  /**
-   * @private
-   * @param {ResultCallback} successCallback
-   * @param {number} defaultResponse
-   * @returns {ResultCallback}
-   */
-  _callbackErrorHandler (successCallback, defaultResponse) {
-    return (err, successValue) => {
-      if (err) {
-        this._handleError(err)
-        successCallback(null, defaultResponse)
-      } else {
-        successCallback(null, successValue)
-      }
+    check(key, limit, callback) {
+        return this.handleOperation('check', key, limit, callback);
     }
-  }
-
-  /**
-   * @private
-   * @param {Promise} originPromise
-   * @param {number} defaultResponse
-   * @returns {Promise}
-   */
-  _promiseErrorHandler (originPromise, defaultResponse) {
-    return new Promise((resolve) => {
-      originPromise.then((successValue) => {
-        resolve(successValue)
-      }, (error) => {
-        this._handleError(error)
-        resolve(defaultResponse)
-      })
-    })
-  }
-
-  /**
-   * @param {Error} error
-   */
-  _handleError (error) {
-    this._markServiceAsUnavailable()
-    this.emit(ERROR_EVENT, error)
-  }
-
-  _markServiceAsUnavailable () {
-    this._redisServiceAvailable = false
-    if (this._reconnectTimer) {
-      clearTimeout(this._reconnectTimer)
+    reserve(key, limit, callback) {
+        return this.handleOperation('reserve', key, limit, callback);
     }
-    this._reconnectTimer = setTimeout(() => {
-      this._redisServiceAvailable = true
-    }, this.reconnectTimeout)
-  }
-
-  destroy () {
-    super.destroy()
-    if (this._reconnectTimer) {
-      clearTimeout(this._reconnectTimer)
+    cancel(key, ts, callback) {
+        return this.handleOperation('cancel', key, ts, callback);
     }
-    this.removeAllListeners(ERROR_EVENT)
-  }
+    async destroy() {
+        await super.destroy();
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+        }
+        this.removeAllListeners(ERROR_EVENT);
+    }
+    handleOperation(operationName, key, operationArg, callback) {
+        if (callback) {
+            if (this.redisServiceAvailable) {
+                return super[operationName](key, operationArg, this.callbackErrorHandler(callback, this.defaultResponse));
+            }
+            else {
+                return callback(null, this.defaultResponse);
+            }
+        }
+        else {
+            if (this.redisServiceAvailable) {
+                return this.promiseErrorHandler(super[operationName](key, operationArg), this.defaultResponse);
+            }
+            else {
+                return Promise.resolve(this.defaultResponse);
+            }
+        }
+    }
+    callbackErrorHandler(successCallback, defaultResponse) {
+        return (err, successValue) => {
+            if (err) {
+                this.handleError(err);
+                successCallback(null, defaultResponse);
+            }
+            else {
+                successCallback(null, successValue);
+            }
+        };
+    }
+    promiseErrorHandler(originPromise, defaultResponse) {
+        return new Promise((resolve) => {
+            originPromise.then((successValue) => {
+                resolve(successValue);
+            }, (error) => {
+                this.handleError(error);
+                resolve(defaultResponse);
+            });
+        });
+    }
+    handleError(error) {
+        this.markServiceAsUnavailable();
+        this.emit(ERROR_EVENT, error);
+    }
+    markServiceAsUnavailable() {
+        this.redisServiceAvailable = false;
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+        }
+        this.reconnectTimer = setTimeout(() => {
+            this.redisServiceAvailable = true;
+        }, this.reconnectTimeout);
+    }
 }
-
-SafeRedisSlidingWindowRateLimiter.SafeRedisSlidingWindowRateLimiter = SafeRedisSlidingWindowRateLimiter
-
-module.exports = SafeRedisSlidingWindowRateLimiter
+exports.SafeRedisSlidingWindowRateLimiter = SafeRedisSlidingWindowRateLimiter;
