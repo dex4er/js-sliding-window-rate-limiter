@@ -1,27 +1,41 @@
-'use strict'
+import Bluebird = require('bluebird')
 
-const crypto = require('crypto')
+import crypto from 'crypto'
+import Redis from 'ioredis'
+import { LimiterResult, ResultCallback } from '../src/base-sliding-window-rate-limiter'
 
-class MockRedis {
-  constructor (options) {
+export class MockRedis extends Redis {
+  protected connected: boolean
+  protected buckets: {[key: string]: number[]}
+  protected host: string
+
+  constructor (options?: any) {
+    super()
+    super.disconnect()
     options = options || {}
     this.host = options.host
     this.buckets = {}
     this.connected = true
   }
 
-  defineCommand (command, options) {}
+  defineCommand (_command: string, _options: any): void {
+    /**/
+  }
 
-  disconnect () {
+  disconnect (): void {
     this.connected = false
   }
 
-  quit () {
+  quit (): Bluebird<string> {
     this.disconnect()
+
+    return new Bluebird<string>((resolve) => {
+      resolve('')
+    })
   }
 
   // naive implementation of limiter
-  limiter (key, mode, interval, limit, toRemove, callback) {
+  limiter (key: string, mode: number, interval: number, limit: number, toRemove: number, callback?: ResultCallback): LimiterResult {
     if (!this.buckets[key]) {
       this.buckets[key] = []
     }
@@ -55,9 +69,10 @@ class MockRedis {
 
     const now = new Date().getTime()
 
-    this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000 /* ms */)
+    this.buckets[key] = this.buckets[key].filter((ts) => now - ts < interval * 1000 /* ms */)
 
-    let result, usage
+    let result
+    let usage
 
     result = usage = this.buckets[key].length
 
@@ -80,5 +95,3 @@ class MockRedis {
     }
   }
 }
-
-module.exports = MockRedis

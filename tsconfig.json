@@ -1,11 +1,25 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
     "module": "commonjs",
+    "target": "ES2017",
+    "strict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strict": true,
-    "target": "ES2017"
-  }
+    "esModuleInterop": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "outDir": "./dist",
+    "declaration": true
+  },
+  "exclude": [
+    "config/cache",
+    "node_modules",
+    "spool",
+    "vendor",
+    "./dist/**/*",
+    "./test/**/*",
+    "./examples/**/*"
+  ]
 }

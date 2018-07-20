@@ -29,43 +29,42 @@
   },
   "devDependencies": {
     "@types/ioredis": "3.2.5",
+    "@types/mocha": "^5.2.5",
+    "@types/chai": "^4.1.4",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/chai-string": "^1.4.1",
+    "@types/uuid": "^3.4.3",
+    "@types/delay": "^2.0.1",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "chai-string": "^1.4.0",
     "delay": "^2.0.0",
     "dirty-chai": "^2.0.1",
     "luamin": "^1.0.4",
     "snazzy": "^7.0.0",
     "standard": "^10.0.3",
-    "tap": "^11.1.0",
-    "tap-given": "^0.6.0",
     "tslint": "^5.9.1",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.7.1",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "mocha": "^5.2.0",
+    "source-map-support": "^0.5.6",
+    "ts-node": "^7.0.0"
   },
   "scripts": {
     "build": "npm run minify",
     "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f lib/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
     "pretest": "standard --verbose | snazzy && tsc --noEmit --pretty && tslint -t stylish -p .",
-    "test": "tap test/*.js",
     "test:coverage": "npm test -- --coverage",
     "test:coverage:watch": "npm run -s test:coverage -- -R min --coverage-report lcovonly && onchange '**/*.js' -- npm run -s test:coverage -- -R min --coverage-report lcovonly",
     "update": "npm run update:upgrade && npm run update:reinstall",
     "update:upgrade": "ncu --upgrade --upgradeAll",
-    "update:reinstall": "rm -f package-lock.json && rm -rf node_modules && npm cache clear --force && npm install"
+    "update:reinstall": "rm -f package-lock.json && rm -rf node_modules && npm cache clear --force && npm install",
+    "ts-mocha": "mocha --use_strict --pending-deprecation --throw-deprecation --require source-map-support/register --require ts-node/register --timeout 90000",
+    "test": "npm run ts-mocha 'test/unit/**/*.ts'"
   },
-  "standard": {
-    "globals": [
-      "And",
-      "After",
-      "Feature",
-      "Given",
-      "Scenario",
-      "Then",
-      "When"
-    ]
-  },
+  "standard": {},
   "nyc": {
     "exclude": []
   }
