@@ -6,14 +6,14 @@ import { LimiterResult, ResultCallback } from '../src/base-sliding-window-rate-l
 
 export class MockRedis extends Redis {
   protected connected: boolean
-  protected buckets: {[key: string]: number[]}
-  protected host: string
+  protected buckets: { [key: string]: number[] }
+  protected operationDelay: number
 
-  constructor (options?: any) {
+  constructor (options?: { operationDelay?: number }) {
     super()
     super.disconnect()
     options = options || {}
-    this.host = options.host
+    this.operationDelay = options.operationDelay || 0
     this.buckets = {}
     this.connected = true
   }
@@ -61,9 +61,16 @@ export class MockRedis extends Redis {
       })
 
       if (callback) {
-        return callback(error)
+        setTimeout(() => {
+          callback(error)
+        }, this.operationDelay)
+        return
       } else {
-        return Promise.reject(error)
+        return new Promise((_resolve, reject) => {
+          setTimeout(() => {
+            reject(error)
+          })
+        })
       }
     }
 
@@ -71,8 +78,8 @@ export class MockRedis extends Redis {
 
     this.buckets[key] = this.buckets[key].filter((ts) => now - ts < interval * 1000 /* ms */)
 
-    let result
-    let usage
+    let result: number
+    let usage: number
 
     result = usage = this.buckets[key].length
 
@@ -89,9 +96,16 @@ export class MockRedis extends Redis {
     }
 
     if (callback) {
-      return callback(null, result)
+      setTimeout(() => {
+        callback(null, result)
+      }, this.operationDelay)
+      return
     } else {
-      return Promise.resolve(result)
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(result)
+        }, this.operationDelay)
+      })
     }
   }
 }

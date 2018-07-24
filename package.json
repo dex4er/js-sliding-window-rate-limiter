@@ -28,11 +28,11 @@
     "ioredis": "^3.2.2"
   },
   "devDependencies": {
-    "@types/ioredis": "3.2.5",
     "@types/mocha": "^5.2.5",
     "@types/chai": "^4.1.4",
     "@types/chai-as-promised": "^7.1.0",
     "@types/chai-string": "^1.4.1",
+    "@types/ioredis": "^3.2.13",
     "@types/uuid": "^3.4.3",
     "@types/delay": "^2.0.1",
     "chai": "^4.1.2",
@@ -56,7 +56,7 @@
     "build": "npm run tsc && npm run minify",
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > dist/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
-    "pretest": "standard --verbose | snazzy && tsc --noEmit --pretty && tslint -t stylish -p .",
+    "pretest": "tsc --noEmit --pretty && tslint -t stylish -p .",
     "test:coverage": "npm test -- --coverage",
     "test:coverage:watch": "npm run -s test:coverage -- -R min --coverage-report lcovonly && onchange '**/*.js' -- npm run -s test:coverage -- -R min --coverage-report lcovonly",
     "update": "npm run update:upgrade && npm run update:reinstall",
@@ -65,7 +65,6 @@
     "ts-mocha": "mocha --use_strict --pending-deprecation --throw-deprecation --require source-map-support/register --require ts-node/register --timeout 90000",
     "test": "npm run ts-mocha 'test/unit/**/*.ts'"
   },
-  "standard": {},
   "nyc": {
     "exclude": []
   }
