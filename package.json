@@ -2,8 +2,8 @@
   "name": "sliding-window-rate-limiter",
   "version": "0.4.0",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
-  "main": "lib/sliding-window-rate-limiter.js",
-  "typings": "lib/sliding-window-rate-limiter.d.ts",
+  "main": "dist/sliding-window-rate-limiter.js",
+  "typings": "dist/sliding-window-rate-limiter.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/dex4er/js-sliding-window-rate-limiter"
