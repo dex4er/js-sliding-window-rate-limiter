@@ -8,6 +8,8 @@
     "interface-name": false,
     "max-line-length": false,
     "no-unused-variable": false,
-    "no-console": [true, "log"]
+    "no-console": [true, "log"],
+    "no-namespace": false,
+    "object-literal-sort-keys": false
   }
 }

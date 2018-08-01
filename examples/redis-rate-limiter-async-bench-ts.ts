@@ -2,9 +2,6 @@
 
 // Usage: time ts-node examples/redis-rate-limiter-async-bench-ts.ts 10000 >/dev/null
 
-import { promisify } from 'util'
-const delay = promisify(setTimeout)
-
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
@@ -15,15 +12,12 @@ import * as SlidingWindowRateLimiter from '../lib/sliding-window-rate-limiter'
 
 async function main (): Promise<void> {
   const redis = new Redis({
-    enableOfflineQueue: true,
-    enableReadyCheck: true,
     host: REDIS_HOST,
-    lazyConnect: false,
-    retryStrategy: (_times) => 1000,
-    showFriendlyErrorStack: true
-  })
+    retryStrategy: (_times: number) => 1000,
+    maxRetriesPerRequest: 1
+  } as any)
     .on('error', (err) => {
-      console.error(err)
+      console.error('Redis:', err)
     })
 
   const limiter = SlidingWindowRateLimiter.createLimiter({
@@ -31,17 +25,22 @@ async function main (): Promise<void> {
     redis
   })
     .on('error', (err) => {
-      console.error(err)
+      console.error('Limiter:', err)
     })
 
   const key = 'limiter'
 
   for (let i = 1; i <= ATTEMPTS; i++) {
-    await limiter.reserve(key, ATTEMPTS)
-    const usage = await limiter.check(key, ATTEMPTS)
-    console.info(usage)
-    if (!usage) {
-      await delay(1000) // slow down because limiter is not available
+    try {
+      await limiter.reserve(key, ATTEMPTS)
+    } catch (e) {
+      console.error('Benchmark:', e)
+    }
+    try {
+      const usage = await limiter.check(key, ATTEMPTS)
+      console.info(usage)
+    } catch (e) {
+      console.error('Benchmark:', e)
     }
   }
 
