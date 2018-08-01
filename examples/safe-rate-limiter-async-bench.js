@@ -22,21 +22,21 @@ async function main () {
     retryStrategy: (times) => false,
     showFriendlyErrorStack: true
   })
-  .on('error', (err) => {
-    console.error(err)
-    if (!['connecting', 'connect', 'ready'].includes(redis.status)) {
-      void redis.connect()
-    }
-  })
+    .on('error', (err) => {
+      console.error(err)
+      if (!['connecting', 'connect', 'ready'].includes(redis.status)) {
+        void redis.connect()
+      }
+    })
 
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
     redis,
     safe: true
   })
-  .on('error', (err) => {
-    console.error(err)
-  })
+    .on('error', (err) => {
+      console.error(err)
+    })
 
   const key = 'limiter'
 

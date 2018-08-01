@@ -20,23 +20,29 @@ async function main (): Promise<void> {
     host: REDIS_HOST,
     lazyConnect: true,
     retryStrategy: (_times) => false,
+    // reconnectOnError: (_err) => true,
+    // autoResendUnfulfilledCommands: false,
     showFriendlyErrorStack: true
   })
-  .on('error', (err) => {
-    console.error(err)
-    if (!['connecting', 'connect', 'ready'].includes(redis.status)) {
-      void redis.connect()
-    }
-  })
+    .on('error', (err) => {
+      console.error('Redis', err)
+      // console.log(redis.status)
+      // if (!['connecting', 'connect', 'ready'].includes(redis.status)) {
+      //   void redis.connect().catch((err) => {})
+      // }
+    })
 
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
     redis,
     safe: true
   })
-  .on('error', (err) => {
-    console.error(err)
-  })
+    .on('error', (err) => {
+      console.error('Limiter', err)
+      // if (err.message === 'Connection is closed.' && !['connecting', 'connect', 'ready'].includes(redis.status)) {
+      //   void redis.connect().catch((err) => {})
+      // }
+    })
 
   const key = 'limiter'
 
@@ -46,8 +52,9 @@ async function main (): Promise<void> {
     await limiter.reserve(key, ATTEMPTS)
     const usage = await limiter.check(key, ATTEMPTS)
     console.info(usage)
+    await delay(100)
     if (!usage) {
-      await delay(1000) // slow down because limiter is not available
+      await delay(100) // slow down because limiter is not available
     }
   }
 

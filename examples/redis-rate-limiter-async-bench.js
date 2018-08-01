@@ -22,17 +22,17 @@ async function main () {
     retryStrategy: (times) => false,
     showFriendlyErrorStack: true
   })
-  .on('error', (err) => {
-    console.error(err)
-  })
+    .on('error', (err) => {
+      console.error(err)
+    })
 
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
     redis
   })
-  .on('error', (err) => {
-    console.error(err)
-  })
+    .on('error', (err) => {
+      console.error(err)
+    })
 
   const key = 'limiter'
 

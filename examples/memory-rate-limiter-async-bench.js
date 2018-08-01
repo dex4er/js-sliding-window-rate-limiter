@@ -11,9 +11,9 @@ async function main () {
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL
   })
-  .on('error', (err) => {
-    console.error(err)
-  })
+    .on('error', (err) => {
+      console.error(err)
+    })
 
   const key = 'limiter'
 

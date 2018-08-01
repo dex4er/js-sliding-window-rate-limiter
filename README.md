@@ -1,6 +1,8 @@
 # sliding-window-rate-limiter
 
+<!-- markdownlint-disable MD013 -->
 [![Build Status](https://secure.travis-ci.org/dex4er/js-sliding-window-rate-limiter.svg)](http://travis-ci.org/dex4er/js-sliding-window-rate-limiter) [![Coverage Status](https://coveralls.io/repos/github/dex4er/js-sliding-window-rate-limiter/badge.svg)](https://coveralls.io/github/dex4er/js-sliding-window-rate-limiter) [![npm](https://img.shields.io/npm/v/sliding-window-rate-limiter.svg)](https://www.npmjs.com/package/sliding-window-rate-limiter)
+<!-- markdownlint-enable MD013 -->
 
 Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
 
@@ -123,9 +125,13 @@ Frees resources used by limiter (timers and connections).
 
 If `reserve` or `usage` methods returns an error:
 
+<!-- markdownlint-disable MD013 -->
+
 ```console
 ERR Error running script (call to f_8ff6a0f745b738fe1d9fa74079c4c13d032e9947): @user_script:1: user_script:1: attempt to call field \'replicate_commands\' (a nil value)
 ```
+
+<!-- markdownlint-enable MD013 -->
 
 then check if Redis has proper version (>= 3.2.0).
 
@@ -158,11 +164,11 @@ Copyright (c) 2017-2018 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Based on Lua script from https://github.com/3hedgehogs/inredis-ratelimiter
+Based on Lua script from <https://github.com/3hedgehogs/inredis-ratelimiter>
 
 Copyright (c) 2017 3hedgehogs
 
 Inspired by ClassDojo blog note
-https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/ and
+<https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/> and
 [`rolling-rate-limiter`](https://www.npmjs.com/package/rolling-rate-limiter)
 module.

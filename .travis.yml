@@ -1,52 +1,27 @@
-dist: trusty
-
 sudo: false
 
 language: node_js
 
-services:
-  - redis
+env:
+  global:
+    - TAP_RCFILE=./.taprc
 
 matrix:
   include:
+    - node_js: "10"
+      env: NPM_RUN_SCRIPT=test NPM_AUDIT=true TAP_ARGS="-- --node-arg=--pending-deprecation --node-arg=--throw-deprecation"
     - node_js: "9"
-      env:
-        - TAP_RCFILE=./.taprc
-        - TEST_REDIS_URL=localhost
-
-    - node_js: "9"
-      env:
-        - TAP_RCFILE=./.taprc
-
     - node_js: "8"
-      env:
-        - TAP_RCFILE=./.taprc
-
     - node_js: "7"
-      env:
-        - TAP_RCFILE=./.taprc
-
     - node_js: "6"
-      env:
-        - TAP_RCFILE=./.taprc
-
     - node_js: "5"
-      env:
-        - TAP_ARGS=--strict
-        - TAP_RCFILE=./.taprc
-
+      env: TAP_ARGS=--strict
     - node_js: "4"
-      env:
-        - TAP_ARGS="--strict --harmony"
-        - TAP_RCFILE=./.taprc
+      env: TAP_ARGS="--strict --harmony"
 
 install:
   - npm install
-  - if [ -n "$NPM_INSTALL_PACKAGES" ]; then npm install $NPM_INSTALL_PACKAGES; fi
-  - npm install typescript tslint tslint-config-standard
+  - if [ "$NPM_AUDIT" = true ]; then npm audit; fi
 
 script:
-  - npm run build
-  - npm run ${NPM_RUN_SCRIPT:-test} -- $TAP_ARGS
-  - node_modules/.bin/tsc
-  - node_modules/.bin/tslint -t stylish -p .
+  - npm run ${NPM_RUN_SCRIPT:-test:api} -- ${TAP_ARGS}

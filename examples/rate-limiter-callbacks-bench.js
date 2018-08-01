@@ -20,7 +20,7 @@ function main () {
     lazyConnect: true,
     showFriendlyErrorStack: true
   })
-  .on('error', noop)
+    .on('error', noop)
 
   const key = 'limiter'
 
