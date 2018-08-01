@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { SlidingWindowRateLimiterBackend } from './sliding-window-rate-limiter'
 import { RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions } from './redis-sliding-window-rate-limiter'
 

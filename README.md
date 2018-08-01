@@ -18,6 +18,12 @@ Redis >= 3.2.0 is required for Redis backend.
 npm install sliding-window-rate-limiter
 ```
 
+_Additionally for Typescript:_
+
+```shell
+npm install -D @types/node @types/ioredis
+```
+
 ## Usage
 
 ```js
@@ -48,6 +54,9 @@ _Options:_
 * `defaultResponse` is a number value returned when Redis server is not
   available (only for SafeRedis backend, default value: 0)
 
+If `redis` parameter is undefined or string then new `ioredis` object is created
+with `retryStrategy` set to 1 seconds and `maxRetriesPerRequest` set to 1.
+
 _Example:_
 
 ```js
@@ -61,7 +70,11 @@ or
 ```js
 const limiter = SlidingWindowRateLimiter.createLimiter({
   interval: 60,
-  redis: new Redis({ host: 'redis-server' }),
+  redis: new Redis({
+    host: 'redis-server',
+    retryStrategy: (_times) => 1000,
+    maxRetriesPerRequest: 1
+  }),
   safe: true
 })
 ```
@@ -119,7 +132,8 @@ expired.
 limiter.destroy()
 ```
 
-Frees resources used by limiter (timers and connections).
+Frees resources used by limiter (timers and Redis connection if was created by
+limiter itself).
 
 ## Errors
 
