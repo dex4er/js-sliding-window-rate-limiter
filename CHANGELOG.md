@@ -3,6 +3,7 @@
 ## v0.5.0 2018-08-01
 
 * Use ioredis@4 because of new `maxRetriesPerRequest` option.
+* Dropped support for Node < 6
 
 ## v0.4.0 2018-02-10
 

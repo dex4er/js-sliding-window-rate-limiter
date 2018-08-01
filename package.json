@@ -22,7 +22,7 @@
   },
   "homepage": "http://github.com/dex4er/js-sliding-window-rate-limiter",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   },
   "dependencies": {
     "ioredis": "^4.0.0-3"
