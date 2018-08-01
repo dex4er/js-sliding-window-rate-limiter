@@ -1,11 +1,13 @@
 *-ts.js
 
+*.gz
 *.tgz
 
 ts-node-*
 
 /coverage/
 /node_modules/
+/out/
 
 /.nyc_output/
 

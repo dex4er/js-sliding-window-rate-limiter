@@ -7,6 +7,7 @@
     "await-promise": [true, "Bluebird", "Promise", "PromiseLike"],
     "interface-name": false,
     "max-line-length": false,
+    "no-unused-variable is deprecated": false,
     "no-console": [true, "log"]
   }
 }
