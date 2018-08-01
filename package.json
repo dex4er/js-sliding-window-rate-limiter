@@ -35,6 +35,7 @@
     "dirty-chai": "^2.0.1",
     "eslint-config-standard": "^12.0.0-alpha.0",
     "luamin": "^1.0.4",
+    "markdownlint-cli": "^0.12.0",
     "standard": "^11.0.1",
     "tap": "^12.0.1",
     "tap-given": "^0.6.0",
