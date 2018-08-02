@@ -2,6 +2,9 @@ sudo: false
 
 language: node_js
 
+services:
+  - redis
+
 env:
   global:
     - TAP_RCFILE=./.taprc
@@ -10,6 +13,8 @@ matrix:
   include:
     - node_js: "10"
       env: NPM_RUN_SCRIPT=test NPM_AUDIT=true TAP_ARGS="-- --node-arg=--pending-deprecation --node-arg=--throw-deprecation"
+    - node_js: "10"
+      env: TEST_REDIS_URL=localhost
     - node_js: "9"
     - node_js: "8"
     - node_js: "7"
