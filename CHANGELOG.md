@@ -5,6 +5,8 @@
 * Use ioredis@4 because of new `maxRetriesPerRequest` option.
 * Dropped support for Node < 6
 * `reconnectTimeout` option of safe limiter renamed to `reuseRedisAfter`.
+* Redis client calls are wrapped with try/catch and then return error
+  asynchronously.
 
 ## v0.4.0 2018-02-10
 
