@@ -33,7 +33,7 @@ Feature('Test sliding-window-rate-limiter module error with callbacks with Redis
       key = 'error'
     })
 
-    When('I try to make one reservation', done => {
+    When('I try to make one reservation', (done) => {
       limiter.reserve(key, defaultLimit, (err, value) => {
         error = err
         done()

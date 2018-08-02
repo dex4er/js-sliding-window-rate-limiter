@@ -40,7 +40,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         key = 'one-reservation:' + uuidv1()
       })
 
-      When('I check usage', done => {
+      When('I check usage', (done) => {
         limiter.check(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -56,7 +56,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.equal(0)
       })
 
-      When('I make one reservation', done => {
+      When('I make one reservation', (done) => {
         limiter.reserve(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -72,7 +72,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.be.above(0)
       })
 
-      When('I check usage', done => {
+      When('I check usage', (done) => {
         limiter.check(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -109,7 +109,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         key = 'above-limit:' + uuidv1()
       })
 
-      When('I check usage', done => {
+      When('I check usage', (done) => {
         limiter.check(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -125,7 +125,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.equal(0)
       })
 
-      When('I make one reservation', done => {
+      When('I make one reservation', (done) => {
         limiter.reserve(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -141,7 +141,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.be.above(0)
       })
 
-      When('I try to make another above limit', done => {
+      When('I try to make another above limit', (done) => {
         limiter.reserve(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -157,7 +157,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.be.below(0)
       })
 
-      When('I check usage', done => {
+      When('I check usage', (done) => {
         limiter.check(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -194,7 +194,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         key = 'after-interval:' + uuidv1()
       })
 
-      When('I check usage', done => {
+      When('I check usage', (done) => {
         limiter.check(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -210,7 +210,7 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.equal(0)
       })
 
-      When('I make one reservation', done => {
+      When('I make one reservation', (done) => {
         limiter.reserve(key, defaultLimit, (err, value) => {
           error = err
           usage = value
@@ -226,11 +226,11 @@ Feature('Test sliding-window-rate-limiter module with callbacks', () => {
         return usage.should.be.above(0)
       })
 
-      When('I wait more than interval', done => {
+      When('I wait more than interval', (done) => {
         setTimeout(done, 2000)
       })
 
-      And('I try to make another above limit', done => {
+      And('I try to make another above limit', (done) => {
         limiter.reserve(key, defaultLimit, (err, value) => {
           error = err
           usage = value
