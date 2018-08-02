@@ -48,7 +48,7 @@ _Options:_
 * `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (only for Redis backend)
 * `safe`: `true` (only for SafeRedis backend)
-* `reconnectTimeout` is a time (milliseconds) to reconnect to Redis server
+* `reuseRedisAfter` is a time (milliseconds) to reconnect to Redis server
   after connection failure (only for SafeRedis backend, default value: 2000
   milliseconds)
 * `defaultResponse` is a number value returned when Redis server is not
@@ -165,7 +165,7 @@ limiter can be shared between many clients.
 There is extended version of limiter, which behaves gracefully, when Redis
 server is unavailable for any reason. In case of Redis connection failure,
 SafeRedis backend will always return positive response (`defaultResponse`
-value), and will try to reconnect to Redis server after `reconnectTimeout`.
+value), and will try to reconnect to Redis server after `reuseRedisAfter`.
 
 ## Lua
 

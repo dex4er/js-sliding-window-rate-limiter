@@ -4,6 +4,7 @@
 
 * Use ioredis@4 because of new `maxRetriesPerRequest` option.
 * Dropped support for Node < 6
+* `reconnectTimeout` option of safe limiter renamed to `reuseRedisAfter`.
 
 ## v0.4.0 2018-02-10
 
