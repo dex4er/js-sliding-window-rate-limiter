@@ -54,8 +54,8 @@ _Options:_
 * `defaultResponse` is a number value returned when Redis server is not
   available (only for SafeRedis backend, default value: 0)
 
-If `redis` parameter is undefined or string then new `ioredis` object is created
-with `retryStrategy` set to 1 seconds and `maxRetriesPerRequest` set to 1.
+If `redis` parameter is a string then new `ioredis` object is created with
+`retryStrategy` set to 1 seconds and `maxRetriesPerRequest` set to 1.
 
 _Example:_
 
@@ -165,7 +165,7 @@ limiter can be shared between many clients.
 There is extended version of limiter, which behaves gracefully, when Redis
 server is unavailable for any reason. In case of Redis connection failure,
 SafeRedis backend will always return positive response (`defaultResponse`
-value), and will try to reconnect to Redis server after `reuseRedisAfter`.
+value), and will try to use again the Redis server after `reuseRedisAfter`.
 
 ## Lua
 
