@@ -48,9 +48,9 @@ Feature('Test sliding-window-rate-limiter module error with promises with Redis 
   })
 
   Scenario('Redis throws an exceptio ', () => {
-    let error
     let key
     let limiter
+    let promise
     let redis
     const defaultLimit = 1
 
@@ -70,15 +70,11 @@ Feature('Test sliding-window-rate-limiter module error with promises with Redis 
     })
 
     When('I try to make one reservation', () => {
-      try {
-        limiter.reserve(key, defaultLimit, (_err) => { /* never */ })
-      } catch (e) {
-        error = e
-      }
+      promise = limiter.reserve(key, defaultLimit)
     })
 
     Then('limiter throws an exception', () => {
-      error.should.be.an('error').with.property('message', 'Redis throws an exception')
+      return promise.should.rejectedWith(Error, 'Redis throws an exception')
     })
 
     After('destroy limiter', () => {
