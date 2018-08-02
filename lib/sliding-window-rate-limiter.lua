@@ -1,6 +1,6 @@
 -- Lua script based on https://github.com/3hedgehogs/inredis-ratelimiter
 --
--- Copyright (c) 2017 3hedgehogs
+-- Copyright (c) 2017 Serguei Poliakov <serguei.poliakov@gmail.com>
 -- Copyright (c) 2017 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 --
 -- Run `npm run minify` after changes in this file

@@ -180,7 +180,7 @@ Copyright (c) 2017-2018 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 Based on Lua script from <https://github.com/3hedgehogs/inredis-ratelimiter>
 
-Copyright (c) 2017 3hedgehogs
+Copyright (c) 2017 Serguei Poliakov <serguei.poliakov@gmail.com>
 
 Inspired by ClassDojo blog note
 <https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/> and
