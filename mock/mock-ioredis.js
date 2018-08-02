@@ -26,6 +26,10 @@ class MockRedis {
       this.buckets[key] = []
     }
 
+    if (key === 'exception') {
+      throw new Error('Redis throws an exception')
+    }
+
     if (key === 'error' || !this.connected) {
       const sha1sum = crypto.createHash('sha1').update(String(Math.random())).digest('hex')
 
