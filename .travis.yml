@@ -25,4 +25,5 @@ install:
   - if [ "$NPM_AUDIT" = true ]; then npm audit; fi
 
 script:
+  - npm run build
   - npm run ${NPM_RUN_SCRIPT:-test:api} -- ${TAP_ARGS}
