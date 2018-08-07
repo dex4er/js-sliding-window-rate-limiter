@@ -16,7 +16,7 @@
         "function": false
       }
     ],
-    "no-unnecessary-type-assertion": [true, "s"], // ie. `as s` is a hint about unit
+    "no-unnecessary-type-assertion": [true, "ms", "s"], // ie. `as s` is a hint about unit
     "object-curly-spacing": [ // aligning style with standard
       true,
       "always"

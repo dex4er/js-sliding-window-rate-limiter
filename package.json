@@ -46,10 +46,10 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "build": "npm run minify",
+    "build": "npm run minify && tsc --pretty",
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
-    "pretest": "eslint . && tsc --noEmit --pretty && tslint -t stylish -p . && markdownlint *.md",
+    "pretest": "npm run build && eslint . && tslint -t stylish -p . && markdownlint *.md",
     "test": "npm run test:api",
     "test:api": "tap test/*.js",
     "test:coverage": "npm test -- --coverage"
