@@ -5,7 +5,7 @@
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
-import * as SlidingWindowRateLimiter from '../lib/sliding-window-rate-limiter'
+import * as SlidingWindowRateLimiter from '../src/sliding-window-rate-limiter'
 
 async function main (): Promise<void> {
   const limiter = SlidingWindowRateLimiter.createLimiter({

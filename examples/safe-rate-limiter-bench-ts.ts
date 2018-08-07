@@ -7,7 +7,7 @@ const INTERVAL = Number(process.argv[3]) || 60
 
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
 
-import * as SlidingWindowRateLimiter from '../lib/sliding-window-rate-limiter'
+import * as SlidingWindowRateLimiter from '../src/sliding-window-rate-limiter'
 
 import { promisify } from 'util'
 const delay = promisify(setTimeout)

@@ -37,6 +37,7 @@
     "eslint-config-standard": "^12.0.0-alpha.0",
     "luamin": "^1.0.4",
     "markdownlint-cli": "^0.12.0",
+    "rimraf": "^2.6.2",
     "standard": "^11.0.1",
     "tap": "^12.0.1",
     "tap-given": "^0.6.0",
@@ -46,7 +47,8 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "build": "npm run minify && tsc --pretty",
+    "build": "tsc --pretty && npm run minify",
+    "clean": "rimraf lib",
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
     "pretest": "npm run build && eslint . && tslint -t stylish -p . && markdownlint *.md",

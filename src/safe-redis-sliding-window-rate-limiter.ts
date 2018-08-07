@@ -24,8 +24,8 @@ export interface SafeRedisSlidingWindowRateLimiter {
 }
 
 export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter implements SlidingWindowRateLimiterBackend {
-  protected reuseRedisAfter: number
-  protected defaultResponse: number
+  readonly reuseRedisAfter: number
+  readonly defaultResponse: number
 
   protected redisServiceAvailable: boolean = true
   protected reconnectTimer?: NodeJS.Timer = undefined

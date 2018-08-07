@@ -5,6 +5,8 @@
 
 ts-node-*
 
+/lib/
+
 /coverage/
 /node_modules/
 /out/

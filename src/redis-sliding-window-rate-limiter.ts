@@ -38,8 +38,7 @@ const lua = process.env.DEBUG_SLIDING_WINDOW_RATELIMITER_LUA
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly interval: s
-
-  protected redis: Redis
+  readonly redis: Redis
 
   constructor (readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
