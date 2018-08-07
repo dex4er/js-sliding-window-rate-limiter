@@ -5,31 +5,19 @@ import { SafeRedisSlidingWindowRateLimiter, SafeRedisSlidingWindowRateLimiterOpt
 export * from './memory-sliding-window-rate-limiter'
 export * from './redis-sliding-window-rate-limiter'
 export * from './safe-redis-sliding-window-rate-limiter'
-
-type s = number
-
-export interface SlidingWindowRateLimiterOptions {
-  interval?: s
-}
-
-export declare interface SlidingWindowRateLimiterBackend {
-  readonly options: SlidingWindowRateLimiterOptions
-  readonly interval: s
-
-  reserve (key: string, limit: number): Promise<number>
-  reserve (key: string, limit: number, callback: (error: Error | null, ts: number) => void): void
-
-  check (key: string, limit: number): Promise<number>
-  check (key: string, limit: number, callback: (error: Error | null, usage: number) => void): void
-
-  cancel (key: string, ts: number): Promise<number>
-  cancel (key: string, ts: number, callback: (error: Error | null, usage: number) => void): void
-
-  destroy (): void
-}
+export * from './sliding-window-rate-limiter-backend'
 
 export function createLimiter (options: MemorySlidingWindowRateLimiterOptions): MemorySlidingWindowRateLimiter
 export function createLimiter (options: RedisSlidingWindowRateLimiterOptions): RedisSlidingWindowRateLimiter
 export function createLimiter (options: SafeRedisSlidingWindowRateLimiterOptions): SafeRedisSlidingWindowRateLimiter
+export function createLimiter (options: any): any {
+  if (options.safe && options.redis) {
+    return new SafeRedisSlidingWindowRateLimiter(options)
+  } else if (options.redis) {
+    return new RedisSlidingWindowRateLimiter(options)
+  } else {
+    return new MemorySlidingWindowRateLimiter(options)
+  }
+}
 
 export default createLimiter

@@ -85,12 +85,6 @@ const limiter = SlidingWindowRateLimiter.createLimiter({
 const usage = await limiter.check(key, limit)
 ```
 
-or
-
-```js
-limiter.check(key, limit, (err, usage) => {})
-```
-
 Checks current usage for `key`. If usage is above limit, it returns a negative
 number with current usage. Throws an error if has occurred.
 
@@ -98,12 +92,6 @@ number with current usage. Throws an error if has occurred.
 
 ```js
 const ts = await limiter.reserve(key, limit)
-```
-
-or
-
-```js
-limiter.reserve(key, limit, (err, ts) => {})
 ```
 
 Makes a reservation and returns reserved timestamp as `ts`. Returns a negative
@@ -114,12 +102,6 @@ Throws an error if has occurred.
 
 ```js
 const canceled = await limiter.cancel(key, ts)
-```
-
-or
-
-```js
-limiter.cancel(key, (err, canceled) => {})
 ```
 
 Cancels a reservation for timestamp `ts` and returns number of canceled
@@ -166,11 +148,6 @@ There is extended version of limiter, which behaves gracefully, when Redis
 server is unavailable for any reason. In case of Redis connection failure,
 SafeRedis backend will always return positive response (`defaultResponse`
 value), and will try to use again the Redis server after `reuseRedisAfter`.
-
-## Lua
-
-Minified script is sent to Redis server by default. Full script can be sent
-instead when `DEBUG_LUA` environment variable is set.
 
 ## License
 

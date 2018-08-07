@@ -1,6 +1,6 @@
 {
   "name": "sliding-window-rate-limiter",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
   "main": "lib/sliding-window-rate-limiter.js",
   "typings": "lib/sliding-window-rate-limiter.d.ts",
@@ -25,7 +25,8 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "ioredis": "^4.0.0-3"
+    "ioredis": "^4.0.0-3",
+    "tslib": "^1.9.3"
   },
   "devDependencies": {
     "@types/ioredis": "3.2.13",
@@ -46,7 +47,7 @@
   },
   "scripts": {
     "build": "npm run minify",
-    "minify": "luamin -f lib/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f lib/sliding-window-rate-limiter.lua",
+    "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "prepublishOnly": "npm run minify",
     "pretest": "eslint . && tsc --noEmit --pretty && tslint -t stylish -p . && markdownlint *.md",
     "test": "npm run test:api",

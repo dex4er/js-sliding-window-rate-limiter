@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.0 2018-08-07
+
+* Converted to Typescript.
+* Callback API is removed. Only Promises are available.
+
 ## v0.5.0 2018-08-01
 
 * Use ioredis@4 because of new `maxRetriesPerRequest` option.

@@ -8,9 +8,9 @@ chai.use(require('dirty-chai'))
 chai.should()
 
 const backendClasses = {
-  Memory: require('../lib/memory-sliding-window-rate-limiter'),
-  Redis: require('../lib/redis-sliding-window-rate-limiter'),
-  SafeRedis: require('../lib/safe-redis-sliding-window-rate-limiter')
+  Memory: require('../lib/memory-sliding-window-rate-limiter').MemorySlidingWindowRateLimiter,
+  Redis: require('../lib/redis-sliding-window-rate-limiter').RedisSlidingWindowRateLimiter,
+  SafeRedis: require('../lib/safe-redis-sliding-window-rate-limiter').SafeRedisSlidingWindowRateLimiter
 }
 
 const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
