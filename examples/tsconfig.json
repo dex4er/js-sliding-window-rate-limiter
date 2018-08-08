@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "target": "ES6",
+    "strict": true,
+    "typeRoots": [
+      "../node_modules/@types"
+    ]
+  }
+}

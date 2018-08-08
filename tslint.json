@@ -17,6 +17,7 @@
       }
     ],
     "no-unnecessary-type-assertion": [true, "ms", "s"], // ie. `as s` is a hint about unit
+    "no-unused-variable": false, // no-unused-variable is deprecated. Since TypeScript 2.9.
     "object-curly-spacing": [ // aligning style with standard
       true,
       "always"

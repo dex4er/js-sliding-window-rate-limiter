@@ -1,27 +1,46 @@
-'use strict'
+// TODO: Bluebird is used because of outdated typings for ioredis
+import Bluebird from 'bluebird'
+import crypto from 'crypto'
+import IORedis from 'ioredis'
 
-const crypto = require('crypto')
+interface Buckets {
+  [key: string]: number[]
+}
 
-class MockRedis {
-  constructor (options) {
-    options = options || {}
+export class MockIORedis extends IORedis {
+  host?: string
+  buckets: Buckets = {}
+  connected: boolean = true
+
+  constructor (options: IORedis.RedisOptions | string = {}) {
+    super()
+
+    if (typeof options === 'string') {
+      options = { host: options }
+    }
+
     this.host = options.host
-    this.buckets = {}
-    this.connected = true
   }
 
-  defineCommand (command, options) {}
+  connect (): Bluebird<any> {
+    return Bluebird.resolve()
+  }
 
-  disconnect () {
+  defineCommand (_command: string, _options: any): void {
+    // noop
+  }
+
+  disconnect (): void {
     this.connected = false
   }
 
-  quit () {
+  quit (): Bluebird<string> {
     this.disconnect()
+    return Bluebird.resolve('OK')
   }
 
   // naive implementation of limiter
-  limiter (key, mode, interval, limit, toRemove, callback) {
+  limiter (key: string, mode: number, interval: number, limit: number, toRemove: number): Promise<number> {
     if (!this.buckets[key]) {
       this.buckets[key] = []
     }
@@ -50,18 +69,15 @@ class MockRedis {
         }
       })
 
-      if (callback) {
-        return callback(error)
-      } else {
-        return Promise.reject(error)
-      }
+      return Promise.reject(error)
     }
 
     const now = new Date().getTime()
 
-    this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000 /* ms */)
+    this.buckets[key] = this.buckets[key].filter((ts) => now - ts < interval * 1000)
 
-    let result, usage
+    let result: number
+    let usage: number
 
     result = usage = this.buckets[key].length
 
@@ -77,12 +93,8 @@ class MockRedis {
       }
     }
 
-    if (callback) {
-      return callback(null, result)
-    } else {
-      return Promise.resolve(result)
-    }
+    return Promise.resolve(result)
   }
 }
 
-module.exports = MockRedis
+export default MockIORedis

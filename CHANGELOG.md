@@ -4,6 +4,7 @@
 
 * Converted to Typescript.
 * Callback API is removed. Only Promises are available.
+* Mocha for tests.
 
 ## v0.5.0 2018-08-01
 

@@ -1,39 +1,35 @@
-'use strict'
+import { After, And, Feature, Given, Scenario, Then, When } from './lib/steps'
 
-const t = require('tap')
-require('tap-given')(t)
+import delay from 'delay'
+import IORedis from 'ioredis'
+import uuidv1 from 'uuid/v1'
 
-const chai = require('chai')
-chai.use(require('chai-as-promised'))
-chai.should()
+import { createLimiter } from '../src/sliding-window-rate-limiter'
+import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
 
-const delay = require('delay')
-const uuidv1 = require('uuid/v1')
+import MockIORedis from './lib/mock-ioredis'
+
+const TEST_REDIS_URL = process.env.TEST_REDIS_URL
+const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
+
+const limiterBackendOptions: {[backend: string]: any} = {
+  Memory: { interval: 1 },
+  Redis: { redis, interval: 1 },
+  SafeRedis: { safe: true, redis, interval: 1 }
+}
 
 Feature('Test sliding-window-rate-limiter module with promises', () => {
-  const TEST_REDIS_URL = process.env.TEST_REDIS_URL
-  const redisModule = TEST_REDIS_URL ? 'ioredis' : '../mock/mock-ioredis'
-  const Redis = require(redisModule)
-  const redis = new Redis(TEST_REDIS_URL)
-
-  const limiterBackendOptions = {
-    'Memory': { interval: 1 },
-    'Redis': { redis, interval: 1 },
-    'SafeRedis': { safe: true, redis, interval: 1 }
-  }
-
-  const limiterFactoryClass = require('./../lib/sliding-window-rate-limiter')
-
   for (const backend of Object.keys(limiterBackendOptions)) {
     Scenario(`Make one reservation - ${backend} backend`, () => {
-      let key
-      let limiter
-      let promise
       const defaultLimit = 1
       const options = limiterBackendOptions[backend]
 
+      let key: string
+      let limiter: SlidingWindowRateLimiterBackend
+      let promise: Promise<number>
+
       Given('limiter object', () => {
-        limiter = limiterFactoryClass.createLimiter(options)
+        limiter = createLimiter(options)
       })
 
       And('key', () => {
@@ -64,20 +60,21 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return promise.should.eventually.be.above(0)
       })
 
-      After('destroy limiter', () => {
+      After(() => {
         limiter.destroy()
       })
     })
 
     Scenario(`Make one reservation and another above limit - ${backend} backend`, () => {
-      let key
-      let limiter
-      let promise
       const defaultLimit = 1
       const options = limiterBackendOptions[backend]
 
+      let key: string
+      let limiter: SlidingWindowRateLimiterBackend
+      let promise: Promise<number>
+
       Given('limiter object', () => {
-        limiter = limiterFactoryClass.createLimiter(options)
+        limiter = createLimiter(options)
       })
 
       And('key', () => {
@@ -116,20 +113,21 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return promise.should.eventually.be.above(0)
       })
 
-      After('destroy limiter', () => {
+      After(() => {
         limiter.destroy()
       })
     })
 
     Scenario('Make one reservation and another after interval - redis backend', () => {
-      let key
-      let limiter
-      let promise
       const defaultLimit = 1
       const options = limiterBackendOptions[backend]
 
+      let key: string
+      let limiter: SlidingWindowRateLimiterBackend
+      let promise: Promise<number>
+
       And('limiter object', () => {
-        limiter = limiterFactoryClass.createLimiter(options)
+        limiter = createLimiter(options)
       })
 
       And('key', () => {
@@ -156,20 +154,21 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return promise.should.eventually.be.above(0)
       })
 
-      After('destroy limiter', () => {
+      After(() => {
         limiter.destroy()
       })
     })
 
     Scenario(`Cancel reservation - ${backend} backend`, () => {
-      let key
-      let limiter
-      let reservationToken
       const defaultLimit = 1
       const options = limiterBackendOptions[backend]
 
+      let key: string
+      let limiter: SlidingWindowRateLimiterBackend
+      let reservationToken: number
+
       And('limiter object', () => {
-        limiter = limiterFactoryClass.createLimiter(options)
+        limiter = createLimiter(options)
       })
 
       And('key', () => {
@@ -208,13 +207,13 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
       })
 
-      After('destroy limiter', () => {
+      After(() => {
         limiter.destroy()
       })
     })
   }
 
-  After('disconnect Redis', () => {
+  After(() => {
     redis.quit()
   })
 })
