@@ -5,7 +5,10 @@ import fs from 'fs'
 import IORedis from 'ioredis'
 import path from 'path'
 
-import { SlidingWindowRateLimiterBackend, SlidingWindowRateLimiterBackendOptions } from './sliding-window-rate-limiter-backend'
+import {
+  SlidingWindowRateLimiterBackend,
+  SlidingWindowRateLimiterBackendOptions
+} from './sliding-window-rate-limiter-backend'
 
 type ms = number
 type s = number
@@ -39,6 +42,7 @@ const lua = process.env.DEBUG_SLIDING_WINDOW_RATELIMITER_LUA
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly interval: s
   readonly redis: Redis
+  protected readonly operationTimeout: number = this.options.operationTimeout || 0
 
   constructor (readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
@@ -87,10 +91,36 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
 
   protected limiter (key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms> {
     try {
-      return this.redis.limiter(key, mode, interval, limit, ts)
+      if (!this.operationTimeout) {
+        return this.redis.limiter(key, mode, interval, limit, ts)
+      } else {
+        return this.handleTimeout(this.redis.limiter(key, mode, interval, limit, ts))
+      }
     } catch (e) {
       return Promise.reject(e)
     }
+  }
+
+  protected handleTimeout<T> (operationPromise: Promise<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      let responseReturned = false
+      const timer = setTimeout(() => {
+        if (!responseReturned) {
+          responseReturned = true
+          reject(new Error('Operation timed out.'))
+        }
+      }, this.operationTimeout)
+
+      function createOperationCallback (success: boolean = true): (result: any) => void {
+        return (result: any) => {
+          clearTimeout(timer)
+          responseReturned = true
+          success ? resolve(result) : reject(result)
+        }
+      }
+
+      operationPromise.then(createOperationCallback(true)).catch(createOperationCallback(false))
+    })
   }
 }
 

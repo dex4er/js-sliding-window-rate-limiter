@@ -12,7 +12,7 @@ export class MockIORedis extends IORedis {
   buckets: Buckets = {}
   connected: boolean = true
 
-  constructor (options: IORedis.RedisOptions | string = {}) {
+  constructor (options: IORedis.RedisOptions | string = {}, protected delayOperation?: number) {
     super()
 
     if (typeof options === 'string') {
@@ -40,7 +40,7 @@ export class MockIORedis extends IORedis {
   }
 
   // naive implementation of limiter
-  limiter (key: string, mode: number, interval: number, limit: number, toRemove: number): Promise<number> {
+  async limiter (key: string, mode: number, interval: number, limit: number, toRemove: number): Promise<number> {
     if (!this.buckets[key]) {
       this.buckets[key] = []
     }
@@ -70,6 +70,12 @@ export class MockIORedis extends IORedis {
       })
 
       return Promise.reject(error)
+    }
+
+    if (this.delayOperation) {
+      await new Promise((resolve) => {
+        setTimeout(() => resolve(), this.delayOperation)
+      })
     }
 
     const now = new Date().getTime()
