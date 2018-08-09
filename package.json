@@ -1,6 +1,6 @@
 {
   "name": "sliding-window-rate-limiter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
   "main": "lib/sliding-window-rate-limiter.js",
   "typings": "lib/sliding-window-rate-limiter.d.ts",
@@ -25,12 +25,12 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "@types/chai-as-promised": "^7.1.0",
     "ioredis": "^4.0.0-3",
     "tslib": "^1.9.3"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
+    "@types/chai-as-promised": "^7.1.0",
     "@types/delay": "^2.0.1",
     "@types/ioredis": "3.2.13",
     "@types/mocha": "^5.2.5",

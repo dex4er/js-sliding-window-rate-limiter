@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1 2018-08-09
+
+* Fix devDependencies.
+
 ## v1.0.0 2018-08-09
 
 * Converted to Typescript.
