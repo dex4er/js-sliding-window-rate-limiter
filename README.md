@@ -47,6 +47,8 @@ _Options:_
 * `interval` is a number of seconds in a sliding window
 * `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (only for Redis backend)
+* `operationTimeout` is a time in milliseconds after Redis operation is canceled
+  (for Redis and SafeRedis backends, optional)
 * `safe`: `true` (only for SafeRedis backend)
 * `reuseRedisAfter` is a time (milliseconds) to reconnect to Redis server
   after connection failure (only for SafeRedis backend, default value: 2000

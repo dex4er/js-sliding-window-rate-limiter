@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0 2018-08-09
+
+* New option `operationTimeout` for Redis and SafeRedis backends.
+
 ## v1.0.1 2018-08-09
 
 * Fix devDependencies.
