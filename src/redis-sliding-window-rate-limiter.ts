@@ -31,8 +31,8 @@ export interface Redis extends IORedis.Redis {
 
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {
   redis?: Redis | string
-  interval?: number
-  operationTimeout?: number
+  interval?: s
+  operationTimeout?: ms
 }
 
 const lua = process.env.DEBUG_SLIDING_WINDOW_RATELIMITER_LUA
@@ -40,14 +40,16 @@ const lua = process.env.DEBUG_SLIDING_WINDOW_RATELIMITER_LUA
   : fs.readFileSync(path.join(__dirname, '../lib/sliding-window-rate-limiter.min.lua'), 'utf8')
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
-  readonly interval: s
   readonly redis: Redis
-  protected readonly operationTimeout: number = this.options.operationTimeout || 0
+  readonly interval: s
+  readonly operationTimeout: ms
 
   constructor (readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
 
     this.interval = Number(options.interval) || 60 as s
+
+    this.operationTimeout = options.operationTimeout || 0
 
     if (!options.redis || typeof options.redis === 'string') {
       this.redis = new IORedis({
@@ -104,10 +106,11 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
   protected handleTimeout<T> (operationPromise: Promise<T>): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       let responseReturned = false
+
       const timer = setTimeout(() => {
         if (!responseReturned) {
           responseReturned = true
-          reject(new Error('Operation timed out.'))
+          reject(new Error('Operation timed out'))
         }
       }, this.operationTimeout)
 

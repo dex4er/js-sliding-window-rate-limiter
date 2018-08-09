@@ -3,23 +3,32 @@ import Bluebird from 'bluebird'
 import crypto from 'crypto'
 import IORedis from 'ioredis'
 
+type ms = number
+
 interface Buckets {
   [key: string]: number[]
 }
 
-export class MockIORedis extends IORedis {
-  host?: string
-  buckets: Buckets = {}
-  connected: boolean = true
+interface MockIORedisOptions extends IORedis.RedisOptions {
+  operationDelay?: ms
+}
 
-  constructor (options: IORedis.RedisOptions | string = {}, protected delayOperation?: number) {
+export class MockIORedis extends IORedis {
+  protected host?: string
+  protected operationDelay?: ms
+
+  protected buckets: Buckets = {}
+  protected connected: boolean = true
+
+  constructor (protected options: MockIORedisOptions | string = {}) {
     super()
 
     if (typeof options === 'string') {
-      options = { host: options }
+      this.options = options = { host: options }
     }
 
     this.host = options.host
+    this.operationDelay = options.operationDelay
   }
 
   connect (): Bluebird<any> {
@@ -40,7 +49,7 @@ export class MockIORedis extends IORedis {
   }
 
   // naive implementation of limiter
-  async limiter (key: string, mode: number, interval: number, limit: number, toRemove: number): Promise<number> {
+  limiter (key: string, mode: number, interval: number, limit: number, toRemove: number): Promise<number> {
     if (!this.buckets[key]) {
       this.buckets[key] = []
     }
@@ -72,34 +81,34 @@ export class MockIORedis extends IORedis {
       return Promise.reject(error)
     }
 
-    if (this.delayOperation) {
-      await new Promise((resolve) => {
-        setTimeout(() => resolve(), this.delayOperation)
-      })
-    }
+    const delayPromise = this.operationDelay ? new Promise<void>((resolve) => {
+      setTimeout(() => resolve(), this.operationDelay)
+    }) : Promise.resolve()
 
-    const now = new Date().getTime()
+    return delayPromise.then(() => {
+      const now = new Date().getTime()
 
-    this.buckets[key] = this.buckets[key].filter((ts) => now - ts < interval * 1000)
+      this.buckets[key] = this.buckets[key].filter((ts) => now - ts < interval * 1000)
 
-    let result: number
-    let usage: number
+      let result: number
+      let usage: number
 
-    result = usage = this.buckets[key].length
+      result = usage = this.buckets[key].length
 
-    if (mode === 2) {
-      const index = this.buckets[key].indexOf(toRemove)
-      result = this.buckets[key].splice(index, 1).length
-    } else if (mode === 1) {
-      if (usage >= limit) {
-        result = usage = -limit
-      } else {
-        this.buckets[key].push(now)
-        result = now
+      if (mode === 2) {
+        const index = this.buckets[key].indexOf(toRemove)
+        result = this.buckets[key].splice(index, 1).length
+      } else if (mode === 1) {
+        if (usage >= limit) {
+          result = usage = -limit
+        } else {
+          this.buckets[key].push(now)
+          result = now
+        }
       }
-    }
 
-    return Promise.resolve(result)
+      return result
+    })
   }
 }
 
