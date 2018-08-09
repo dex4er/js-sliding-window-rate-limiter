@@ -5,7 +5,7 @@ import IORedis from 'ioredis'
 import { MemorySlidingWindowRateLimiter } from '../src/memory-sliding-window-rate-limiter'
 import { RedisSlidingWindowRateLimiter } from '../src/redis-sliding-window-rate-limiter'
 import { SafeRedisSlidingWindowRateLimiter } from '../src/safe-redis-sliding-window-rate-limiter'
-import { createLimiter } from '../src/sliding-window-rate-limiter'
+import { SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
 import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
 
 import MockIORedis from './lib/mock-ioredis'
@@ -32,7 +32,7 @@ for (const backend of ['Memory', 'Redis', 'SafeRedis']) {
 
     Scenario('basic usage', () => {
       When('create simple limiter', () => {
-        limiter = createLimiter(options)
+        limiter = SlidingWindowRateLimiter.createLimiter(options)
       })
 
       Then('limiter exists', () => {

@@ -1,9 +1,11 @@
 # Changelog
 
-## v1.0.0 2018-08-07
+## v1.0.0 2018-08-09
 
 * Converted to Typescript.
 * Callback API is removed. Only Promises are available.
+* Prefer `import SlidingWindowRateLimiter from 'sliding-window-rate-limiter'`
+  syntax.
 * Mocha for tests.
 
 ## v0.5.0 2018-08-01

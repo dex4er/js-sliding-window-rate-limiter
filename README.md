@@ -33,7 +33,7 @@ const SlidingWindowRateLimiter = require('sliding-window-rate-limiter')
 _Typescript:_
 
 ```ts
-import * as SlidingWindowRateLimiter from 'sliding-window-rate-limiter'
+import SlidingWindowRateLimiter from 'sliding-window-rate-limiter'
 ```
 
 ### constructor

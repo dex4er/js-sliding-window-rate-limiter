@@ -1,6 +1,6 @@
 import { After, And, Feature, Given, Scenario, Then, When } from './lib/steps'
 
-import { createLimiter, Redis, RedisSlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
+import { Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
 
 import MockIORedis from './lib/mock-ioredis'
 
@@ -18,7 +18,7 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     })
 
     And('limiter object', () => {
-      limiter = createLimiter({
+      limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
         redis
       })
@@ -58,7 +58,7 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     })
 
     And('limiter object', () => {
-      limiter = createLimiter({
+      limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
         redis
       })

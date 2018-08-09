@@ -4,7 +4,7 @@ import delay from 'delay'
 import IORedis from 'ioredis'
 import uuidv1 from 'uuid/v1'
 
-import { createLimiter } from '../src/sliding-window-rate-limiter'
+import { SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
 import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
 
 import MockIORedis from './lib/mock-ioredis'
@@ -29,7 +29,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       let promise: Promise<number>
 
       Given('limiter object', () => {
-        limiter = createLimiter(options)
+        limiter = SlidingWindowRateLimiter.createLimiter(options)
       })
 
       And('key', () => {
@@ -74,7 +74,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       let promise: Promise<number>
 
       Given('limiter object', () => {
-        limiter = createLimiter(options)
+        limiter = SlidingWindowRateLimiter.createLimiter(options)
       })
 
       And('key', () => {
@@ -127,7 +127,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       let promise: Promise<number>
 
       And('limiter object', () => {
-        limiter = createLimiter(options)
+        limiter = SlidingWindowRateLimiter.createLimiter(options)
       })
 
       And('key', () => {
@@ -168,7 +168,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
       let reservationToken: number
 
       And('limiter object', () => {
-        limiter = createLimiter(options)
+        limiter = SlidingWindowRateLimiter.createLimiter(options)
       })
 
       And('key', () => {
