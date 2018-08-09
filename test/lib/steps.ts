@@ -1,3 +1,5 @@
+import './environment'
+
 import Mocha from 'mocha'
 
 export const Feature = (what: string, how: () => void) => describe('Feature: ' + what, how)
