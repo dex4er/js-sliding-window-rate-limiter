@@ -96,33 +96,25 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
       if (!this.operationTimeout) {
         return this.redis.limiter(key, mode, interval, limit, ts)
       } else {
-        return this.handleTimeout(this.redis.limiter(key, mode, interval, limit, ts))
+        return this.promiseWithTimeout(this.redis.limiter(key, mode, interval, limit, ts))
       }
     } catch (e) {
       return Promise.reject(e)
     }
   }
 
-  protected handleTimeout<T> (operationPromise: Promise<T>): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      let responseReturned = false
+  protected promiseWithTimeout<T> (operationPromise: Promise<T>): Promise<T> {
+    let timer: NodeJS.Timer
 
-      const timer = setTimeout(() => {
-        if (!responseReturned) {
-          responseReturned = true
-          reject(new Error('Operation timed out'))
-        }
+    const timeoutPromise = new Promise<T>((_resolve, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error('Operation timed out'))
       }, this.operationTimeout)
+    })
 
-      function createOperationCallback (success: boolean = true): (result: any) => void {
-        return (result: any) => {
-          clearTimeout(timer)
-          responseReturned = true
-          success ? resolve(result) : reject(result)
-        }
-      }
-
-      operationPromise.then(createOperationCallback(true)).catch(createOperationCallback(false))
+    return Promise.race([operationPromise, timeoutPromise]).then((result) => {
+      if (timer) clearTimeout(timer)
+      return result
     })
   }
 }
