@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.2 2018-08-17
+
+* ioredis@4.0.0
+
 ## v1.1.1 2018-08-10
 
 * Refactoring for option `operationTimeout`.
