@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.3 2018-08-29
+
+* Distribute with src directory too.
+
 ## v1.1.2 2018-08-17
 
 * ioredis@4.0.0
