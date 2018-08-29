@@ -1,5 +1,3 @@
-// TODO: Bluebird is used because of outdated typings for ioredis
-import Bluebird from 'bluebird'
 import crypto from 'crypto'
 import IORedis from 'ioredis'
 
@@ -31,8 +29,8 @@ export class MockIORedis extends IORedis {
     this.operationDelay = options.operationDelay
   }
 
-  connect (): Bluebird<any> {
-    return Bluebird.resolve()
+  connect (): Promise<any> {
+    return Promise.resolve()
   }
 
   defineCommand (_command: string, _options: any): void {
@@ -43,9 +41,9 @@ export class MockIORedis extends IORedis {
     this.connected = false
   }
 
-  quit (): Bluebird<string> {
+  quit (): Promise<string> {
     this.disconnect()
-    return Bluebird.resolve('OK')
+    return Promise.resolve('OK')
   }
 
   // naive implementation of limiter

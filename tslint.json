@@ -5,7 +5,6 @@
   ],
   "rules": {
     "arrow-parens": true, // aligning style with standard
-    "await-promise": [true, "Bluebird", "Promise", "PromiseLike"], // amqplib uses Bluebird
     "interface-name": [true, "never-prefix"], // we don't like hungarian notation
     "max-line-length": false, // looooong lines are not a problem with good text editor
     "member-access": [true, "no-public"], // public is implicit

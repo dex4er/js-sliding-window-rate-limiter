@@ -19,11 +19,6 @@ const enum LimiterMode {
   Cancel
 }
 
-// TODO: maxRetriesPerRequest is not a part of IORedis.RedisOptions yet
-export interface RedisOptions extends IORedis.RedisOptions {
-  maxRetriesPerRequest: number
-}
-
 // Additional command defined
 export interface Redis extends IORedis.Redis {
   limiter (key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms>
@@ -56,7 +51,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
         host: options.redis,
         retryStrategy: (_times) => 1000 as ms,
         maxRetriesPerRequest: 1
-      } as RedisOptions) as Redis
+      }) as Redis
     } else {
       this.redis = options.redis
     }

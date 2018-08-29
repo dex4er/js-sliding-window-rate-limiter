@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.0 2018-08-29
+
+* IORedis typings without Bluebird.
+
 ## v1.1.3 2018-08-29
 
 * Distribute with src directory too.
