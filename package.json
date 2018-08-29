@@ -55,6 +55,7 @@
     "build": "tsc --pretty && npm run minify",
     "clean": "rimraf lib",
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
+    "postpublish": "git tag v$npm_package_version -a -m \"Release $npm_package_version\" && git push --tags",
     "prepublishOnly": "npm run build",
     "pretest": "npm run build && eslint . && tslint -t stylish -p . && markdownlint \"*.md\"",
     "test": "npm run test:api",
