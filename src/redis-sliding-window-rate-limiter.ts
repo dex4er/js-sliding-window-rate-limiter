@@ -13,7 +13,7 @@ import {
 type ms = number
 type s = number
 
-enum LimiterMode {
+const enum LimiterMode {
   Check,
   Reserve,
   Cancel
