@@ -37,6 +37,7 @@
     "@types/uuid": "^3.4.3",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "coveralls": "^3.0.2",
     "delay": "^3.1.0",
     "eslint": "^5.4.0",
     "eslint-config-standard": "^12.0.0",
