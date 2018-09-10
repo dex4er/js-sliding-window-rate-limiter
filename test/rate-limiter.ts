@@ -1,13 +1,13 @@
 import { After, And, Feature, Given, Scenario, Then, When } from './lib/steps'
 
-import delay from 'delay'
 import IORedis from 'ioredis'
 import uuidv1 from 'uuid/v1'
 
 import { SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
 import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
 
-import MockIORedis from './lib/mock-ioredis'
+import { delay } from './lib/delay'
+import { MockIORedis } from './lib/mock-ioredis'
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
@@ -177,10 +177,9 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
       When('I make one reservation', () => {
         const reservationTokenPromise = limiter.reserve(key, defaultLimit)
-        reservationTokenPromise.then((resolvedReservationToken) => {
+        return reservationTokenPromise.then((resolvedReservationToken) => {
           reservationToken = resolvedReservationToken
         })
-        return reservationTokenPromise
       })
 
       Then('reservation token is correct', () => {
@@ -213,7 +212,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
     })
   }
 
-  After(() => {
-    redis.quit()
+  After(async () => {
+    await redis.quit()
   })
 })

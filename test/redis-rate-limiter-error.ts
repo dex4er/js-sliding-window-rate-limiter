@@ -2,7 +2,7 @@ import { After, And, Feature, Given, Scenario, Then, When } from './lib/steps'
 
 import { Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
 
-import MockIORedis from './lib/mock-ioredis'
+import { MockIORedis } from './lib/mock-ioredis'
 
 Feature('Test sliding-window-rate-limiter module error with Redis backend', () => {
   Scenario('Redis returns error', () => {

@@ -8,7 +8,7 @@ import { SafeRedisSlidingWindowRateLimiter } from '../src/safe-redis-sliding-win
 import { SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
 import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
 
-import MockIORedis from './lib/mock-ioredis'
+import { MockIORedis } from './lib/mock-ioredis'
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)

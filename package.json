@@ -37,7 +37,6 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.2",
-    "delay": "^4.0.0",
     "eslint": "^5.5.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
@@ -57,15 +56,16 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "build": "tsc --pretty && npm run minify",
+    "build": "npm run compile && npm run minify",
     "clean": "rimraf lib",
+    "compile": "tsc --pretty",
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
-    "postpublish": "git tag v$npm_package_version -a -m \"Release $npm_package_version\" && git push --tags",
+    "postpublish": "git tag v$npm_package_version -a -m \"Release v$npm_package_version\" && git push --tags",
     "prepublishOnly": "npm run build",
-    "pretest": "npm run build && eslint . && tslint -t stylish -p . && markdownlint \"*.md\"",
-    "test": "npm run test:api",
-    "test:api": "npm run ts-mocha -- \"test/*.ts\"",
-    "test:coverage": "nyc --reporter json npm run test:api && nyc report",
+    "pretest": "npm run build && tsc --pretty -p examples && tsc --pretty -p test && eslint . && tslint -t stylish -p . && tslint -t stylish -p examples && tslint -t stylish -p test && markdownlint \"*.md\"",
+    "test": "npm run test:spec",
+    "test:spec": "npm run ts-mocha -- \"test/*.ts\"",
+    "test:coverage": "nyc --reporter json npm run test:spec && nyc report",
     "ts-mocha": "mocha --use_strict --throw-deprecation --require source-map-support/register --require ts-node/register --timeout 90000"
   },
   "nyc": {
@@ -73,6 +73,7 @@
       ".ts"
     ],
     "exclude": [
+      ".*.js",
       "**/*.d.ts"
     ]
   }

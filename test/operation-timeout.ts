@@ -5,7 +5,7 @@ import uuidv1 from 'uuid/v1'
 import RedisSlidingWindowRateLimiter from '../src/redis-sliding-window-rate-limiter'
 import { Redis } from '../src/sliding-window-rate-limiter'
 
-import MockIORedis from './lib/mock-ioredis'
+import { MockIORedis } from './lib/mock-ioredis'
 
 Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () => {
   const defaultLimit = 1

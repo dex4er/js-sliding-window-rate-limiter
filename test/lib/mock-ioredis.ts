@@ -80,7 +80,7 @@ export class MockIORedis extends IORedis {
     }
 
     const delayPromise = this.operationDelay ? new Promise<void>((resolve) => {
-      setTimeout(() => resolve(), this.operationDelay)
+      setTimeout(() => resolve(), this.operationDelay!)
     }) : Promise.resolve()
 
     return delayPromise.then(() => {
@@ -109,5 +109,3 @@ export class MockIORedis extends IORedis {
     })
   }
 }
-
-export default MockIORedis
