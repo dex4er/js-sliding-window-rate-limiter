@@ -26,7 +26,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
       let key: string
       let limiter: SlidingWindowRateLimiterBackend
-      let promise: Promise<number>
+      let usage: number
 
       Given('limiter object', () => {
         limiter = SlidingWindowRateLimiter.createLimiter(options)
@@ -36,28 +36,28 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         key = 'one-reservation:' + uuidv1()
       })
 
-      When('I check usage', () => {
-        promise = limiter.check(key, defaultLimit)
+      When('I check usage', async () => {
+        usage = await limiter.check(key, defaultLimit)
       })
 
       Then('usage is zero', () => {
-        return promise.should.eventually.equal(0)
+        usage.should.equal(0)
       })
 
-      When('I make one reservation', () => {
-        promise = limiter.reserve(key, defaultLimit)
-      })
-
-      Then('usage is above zero', () => {
-        return promise.should.eventually.be.above(0)
-      })
-
-      When('I check usage', () => {
-        promise = limiter.check(key, defaultLimit)
+      When('I make one reservation', async () => {
+        usage = await limiter.reserve(key, defaultLimit)
       })
 
       Then('usage is above zero', () => {
-        return promise.should.eventually.be.above(0)
+        usage.should.be.above(0)
+      })
+
+      When('I check usage', async () => {
+        usage = await limiter.check(key, defaultLimit)
+      })
+
+      Then('usage is above zero', () => {
+        usage.should.be.above(0)
       })
 
       After(() => {
@@ -71,7 +71,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
       let key: string
       let limiter: SlidingWindowRateLimiterBackend
-      let promise: Promise<number>
+      let usage: number
 
       Given('limiter object', () => {
         limiter = SlidingWindowRateLimiter.createLimiter(options)
@@ -81,36 +81,36 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         key = 'above-limit:' + uuidv1()
       })
 
-      When('I check usage', () => {
-        promise = limiter.check(key, defaultLimit)
+      When('I check usage', async () => {
+        usage = await limiter.check(key, defaultLimit)
       })
 
       Then('usage is zero', () => {
-        return promise.should.eventually.equal(0)
+        usage.should.equal(0)
       })
 
-      When('I make one reservation', () => {
-        promise = limiter.reserve(key, defaultLimit)
+      When('I make one reservation', async () => {
+        usage = await limiter.reserve(key, defaultLimit)
       })
 
       Then('usage is above zero', () => {
-        return promise.should.eventually.be.above(0)
+        usage.should.be.above(0)
       })
 
-      When('I try to make another above limit', () => {
-        promise = limiter.reserve(key, defaultLimit)
+      When('I try to make another above limit', async () => {
+        usage = await limiter.reserve(key, defaultLimit)
       })
 
       Then('usage is below zero', () => {
-        return promise.should.eventually.be.below(0)
+        usage.should.be.below(0)
       })
 
-      When('I check usage', () => {
-        promise = limiter.check(key, defaultLimit)
+      When('I check usage', async () => {
+        usage = await limiter.check(key, defaultLimit)
       })
 
       Then('usage is above zero', () => {
-        return promise.should.eventually.be.above(0)
+        usage.should.be.above(0)
       })
 
       After(() => {
@@ -124,7 +124,7 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
 
       let key: string
       let limiter: SlidingWindowRateLimiterBackend
-      let promise: Promise<number>
+      let usage: number
 
       And('limiter object', () => {
         limiter = SlidingWindowRateLimiter.createLimiter(options)
@@ -134,24 +134,24 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         key = 'after-interval:' + uuidv1()
       })
 
-      When('I make one reservation', () => {
-        promise = limiter.reserve(key, defaultLimit)
+      When('I make one reservation', async () => {
+        usage = await limiter.reserve(key, defaultLimit)
       })
 
       Then('usage is above zero', () => {
-        return promise.should.eventually.be.above(0)
+        usage.should.be.above(0)
       })
 
       When('I wait more than interval', () => {
         return delay(2000 /* ms */)
       })
 
-      And('I try to make another above limit', () => {
-        promise = limiter.reserve(key, defaultLimit)
+      And('I try to make another above limit', async () => {
+        usage = await limiter.reserve(key, defaultLimit)
       })
 
       Then('usage is above zero', () => {
-        return promise.should.eventually.be.above(0)
+        usage.should.be.above(0)
       })
 
       After(() => {
@@ -175,35 +175,32 @@ Feature('Test sliding-window-rate-limiter module with promises', () => {
         key = 'after-interval:' + uuidv1()
       })
 
-      When('I make one reservation', () => {
-        const reservationTokenPromise = limiter.reserve(key, defaultLimit)
-        return reservationTokenPromise.then((resolvedReservationToken) => {
-          reservationToken = resolvedReservationToken
-        })
+      When('I make one reservation', async () => {
+        reservationToken = await limiter.reserve(key, defaultLimit)
       })
 
       Then('reservation token is correct', () => {
         reservationToken.should.be.above(0)
       })
 
-      And('usage is above zero', () => {
-        return limiter.check(key, defaultLimit).should.eventually.be.above(0)
+      And('usage is above zero', async () => {
+        await limiter.check(key, defaultLimit).should.eventually.be.above(0)
       })
 
-      When('I cancel reservation', () => {
-        return limiter.cancel(key, reservationToken).should.eventually.equal(1)
+      When('I cancel reservation', async () => {
+        await limiter.cancel(key, reservationToken).should.eventually.equal(1)
       })
 
-      Then('there should be no reservations', () => {
-        return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+      Then('there should be no reservations', async () => {
+        await limiter.check(key, defaultLimit).should.eventually.be.equal(0)
       })
 
-      When('I cancel already canceled reservation', () => {
-        return limiter.cancel(key, reservationToken).should.eventually.equal(0)
+      When('I cancel already canceled reservation', async () => {
+        await limiter.cancel(key, reservationToken).should.eventually.equal(0)
       })
 
-      Then('there should be no reservations', () => {
-        return limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+      Then('there should be no reservations', async () => {
+        await limiter.check(key, defaultLimit).should.eventually.be.equal(0)
       })
 
       After(() => {

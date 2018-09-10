@@ -28,14 +28,16 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
       key = 'error'
     })
 
-    When('I try to make one reservation', () => {
-      limiter.reserve(key, defaultLimit).catch((err) => {
-        error = err
-      })
+    When('I try to make one reservation', async () => {
+      try {
+        await limiter.reserve(key, defaultLimit)
+      } catch (e) {
+        error = e
+      }
     })
 
     Then('reservation is rejected', () => {
-      return error.should.be.an('Error')
+      error.should.be.an('Error')
         .and.has.property('message')
         .that.matches(/ERR Error running script/)
     })
@@ -68,14 +70,16 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
       key = 'exception'
     })
 
-    When('I try to make one reservation', () => {
-      limiter.reserve(key, defaultLimit).catch((err) => {
-        error = err
-      })
+    When('I try to make one reservation', async () => {
+      try {
+        await limiter.reserve(key, defaultLimit)
+      } catch (e) {
+        error = e
+      }
     })
 
     Then('limiter throws an exception', () => {
-      return error.should.be.an('Error', 'Redis throws an exception')
+      error.should.be.an('Error', 'Redis throws an exception')
     })
 
     After(() => {

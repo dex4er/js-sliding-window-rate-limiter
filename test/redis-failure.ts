@@ -35,19 +35,19 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     })
 
     When('Redis is disconnected', () => {
-      return redis.disconnect()
+      redis.disconnect()
     })
 
-    And('check method is called', () => {
-      return limiter.check(key, defaultLimit).should.eventually.equal(0)
+    And('check method is called', async () => {
+      await limiter.check(key, defaultLimit).should.eventually.equal(0)
     })
 
     Then('one error event was fired', () => {
       errors.length.should.equals(1)
     })
 
-    When('reserve method is called', () => {
-      return limiter.reserve(key, defaultLimit).should.eventually.equal(0)
+    When('reserve method is called', async () => {
+      await limiter.reserve(key, defaultLimit).should.eventually.equal(0)
     })
 
     Then('one error event was fired', () => {
