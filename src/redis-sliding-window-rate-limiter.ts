@@ -2,7 +2,7 @@
 
 import { EventEmitter } from 'events'
 import fs from 'fs'
-import IORedis from 'ioredis'
+import IORedis = require('ioredis');
 import path from 'path'
 
 import {
