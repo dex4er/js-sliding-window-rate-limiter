@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.0 2010-03-21
+
+* Typescript: use `import IORedis = require('ioredis')` syntax so it can be used
+  in a project without `esModuleInterop` compiler option.
+
 ## v1.2.0 2018-08-29
 
 * IORedis typings without Bluebird.

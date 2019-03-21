@@ -153,7 +153,7 @@ value), and will try to use again the Redis server after `reuseRedisAfter`.
 
 ## License
 
-Copyright (c) 2017-2018 Piotr Roszatycki <piotr.roszatycki@gmail.com>
+Copyright (c) 2017-2019 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 [MIT](https://opensource.org/licenses/MIT)
 
