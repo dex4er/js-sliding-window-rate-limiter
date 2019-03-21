@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.0 2019-03-22
+
+* Breaking change: dropped support for Node 6.
+
 ## v1.5.0 2019-03-22
 
 * Support for Node 6 has been restored and will be dropped in 2.x.x versions.

@@ -8,7 +8,7 @@ Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
 
 ## Requirements
 
-This module requires ES6 with Node >= 6.
+This module requires ES6 with Node >= 8.
 
 Redis >= 3.2.0 is required for Redis backend.
 

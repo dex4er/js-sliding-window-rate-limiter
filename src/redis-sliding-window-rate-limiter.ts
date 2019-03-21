@@ -86,20 +86,16 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     }
   }
 
-  protected limiter (key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms> {
-    try {
-      if (!this.operationTimeout) {
-        return this.redis.limiter(key, mode, interval, limit, ts)
-      } else {
-        return this.promiseWithTimeout(this.redis.limiter(key, mode, interval, limit, ts))
-      }
-    } catch (e) {
-      return Promise.reject(e)
+  private async limiter (key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms> {
+    if (!this.operationTimeout) {
+      return this.redis.limiter(key, mode, interval, limit, ts)
+    } else {
+      return this.promiseWithTimeout(this.redis.limiter(key, mode, interval, limit, ts))
     }
   }
 
-  protected promiseWithTimeout<T> (operationPromise: Promise<T>): Promise<T> {
-    let timer: NodeJS.Timer
+  private async promiseWithTimeout<T> (operationPromise: Promise<T>): Promise<T> {
+    let timer: NodeJS.Timeout | undefined
 
     const timeoutPromise = new Promise<T>((_resolve, reject) => {
       timer = setTimeout(() => {
@@ -107,10 +103,11 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
       }, this.operationTimeout)
     })
 
-    return Promise.race([operationPromise, timeoutPromise]).then((result) => {
-      if (timer) clearTimeout(timer)
-      return result
-    })
+    const result = await Promise.race([operationPromise, timeoutPromise])
+
+    if (timer) clearTimeout(timer)
+
+    return result
   }
 }
 
