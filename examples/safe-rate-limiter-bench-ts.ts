@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-// Usage: time ts-node examples/redis-rate-limiter-bench-ts.ts 10000 >/dev/null
+// Usage: n0 >/dev/null
 
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60

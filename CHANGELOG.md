@@ -1,6 +1,10 @@
 # Changelog
 
-## v1.3.0 2010-03-21
+## v1.4.0 2019-03-21
+
+* Dropped support for Node 6. `async`/`await` syntax is used and ES2017 code is generated.
+
+## v1.3.0 2019-03-21
 
 * Typescript: use `import IORedis = require('ioredis')` syntax so it can be used
   in a project without `esModuleInterop` compiler option.
