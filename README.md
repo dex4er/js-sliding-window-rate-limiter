@@ -36,6 +36,24 @@ _Typescript:_
 import SlidingWindowRateLimiter from 'sliding-window-rate-limiter'
 ```
 
+Transpiling this module with own settings in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "paths": {
+      "sliding-window-rate-limiter": ["node_modules/sliding-window-rate-limiter/src/sliding-window-rate-limiter"]
+    },
+    "strict": true
+  },
+  "include": [
+    "node_modules/sliding-window-rate-limiter/src/*.ts"
+  ]
+}
+```
+
 ### constructor
 
 ```js
