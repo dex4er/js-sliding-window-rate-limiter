@@ -12,7 +12,7 @@ interface Buckets {
 }
 
 interface Timers {
-  [key: string]: NodeJS.Timeout
+  [key: string]: NodeJS.Timer
 }
 
 export type MemorySlidingWindowRateLimiterOptions = SlidingWindowRateLimiterBackendOptions
@@ -29,25 +29,25 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     this.interval = Number(options.interval) || 60 as s
   }
 
-  async check (key: string, limit: number): Promise<number> {
+  check (key: string, limit: number): Promise<number> {
     this.bucketExpireNow(key)
 
     const usage = this.buckets[key].length
 
     if (usage > limit) {
-      return -limit
+      return Promise.resolve(-limit)
     } else {
-      return usage
+      return Promise.resolve(usage)
     }
   }
 
-  async reserve (key: string, limit: number): Promise<number | ms> {
+  reserve (key: string, limit: number): Promise<number | ms> {
     const now = this.bucketExpireNow(key)
 
     const usage = this.buckets[key].length
 
     if (usage >= limit) {
-      return -limit
+      return Promise.resolve(-limit)
     } else {
       this.buckets[key].push(now)
 
@@ -59,11 +59,11 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
         delete this.timers[key]
       }, this.interval * 1000 as ms)
 
-      return now
+      return Promise.resolve(now)
     }
   }
 
-  async cancel (key: string, ts: number): Promise<number | ms> {
+  cancel (key: string, ts: number): Promise<number | ms> {
     this.bucketExpireNow(key)
 
     let canceled = 0
@@ -74,7 +74,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
       canceled = this.buckets[key].splice(position, 1).length
     }
 
-    return canceled
+    return Promise.resolve(canceled)
   }
 
   destroy (): void {
@@ -83,7 +83,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     }
   }
 
-  private bucketExpireNow (key: string): ms {
+  protected bucketExpireNow (key: string): ms {
     const now: ms = new Date().getTime()
     this.buckets[key] = this.buckets[key] ? this.buckets[key].filter((ts) => now - ts < (this.interval * 1000 as ms)) : []
     return now

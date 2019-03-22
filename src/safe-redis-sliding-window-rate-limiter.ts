@@ -28,7 +28,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
   readonly defaultResponse: number
 
   protected redisServiceAvailable: boolean = true
-  protected reconnectTimer?: NodeJS.Timeout = undefined
+  protected reconnectTimer?: NodeJS.Timer = undefined
 
   constructor (readonly options: SafeRedisSlidingWindowRateLimiterOptions = {}) {
     super(options)
@@ -37,27 +37,27 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
     this.defaultResponse = Number(options.defaultResponse) || 0
   }
 
-  async check (key: string, limit: number): Promise<number> {
+  check (key: string, limit: number): Promise<number> {
     if (this.redisServiceAvailable) {
       return this.promiseErrorHandler(super.check(key, limit), this.defaultResponse)
     } else {
-      return this.defaultResponse
+      return Promise.resolve(this.defaultResponse)
     }
   }
 
-  async reserve (key: string, limit: number): Promise<number | ms> {
+  reserve (key: string, limit: number): Promise<number | ms> {
     if (this.redisServiceAvailable) {
       return this.promiseErrorHandler(super.reserve(key, limit), this.defaultResponse)
     } else {
-      return this.defaultResponse
+      return Promise.resolve(this.defaultResponse)
     }
   }
 
-  async cancel (key: string, ts: ms): Promise<number | ms> {
+  cancel (key: string, ts: ms): Promise<number | ms> {
     if (this.redisServiceAvailable) {
       return this.promiseErrorHandler(super.cancel(key, ts), this.defaultResponse)
     } else {
-      return this.defaultResponse
+      return Promise.resolve(this.defaultResponse)
     }
   }
 
@@ -69,22 +69,23 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
     this.removeAllListeners('error')
   }
 
-  private async promiseErrorHandler (originPromise: Promise<number | ms>, defaultResponse: number): Promise<number | ms> {
-    try {
-      const successValue = await originPromise
-      return successValue
-    } catch (e) {
-      this.handleError(e)
-      return defaultResponse
-    }
+  protected promiseErrorHandler (originPromise: Promise<number | ms>, defaultResponse: number): Promise<number | ms> {
+    return new Promise((resolve) => {
+      originPromise.then((successValue) => {
+        resolve(successValue)
+      }, (error) => {
+        this.handleError(error)
+        resolve(defaultResponse)
+      })
+    })
   }
 
-  private handleError (error: Error): void {
+  protected handleError (error: Error): void {
     this.markServiceAsUnavailable()
     this.emit('error', error)
   }
 
-  private markServiceAsUnavailable (): void {
+  protected markServiceAsUnavailable (): void {
     this.redisServiceAvailable = false
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer)

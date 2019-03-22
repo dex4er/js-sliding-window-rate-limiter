@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.0 2019-03-22
+
+* Support for Node 6 has been restored and will be dropped in 2.x.x versions.
+
 ## v1.4.0 2019-03-21
 
 * Dropped support for Node 6. `async`/`await` syntax is used and ES2017 code is generated.
