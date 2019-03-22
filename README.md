@@ -49,6 +49,7 @@ Transpiling this module with own settings in `tsconfig.json`:
     "strict": true
   },
   "include": [
+    "*.ts",
     "node_modules/sliding-window-rate-limiter/src/*.ts"
   ]
 }
