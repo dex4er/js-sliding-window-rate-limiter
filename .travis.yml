@@ -22,3 +22,6 @@ script:
   - npm run build
   - $NYC npm run ${NPM_RUN_SCRIPT:-test:spec} -- ${MOCHA_ARGS}
   - if [ -n "$NYC" ]; then nyc report --color && nyc report --reporter=text-lcov | coveralls; fi
+  - npm run clean
+  - git add .
+  - git diff-index --quiet HEAD
