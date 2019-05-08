@@ -1,8 +1,9 @@
 # Changelog
 
-## v2.0.1 2019-05-08
+## v2.1.0 2019-05-08
 
-* Updated dependencies.
+* `SlidingWindowRateLimiter.createLimiter` is now a static method rather than
+  part of a namespace.
 
 ## v2.0.0 2019-03-22
 
