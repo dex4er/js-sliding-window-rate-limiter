@@ -48,7 +48,7 @@
     "mocha": "^6.1.4",
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",
-    "rimraf": "^2.6.3",
+    "shx": "^0.3.2",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
@@ -57,7 +57,7 @@
   },
   "scripts": {
     "build": "npm run compile && npm run minify",
-    "clean": "rimraf lib",
+    "clean": "shx rm -rf lib",
     "compile": "tsc --pretty",
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "postpublish": "git tag v$npm_package_version -a -m \"Release v$npm_package_version\" && git push --tags",
