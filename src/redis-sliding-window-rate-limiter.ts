@@ -1,13 +1,13 @@
 /// <reference types="node" />
 
-import { EventEmitter } from 'events'
+import {EventEmitter} from 'events'
 import fs from 'fs'
 import IORedis = require('ioredis')
 import path from 'path'
 
 import {
   SlidingWindowRateLimiterBackend,
-  SlidingWindowRateLimiterBackendOptions
+  SlidingWindowRateLimiterBackendOptions,
 } from './sliding-window-rate-limiter-backend'
 
 type ms = number
@@ -16,12 +16,12 @@ type s = number
 const enum LimiterMode {
   Check,
   Reserve,
-  Cancel
+  Cancel,
 }
 
 // Additional command defined
 export interface Redis extends IORedis.Redis {
-  limiter (key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms>
+  limiter(key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms>
 }
 
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {
@@ -39,18 +39,18 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
   readonly interval: s
   readonly operationTimeout: ms
 
-  constructor (readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
+  constructor(readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = Number(options.interval) || 60 as s
+    this.interval = Number(options.interval) || (60 as s)
 
     this.operationTimeout = options.operationTimeout || 0
 
     if (!options.redis || typeof options.redis === 'string') {
       this.redis = new IORedis({
         host: options.redis,
-        retryStrategy: (_times) => 1000 as ms,
-        maxRetriesPerRequest: 1
+        retryStrategy: _times => 1000 as ms,
+        maxRetriesPerRequest: 1,
       }) as Redis
     } else {
       this.redis = options.redis
@@ -58,23 +58,23 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
 
     this.redis.defineCommand('limiter', {
       lua,
-      numberOfKeys: 1
+      numberOfKeys: 1,
     })
   }
 
-  check (key: string, limit: number): Promise<number> {
+  check(key: string, limit: number): Promise<number> {
     return this.limiter(key, LimiterMode.Check, this.interval, limit, 0)
   }
 
-  reserve (key: string, limit: number): Promise<number | ms> {
+  reserve(key: string, limit: number): Promise<number | ms> {
     return this.limiter(key, LimiterMode.Reserve, this.interval, limit, 0)
   }
 
-  cancel (key: string, ts: ms): Promise<number | ms> {
+  cancel(key: string, ts: ms): Promise<number | ms> {
     return this.limiter(key, LimiterMode.Cancel, this.interval, 0, ts)
   }
 
-  destroy (): void {
+  destroy(): void {
     if (!this.options.redis || typeof this.options.redis === 'string') {
       try {
         this.redis.quit().catch(() => {
@@ -86,7 +86,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     }
   }
 
-  private async limiter (key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms> {
+  private async limiter(key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms> {
     if (!this.operationTimeout) {
       return this.redis.limiter(key, mode, interval, limit, ts)
     } else {
@@ -94,7 +94,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     }
   }
 
-  private async promiseWithTimeout<T> (operationPromise: Promise<T>): Promise<T> {
+  private async promiseWithTimeout<T>(operationPromise: Promise<T>): Promise<T> {
     let timer: NodeJS.Timeout | undefined
 
     const timeoutPromise = new Promise<T>((_resolve, reject) => {

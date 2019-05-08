@@ -1,21 +1,21 @@
-import { After, And, Feature, Given, Scenario, Then, When } from './lib/steps'
+import {After, And, Feature, Given, Scenario, Then, When} from './lib/steps'
 
 import IORedis from 'ioredis'
 import uuidv1 from 'uuid/v1'
 
-import { SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
-import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
+import {SlidingWindowRateLimiter} from '../src/sliding-window-rate-limiter'
+import {SlidingWindowRateLimiterBackend} from '../src/sliding-window-rate-limiter-backend'
 
-import { delay } from './lib/delay'
-import { MockIORedis } from './lib/mock-ioredis'
+import {delay} from './lib/delay'
+import {MockIORedis} from './lib/mock-ioredis'
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
 
 const limiterBackendOptions: {[backend: string]: any} = {
-  Memory: { interval: 1 },
-  Redis: { redis, interval: 1 },
-  SafeRedis: { safe: true, redis, interval: 1 }
+  Memory: {interval: 1},
+  Redis: {redis, interval: 1},
+  SafeRedis: {safe: true, redis, interval: 1},
 }
 
 Feature('Test sliding-window-rate-limiter module with promises', () => {

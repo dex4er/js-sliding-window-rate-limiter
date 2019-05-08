@@ -1,8 +1,8 @@
-import { And, Feature, Given, Scenario, Then, When } from './lib/steps'
+import {And, Feature, Given, Scenario, Then, When} from './lib/steps'
 
 import uuidv1 from 'uuid/v1'
-import { Redis, SafeRedisSlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
-import { MockIORedis } from './lib/mock-ioredis'
+import {Redis, SafeRedisSlidingWindowRateLimiter} from '../src/sliding-window-rate-limiter'
+import {MockIORedis} from './lib/mock-ioredis'
 
 Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () => {
   Scenario('Redis failure', () => {
@@ -20,7 +20,7 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     And('limiter object', () => {
       limiter = new SafeRedisSlidingWindowRateLimiter({
         interval: 1,
-        redis
+        redis,
       })
     })
 
@@ -29,7 +29,7 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     })
 
     And('error listener', () => {
-      limiter.on('error', (err) => {
+      limiter.on('error', err => {
         errors.push(err)
       })
     })

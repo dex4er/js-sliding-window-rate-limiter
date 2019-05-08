@@ -1,14 +1,14 @@
-import { After, And, Feature, Scenario, Then, When } from './lib/steps'
+import {After, And, Feature, Scenario, Then, When} from './lib/steps'
 
 import IORedis from 'ioredis'
 
-import { MemorySlidingWindowRateLimiter } from '../src/memory-sliding-window-rate-limiter'
-import { RedisSlidingWindowRateLimiter } from '../src/redis-sliding-window-rate-limiter'
-import { SafeRedisSlidingWindowRateLimiter } from '../src/safe-redis-sliding-window-rate-limiter'
-import { SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
-import { SlidingWindowRateLimiterBackend } from '../src/sliding-window-rate-limiter-backend'
+import {MemorySlidingWindowRateLimiter} from '../src/memory-sliding-window-rate-limiter'
+import {RedisSlidingWindowRateLimiter} from '../src/redis-sliding-window-rate-limiter'
+import {SafeRedisSlidingWindowRateLimiter} from '../src/safe-redis-sliding-window-rate-limiter'
+import {SlidingWindowRateLimiter} from '../src/sliding-window-rate-limiter'
+import {SlidingWindowRateLimiterBackend} from '../src/sliding-window-rate-limiter-backend'
 
-import { MockIORedis } from './lib/mock-ioredis'
+import {MockIORedis} from './lib/mock-ioredis'
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
@@ -16,13 +16,13 @@ const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TES
 const backendClasses: {[backend: string]: any} = {
   Memory: MemorySlidingWindowRateLimiter,
   Redis: RedisSlidingWindowRateLimiter,
-  SafeRedis: SafeRedisSlidingWindowRateLimiter
+  SafeRedis: SafeRedisSlidingWindowRateLimiter,
 }
 
 const limiterBackendOptions: {[backend: string]: any} = {
-  Memory: { interval: 1 },
-  Redis: { redis, interval: 1 },
-  SafeRedis: { safe: true, redis, interval: 1 }
+  Memory: {interval: 1},
+  Redis: {redis, interval: 1},
+  SafeRedis: {safe: true, redis, interval: 1},
 }
 
 for (const backend of ['Memory', 'Redis', 'SafeRedis']) {

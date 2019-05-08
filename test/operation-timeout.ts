@@ -1,16 +1,16 @@
-import { And, Feature, Given, Scenario, Then } from './lib/steps'
+import {And, Feature, Given, Scenario, Then} from './lib/steps'
 
 import uuidv1 from 'uuid/v1'
 
 import RedisSlidingWindowRateLimiter from '../src/redis-sliding-window-rate-limiter'
-import { Redis } from '../src/sliding-window-rate-limiter'
+import {Redis} from '../src/sliding-window-rate-limiter'
 
-import { MockIORedis } from './lib/mock-ioredis'
+import {MockIORedis} from './lib/mock-ioredis'
 
 Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () => {
   const defaultLimit = 1
 
-  let error: Error | { message: string }
+  let error: Error | {message: string}
   let redis: Redis
   let limiter: RedisSlidingWindowRateLimiter
   let key: string
@@ -24,18 +24,18 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     })
 
     And('reset error', () => {
-      error = { message: '' }
+      error = {message: ''}
     })
 
     And('redis connection', () => {
-      redis = new MockIORedis({ operationDelay })
+      redis = new MockIORedis({operationDelay})
     })
 
     And('limiter object', () => {
       limiter = new RedisSlidingWindowRateLimiter({
         interval: 1,
         redis,
-        operationTimeout
+        operationTimeout,
       })
     })
 
@@ -44,7 +44,7 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     })
 
     And('check method is called', () => {
-      return limiter.check(key, defaultLimit).catch((err) => {
+      return limiter.check(key, defaultLimit).catch(err => {
         error = err
       })
     })
@@ -61,18 +61,18 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     })
 
     And('reset error', () => {
-      error = { message: '' }
+      error = {message: ''}
     })
 
     And('redis connection', () => {
-      redis = new MockIORedis({ operationDelay })
+      redis = new MockIORedis({operationDelay})
     })
 
     And('limiter object', () => {
       limiter = new RedisSlidingWindowRateLimiter({
         interval: 1,
         redis,
-        operationTimeout
+        operationTimeout,
       })
     })
 
@@ -81,7 +81,7 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
     })
 
     And('check method is called', async () => {
-      return limiter.check(key, defaultLimit).catch((err) => {
+      return limiter.check(key, defaultLimit).catch(err => {
         error = err
       })
     })

@@ -1,8 +1,11 @@
 /// <reference types="node" />
 
-import { EventEmitter } from 'events'
+import {EventEmitter} from 'events'
 
-import { SlidingWindowRateLimiterBackend, SlidingWindowRateLimiterBackendOptions } from './sliding-window-rate-limiter-backend'
+import {
+  SlidingWindowRateLimiterBackend,
+  SlidingWindowRateLimiterBackendOptions,
+} from './sliding-window-rate-limiter-backend'
 
 type ms = number
 type s = number
@@ -23,13 +26,13 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
   protected buckets: Buckets = {}
   protected timers: Timers = {}
 
-  constructor (readonly options: MemorySlidingWindowRateLimiterOptions = {}) {
+  constructor(readonly options: MemorySlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = Number(options.interval) || 60 as s
+    this.interval = Number(options.interval) || (60 as s)
   }
 
-  async check (key: string, limit: number): Promise<number> {
+  async check(key: string, limit: number): Promise<number> {
     this.bucketExpireNow(key)
 
     const usage = this.buckets[key].length
@@ -41,7 +44,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     }
   }
 
-  async reserve (key: string, limit: number): Promise<number | ms> {
+  async reserve(key: string, limit: number): Promise<number | ms> {
     const now = this.bucketExpireNow(key)
 
     const usage = this.buckets[key].length
@@ -54,16 +57,19 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
       if (this.timers[key]) {
         clearTimeout(this.timers[key])
       }
-      this.timers[key] = setTimeout(() => {
-        delete this.buckets[key]
-        delete this.timers[key]
-      }, this.interval * 1000 as ms)
+      this.timers[key] = setTimeout(
+        () => {
+          delete this.buckets[key]
+          delete this.timers[key]
+        },
+        (this.interval * 1000) as ms,
+      )
 
       return now
     }
   }
 
-  async cancel (key: string, ts: number): Promise<number | ms> {
+  async cancel(key: string, ts: number): Promise<number | ms> {
     this.bucketExpireNow(key)
 
     let canceled = 0
@@ -77,15 +83,17 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     return canceled
   }
 
-  destroy (): void {
+  destroy(): void {
     for (const key of Object.keys(this.timers)) {
       clearTimeout(this.timers[key])
     }
   }
 
-  private bucketExpireNow (key: string): ms {
+  private bucketExpireNow(key: string): ms {
     const now: ms = new Date().getTime()
-    this.buckets[key] = this.buckets[key] ? this.buckets[key].filter((ts) => now - ts < (this.interval * 1000 as ms)) : []
+    this.buckets[key] = this.buckets[key]
+      ? this.buckets[key].filter(ts => now - ts < ((this.interval * 1000) as ms))
+      : []
     return now
   }
 }

@@ -9,19 +9,19 @@ const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
 
 import SlidingWindowRateLimiter from '../src/sliding-window-rate-limiter'
 
-import { promisify } from 'util'
+import {promisify} from 'util'
 const delay = promisify(setTimeout)
 
-async function main (): Promise<void> {
+async function main(): Promise<void> {
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
     redis: REDIS_HOST,
-    safe: true
-  }).on('error', (err) => {
+    safe: true,
+  }).on('error', err => {
     console.error('Limiter:', err)
   })
 
-  limiter.redis.on('error', (err) => {
+  limiter.redis.on('error', err => {
     console.error('Redis:', err)
   })
 

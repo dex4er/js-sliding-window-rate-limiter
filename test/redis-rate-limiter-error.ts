@@ -1,8 +1,8 @@
-import { After, And, Feature, Given, Scenario, Then, When } from './lib/steps'
+import {After, And, Feature, Given, Scenario, Then, When} from './lib/steps'
 
-import { Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter } from '../src/sliding-window-rate-limiter'
+import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from '../src/sliding-window-rate-limiter'
 
-import { MockIORedis } from './lib/mock-ioredis'
+import {MockIORedis} from './lib/mock-ioredis'
 
 Feature('Test sliding-window-rate-limiter module error with Redis backend', () => {
   Scenario('Redis returns error', () => {
@@ -20,7 +20,7 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     And('limiter object', () => {
       limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
-        redis
+        redis,
       })
     })
 
@@ -37,7 +37,8 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     })
 
     Then('reservation is rejected', () => {
-      error.should.be.an('Error')
+      error.should.be
+        .an('Error')
         .and.has.property('message')
         .that.matches(/ERR Error running script/)
     })
@@ -62,7 +63,7 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     And('limiter object', () => {
       limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
-        redis
+        redis,
       })
     })
 

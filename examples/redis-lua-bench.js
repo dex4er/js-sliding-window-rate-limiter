@@ -14,14 +14,14 @@ const Redis = require('ioredis')
 
 const lua = fs.readFileSync(path.join(__dirname, '../lib/sliding-window-rate-limiter.min.lua'), 'utf8')
 
-async function main () {
+async function main() {
   const redis = new Redis({
-    host: process.env.REDIS_HOST
+    host: process.env.REDIS_HOST,
   })
 
   redis.defineCommand('limiter', {
     lua,
-    numberOfKeys: 1
+    numberOfKeys: 1,
   })
 
   const MODE_CHECK = 0
