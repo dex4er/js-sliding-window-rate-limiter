@@ -62,7 +62,7 @@
     "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
     "postpublish": "git tag v$npm_package_version -a -m \"Release v$npm_package_version\" && git push --tags",
     "prepublishOnly": "npm run build",
-    "pretest": "npm run build && tsc --pretty -p examples && tsc --pretty -p test && eslint . && tslint -t stylish -p . && tslint -t stylish -p examples && tslint -t stylish -p test && prettier --ignore-path .gitignore --list-different '**/*.js' '**/*.json' '**/*.ts' '**/*.yaml' && markdownlint \"*.md\"",
+    "pretest": "npm run build && tsc --pretty -p examples && tsc --pretty -p test && eslint . && tslint -t stylish -p . && tslint -t stylish -p examples && tslint -t stylish -p test && prettier --ignore-path .gitignore --list-different '**/*.js' '**/*.json' '**/*.ts' '**/*.yml' && markdownlint \"*.md\"",
     "test": "npm run test:spec",
     "test:spec": "npm run ts-mocha -- \"test/*.ts\"",
     "test:coverage": "nyc --reporter json npm run test:spec && nyc report",
