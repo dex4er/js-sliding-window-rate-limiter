@@ -1,3 +1,5 @@
+import {expect} from "chai"
+
 import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
 
 import IORedis from "ioredis"
@@ -41,7 +43,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is zero", () => {
-        usage.should.equal(0)
+        expect(usage).to.equal(0)
       })
 
       When("I make one reservation", async () => {
@@ -49,7 +51,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is above zero", () => {
-        usage.should.be.above(0)
+        expect(usage).to.be.above(0)
       })
 
       When("I check usage", async () => {
@@ -57,7 +59,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is above zero", () => {
-        usage.should.be.above(0)
+        expect(usage).to.be.above(0)
       })
 
       After(() => {
@@ -86,7 +88,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is zero", () => {
-        usage.should.equal(0)
+        expect(usage).to.equal(0)
       })
 
       When("I make one reservation", async () => {
@@ -94,7 +96,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is above zero", () => {
-        usage.should.be.above(0)
+        expect(usage).to.be.above(0)
       })
 
       When("I try to make another above limit", async () => {
@@ -102,7 +104,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is below zero", () => {
-        usage.should.be.below(0)
+        expect(usage).to.be.below(0)
       })
 
       When("I check usage", async () => {
@@ -110,7 +112,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is above zero", () => {
-        usage.should.be.above(0)
+        expect(usage).to.be.above(0)
       })
 
       After(() => {
@@ -139,7 +141,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is above zero", () => {
-        usage.should.be.above(0)
+        expect(usage).to.be.above(0)
       })
 
       When("I wait more than interval", () => {
@@ -151,7 +153,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("usage is above zero", () => {
-        usage.should.be.above(0)
+        expect(usage).to.be.above(0)
       })
 
       After(() => {
@@ -180,27 +182,27 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("reservation token is correct", () => {
-        reservationToken.should.be.above(0)
+        expect(reservationToken).to.be.above(0)
       })
 
       And("usage is above zero", async () => {
-        await limiter.check(key, defaultLimit).should.eventually.be.above(0)
+        expect(await limiter.check(key, defaultLimit)).to.be.above(0)
       })
 
       When("I cancel reservation", async () => {
-        await limiter.cancel(key, reservationToken).should.eventually.equal(1)
+        expect(await limiter.cancel(key, reservationToken)).to.equal(1)
       })
 
       Then("there should be no reservations", async () => {
-        await limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+        expect(await limiter.check(key, defaultLimit)).to.equal(0)
       })
 
       When("I cancel already canceled reservation", async () => {
-        await limiter.cancel(key, reservationToken).should.eventually.equal(0)
+        expect(await limiter.cancel(key, reservationToken)).to.equal(0)
       })
 
       Then("there should be no reservations", async () => {
-        await limiter.check(key, defaultLimit).should.eventually.be.equal(0)
+        expect(await limiter.check(key, defaultLimit)).to.equal(0)
       })
 
       After(() => {

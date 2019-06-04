@@ -1,3 +1,5 @@
+import {expect} from "chai"
+
 import {After, And, Feature, Scenario, Then, When} from "./lib/steps"
 
 import IORedis from "ioredis"
@@ -36,11 +38,11 @@ for (const backend of ["Memory", "Redis", "SafeRedis"]) {
       })
 
       Then("limiter exists", () => {
-        limiter.should.have.property("reserve")
+        expect(limiter).to.have.property("reserve")
       })
 
       And("limiter has correct class", () => {
-        limiter.should.be.instanceOf(backendClasses[backend])
+        expect(limiter).to.be.instanceOf(backendClasses[backend])
       })
 
       After(() => {

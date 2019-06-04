@@ -1,3 +1,5 @@
+import {expect} from "chai"
+
 import {And, Feature, Given, Scenario, Then, When} from "./lib/steps"
 
 import uuidv1 from "uuid/v1"
@@ -39,19 +41,19 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
     })
 
     And("check method is called", async () => {
-      await limiter.check(key, defaultLimit).should.eventually.equal(0)
+      expect(await limiter.check(key, defaultLimit)).to.equal(0)
     })
 
     Then("one error event was fired", () => {
-      errors.length.should.equals(1)
+      expect(errors.length).to.equal(1)
     })
 
     When("reserve method is called", async () => {
-      await limiter.reserve(key, defaultLimit).should.eventually.equal(0)
+      expect(await limiter.reserve(key, defaultLimit)).to.equal(0)
     })
 
     Then("one error event was fired", () => {
-      errors.length.should.equals(1)
+      expect(errors.length).to.equal(1)
     })
   })
 })

@@ -37,8 +37,8 @@ Feature("Test sliding-window-rate-limiter module error with Redis backend", () =
     })
 
     Then("reservation is rejected", () => {
-      error.should.be
-        .an("Error")
+      expect(error)
+        .to.be.an("Error")
         .and.has.property("message")
         .that.matches(/ERR Error running script/)
     })
@@ -80,7 +80,7 @@ Feature("Test sliding-window-rate-limiter module error with Redis backend", () =
     })
 
     Then("limiter throws an exception", () => {
-      error.should.be.an("Error", "Redis throws an exception")
+      expect(error).to.be.an("Error", "Redis throws an exception")
     })
 
     After(() => {

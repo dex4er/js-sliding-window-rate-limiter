@@ -1,3 +1,5 @@
+import {expect} from "chai"
+
 import {And, Feature, Given, Scenario, Then} from "./lib/steps"
 
 import uuidv1 from "uuid/v1"
@@ -50,7 +52,7 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
     })
 
     Then("timeout error was fired", () => {
-      error.should.be.an("Error", "Operation timed out")
+      expect(error).to.be.an("Error", "Operation timed out")
     })
   })
 
@@ -87,7 +89,7 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
     })
 
     Then("timeout error was not fired", () => {
-      error.should.be.not.an("Error")
+      expect(error).to.be.not.an("Error")
     })
   })
 })
