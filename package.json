@@ -1,6 +1,6 @@
 {
   "name": "sliding-window-rate-limiter",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
   "main": "lib/sliding-window-rate-limiter.js",
   "typings": "lib/sliding-window-rate-limiter.d.ts",
@@ -22,35 +22,35 @@
   },
   "homepage": "http://github.com/dex4er/js-sliding-window-rate-limiter",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
-    "ioredis": "^4.9.3",
+    "ioredis": "^4.9.5",
     "tslib": "^1.9.3"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/ioredis": "4.0.10",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^12.0.0",
+    "@types/ioredis": "4.0.11",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.4",
     "@types/uuid": "^3.4.4",
     "chai": "^4.2.0",
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.2.0",
-    "eslint-plugin-import": "^2.17.2",
-    "eslint-plugin-node": "^9.0.1",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.1.1",
     "luamin": "^1.0.4",
-    "markdownlint-cli": "^0.15.0",
+    "markdownlint-cli": "^0.16.0",
     "mocha": "^6.1.4",
-    "nyc": "^14.1.0",
-    "prettier": "^1.17.0",
+    "nyc": "^14.1.1",
+    "prettier": "^1.17.1",
     "shx": "^0.3.2",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.4.5",
+    "typescript": "^3.5.1",
     "uuid": "^3.3.2"
   },
   "scripts": {
