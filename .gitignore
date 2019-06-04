@@ -1,6 +1,11 @@
 *-ts.js
 
+*.d.ts
 *.gz
+*.lock
+*.log
+*.map
+*.out
 *.tgz
 
 ts-node-*

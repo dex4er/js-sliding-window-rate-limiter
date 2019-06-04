@@ -1,3 +1,5 @@
+import {expect} from "chai"
+
 import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
 
 import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"

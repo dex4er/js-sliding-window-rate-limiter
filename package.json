@@ -1,6 +1,6 @@
 {
   "name": "sliding-window-rate-limiter",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
   "main": "lib/sliding-window-rate-limiter.js",
   "typings": "lib/sliding-window-rate-limiter.d.ts",
@@ -30,13 +30,11 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/chai-as-promised": "^7.1.0",
     "@types/ioredis": "4.0.10",
     "@types/mocha": "^5.2.6",
     "@types/node": "^12.0.0",
     "@types/uuid": "^3.4.4",
     "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
@@ -56,25 +54,18 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "build": "npm run compile && npm run minify",
-    "clean": "shx rm -rf lib",
-    "compile": "tsc --pretty",
-    "minify": "luamin -f src/sliding-window-rate-limiter.lua > lib/sliding-window-rate-limiter.min.lua || luamin -f src/sliding-window-rate-limiter.lua",
+    "compile": "tsc --pretty --project .",
+    "clean": "npm run clean:compile && npm run clean:coverage",
+    "clean:compile": "shx rm -rf lib",
+    "clean:coverage": "shx rm -rf coverage .nyc_output",
+    "lint": "npm run compile && tsc --pretty -p examples && tsc --pretty -p test && eslint . && tslint -t stylish -p . && tslint -t stylish -p examples && tslint -t stylish -p test && prettier --ignore-path .gitignore --list-different '**/*.{js,json,md,ts,yml}' && markdownlint \"*.md\"",
     "postpublish": "git tag v$npm_package_version -a -m \"Release v$npm_package_version\" && git push --tags",
-    "prepublishOnly": "npm run build",
-    "pretest": "npm run build && tsc --pretty -p examples && tsc --pretty -p test && eslint . && tslint -t stylish -p . && tslint -t stylish -p examples && tslint -t stylish -p test && prettier --ignore-path .gitignore --list-different '**/*.js' '**/*.json' '**/*.ts' '**/*.yml' && markdownlint \"*.md\"",
+    "prepack": "npm run compile",
+    "prepublishOnly": "npm run test",
+    "pretest": "npm run lint",
     "test": "npm run test:spec",
     "test:spec": "npm run ts-mocha -- \"test/*.ts\"",
-    "test:coverage": "nyc --reporter json npm run test:spec && nyc report",
-    "ts-mocha": "mocha --use_strict --throw-deprecation --require source-map-support/register --require ts-node/register --timeout 90000"
-  },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ],
-    "exclude": [
-      ".*.js",
-      "**/*.d.ts"
-    ]
+    "test:coverage": "npm run clean:coverage && cross-env NYC=\"nyc --no-clean --reporter=lcov\" npm run test:spec && nyc report --reporter=text-summary --color",
+    "ts-mocha": "$NYC mocha --use_strict --throw-deprecation --require source-map-support/register --require ts-node/register --timeout 90000"
   }
 }

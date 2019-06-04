@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.1.1 2019-06-04
+
+- Minor tweaks in README.
+- Added source map to the package.
+
 ## v2.1.0 2019-05-08
 
 - `SlidingWindowRateLimiter.createLimiter` is now a static method rather than

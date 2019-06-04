@@ -29,29 +29,15 @@ npm install -D @types/node @types/ioredis
 ## Usage
 
 ```js
-const SlidingWindowRateLimiter = require("sliding-window-rate-limiter")
+const {SlidingWindowRateLimiter} = require("sliding-window-rate-limiter")
 ```
 
 _Typescript:_
 
 ```ts
 import SlidingWindowRateLimiter from "sliding-window-rate-limiter"
-```
-
-Transpiling this module with own settings in `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "esModuleInterop": true,
-    "paths": {
-      "sliding-window-rate-limiter": ["node_modules/sliding-window-rate-limiter/src/sliding-window-rate-limiter"]
-    },
-    "strict": true
-  },
-  "include": ["*.ts", "node_modules/sliding-window-rate-limiter/src/*.ts"]
-}
+// or
+import {SlidingWindowRateLimiter} from "sliding-window-rate-limiter"
 ```
 
 ### constructor
