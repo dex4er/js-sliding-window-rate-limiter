@@ -1,7 +1,9 @@
 # sliding-window-rate-limiter
 
 <!-- markdownlint-disable MD013 -->
+
 [![Build Status](https://secure.travis-ci.org/dex4er/js-sliding-window-rate-limiter.svg)](http://travis-ci.org/dex4er/js-sliding-window-rate-limiter) [![Coverage Status](https://coveralls.io/repos/github/dex4er/js-sliding-window-rate-limiter/badge.svg)](https://coveralls.io/github/dex4er/js-sliding-window-rate-limiter) [![npm](https://img.shields.io/npm/v/sliding-window-rate-limiter.svg)](https://www.npmjs.com/package/sliding-window-rate-limiter)
+
 <!-- markdownlint-enable MD013 -->
 
 Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
@@ -27,13 +29,13 @@ npm install -D @types/node @types/ioredis
 ## Usage
 
 ```js
-const SlidingWindowRateLimiter = require('sliding-window-rate-limiter')
+const SlidingWindowRateLimiter = require("sliding-window-rate-limiter")
 ```
 
 _Typescript:_
 
 ```ts
-import SlidingWindowRateLimiter from 'sliding-window-rate-limiter'
+import SlidingWindowRateLimiter from "sliding-window-rate-limiter"
 ```
 
 Transpiling this module with own settings in `tsconfig.json`:
@@ -48,10 +50,7 @@ Transpiling this module with own settings in `tsconfig.json`:
     },
     "strict": true
   },
-  "include": [
-    "*.ts",
-    "node_modules/sliding-window-rate-limiter/src/*.ts"
-  ]
+  "include": ["*.ts", "node_modules/sliding-window-rate-limiter/src/*.ts"]
 }
 ```
 
@@ -63,16 +62,16 @@ const limiter = SlidingWindowRateLimiter.createLimiter(options)
 
 _Options:_
 
-* `interval` is a number of seconds in a sliding window
-* `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
+- `interval` is a number of seconds in a sliding window
+- `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (only for Redis backend)
-* `operationTimeout` is a time in milliseconds after Redis operation is canceled
+- `operationTimeout` is a time in milliseconds after Redis operation is canceled
   (for Redis and SafeRedis backends, optional)
-* `safe`: `true` (only for SafeRedis backend)
-* `reuseRedisAfter` is a time (milliseconds) to reconnect to Redis server
+- `safe`: `true` (only for SafeRedis backend)
+- `reuseRedisAfter` is a time (milliseconds) to reconnect to Redis server
   after connection failure (only for SafeRedis backend, default value: 2000
   milliseconds)
-* `defaultResponse` is a number value returned when Redis server is not
+- `defaultResponse` is a number value returned when Redis server is not
   available (only for SafeRedis backend, default value: 0)
 
 If `redis` parameter is a string then new `ioredis` object is created with
@@ -82,7 +81,7 @@ _Example:_
 
 ```js
 const limiter = SlidingWindowRateLimiter.createLimiter({
-  interval: 60
+  interval: 60,
 })
 ```
 
@@ -92,11 +91,11 @@ or
 const limiter = SlidingWindowRateLimiter.createLimiter({
   interval: 60,
   redis: new Redis({
-    host: 'redis-server',
-    retryStrategy: (_times) => 1000,
-    maxRetriesPerRequest: 1
+    host: "redis-server",
+    retryStrategy: _times => 1000,
+    maxRetriesPerRequest: 1,
   }),
-  safe: true
+  safe: true,
 })
 ```
 

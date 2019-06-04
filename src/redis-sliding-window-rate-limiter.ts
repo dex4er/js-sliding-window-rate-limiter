@@ -1,14 +1,14 @@
 /// <reference types="node" />
 
-import {EventEmitter} from 'events'
-import fs from 'fs'
-import IORedis = require('ioredis')
-import path from 'path'
+import {EventEmitter} from "events"
+import fs from "fs"
+import IORedis = require("ioredis")
+import path from "path"
 
 import {
   SlidingWindowRateLimiterBackend,
   SlidingWindowRateLimiterBackendOptions,
-} from './sliding-window-rate-limiter-backend'
+} from "./sliding-window-rate-limiter-backend"
 
 type ms = number
 type s = number
@@ -31,8 +31,8 @@ export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateL
 }
 
 const lua = process.env.DEBUG_SLIDING_WINDOW_RATELIMITER_LUA
-  ? fs.readFileSync(path.join(__dirname, '../src/sliding-window-rate-limiter.lua'), 'utf8')
-  : fs.readFileSync(path.join(__dirname, '../lib/sliding-window-rate-limiter.min.lua'), 'utf8')
+  ? fs.readFileSync(path.join(__dirname, "../src/sliding-window-rate-limiter.lua"), "utf8")
+  : fs.readFileSync(path.join(__dirname, "../lib/sliding-window-rate-limiter.min.lua"), "utf8")
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly redis: Redis
@@ -46,7 +46,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
 
     this.operationTimeout = options.operationTimeout || 0
 
-    if (!options.redis || typeof options.redis === 'string') {
+    if (!options.redis || typeof options.redis === "string") {
       this.redis = new IORedis({
         host: options.redis,
         retryStrategy: _times => 1000 as ms,
@@ -56,7 +56,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
       this.redis = options.redis
     }
 
-    this.redis.defineCommand('limiter', {
+    this.redis.defineCommand("limiter", {
       lua,
       numberOfKeys: 1,
     })
@@ -75,7 +75,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
   }
 
   destroy(): void {
-    if (!this.options.redis || typeof this.options.redis === 'string') {
+    if (!this.options.redis || typeof this.options.redis === "string") {
       try {
         this.redis.quit().catch(() => {
           this.redis.disconnect()
@@ -99,7 +99,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
 
     const timeoutPromise = new Promise<T>((_resolve, reject) => {
       timer = setTimeout(() => {
-        reject(new Error('Operation timed out'))
+        reject(new Error("Operation timed out"))
       }, this.operationTimeout)
     })
 

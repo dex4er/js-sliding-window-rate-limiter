@@ -5,11 +5,11 @@
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
-const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
+const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
-const SlidingWindowRateLimiter = require('../lib/sliding-window-rate-limiter')
+const SlidingWindowRateLimiter = require("../lib/sliding-window-rate-limiter")
 
-const {promisify} = require('util')
+const {promisify} = require("util")
 const delay = promisify(setTimeout)
 
 async function main() {
@@ -17,15 +17,15 @@ async function main() {
     interval: INTERVAL,
     redis: REDIS_HOST,
     safe: true,
-  }).on('error', err => {
-    console.error('Limiter:', err)
+  }).on("error", err => {
+    console.error("Limiter:", err)
   })
 
-  limiter.redis.on('error', err => {
-    console.error('Redis:', err)
+  limiter.redis.on("error", err => {
+    console.error("Redis:", err)
   })
 
-  const key = 'limiter'
+  const key = "limiter"
 
   for (let i = 1; i <= ATTEMPTS; i++) {
     await limiter.reserve(key, ATTEMPTS)

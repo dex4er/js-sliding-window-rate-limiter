@@ -7,11 +7,11 @@ services:
 
 matrix:
   include:
-    - node_js: 'node'
+    - node_js: "node"
       env: NPM_RUN_SCRIPT=test NPM_AUDIT=true MOCHA_ARGS="-- --node-arg=--pending-deprecation --node-arg=--throw-deprecation" NYC="nyc --reporter json"
-    - node_js: '10'
+    - node_js: "10"
       env: TEST_REDIS_URL=localhost NYC="nyc --reporter json"
-    - node_js: '8'
+    - node_js: "8"
 
 install:
   - npm install

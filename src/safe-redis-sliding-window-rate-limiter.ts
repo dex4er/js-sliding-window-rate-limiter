@@ -1,7 +1,7 @@
 /// <reference types="node" />
 
-import {RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions} from './redis-sliding-window-rate-limiter'
-import {SlidingWindowRateLimiterBackend} from './sliding-window-rate-limiter'
+import {RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions} from "./redis-sliding-window-rate-limiter"
+import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter"
 
 type ms = number
 
@@ -12,15 +12,15 @@ export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWi
 }
 
 export interface SafeRedisSlidingWindowRateLimiter {
-  addListener(event: 'error', listener: (err: Error) => void): this
-  emit(event: 'error', error: Error): boolean
-  listeners(event: 'error'): Array<(err: Error) => void>
-  off(event: 'error', listener: (err: Error) => void): this
-  on(event: 'error', listener: (err: Error) => void): this
-  once(event: 'error', listener: (err: Error) => void): this
-  prependListener(event: 'error', listener: (err: Error) => void): this
-  prependOnceListener(event: 'error', listener: (err: Error) => void): this
-  removeListener(event: 'error', listener: (err: Error) => void): this
+  addListener(event: "error", listener: (err: Error) => void): this
+  emit(event: "error", error: Error): boolean
+  listeners(event: "error"): Array<(err: Error) => void>
+  off(event: "error", listener: (err: Error) => void): this
+  on(event: "error", listener: (err: Error) => void): this
+  once(event: "error", listener: (err: Error) => void): this
+  prependListener(event: "error", listener: (err: Error) => void): this
+  prependOnceListener(event: "error", listener: (err: Error) => void): this
+  removeListener(event: "error", listener: (err: Error) => void): this
 }
 
 export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter
@@ -67,7 +67,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer)
     }
-    this.removeAllListeners('error')
+    this.removeAllListeners("error")
   }
 
   private async promiseErrorHandler(
@@ -85,7 +85,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
 
   private handleError(error: Error): void {
     this.markServiceAsUnavailable()
-    this.emit('error', error)
+    this.emit("error", error)
   }
 
   private markServiceAsUnavailable(): void {

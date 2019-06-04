@@ -1,14 +1,14 @@
-import {After, And, Feature, Scenario, Then, When} from './lib/steps'
+import {After, And, Feature, Scenario, Then, When} from "./lib/steps"
 
-import IORedis from 'ioredis'
+import IORedis from "ioredis"
 
-import {MemorySlidingWindowRateLimiter} from '../src/memory-sliding-window-rate-limiter'
-import {RedisSlidingWindowRateLimiter} from '../src/redis-sliding-window-rate-limiter'
-import {SafeRedisSlidingWindowRateLimiter} from '../src/safe-redis-sliding-window-rate-limiter'
-import {SlidingWindowRateLimiter} from '../src/sliding-window-rate-limiter'
-import {SlidingWindowRateLimiterBackend} from '../src/sliding-window-rate-limiter-backend'
+import {MemorySlidingWindowRateLimiter} from "../src/memory-sliding-window-rate-limiter"
+import {RedisSlidingWindowRateLimiter} from "../src/redis-sliding-window-rate-limiter"
+import {SafeRedisSlidingWindowRateLimiter} from "../src/safe-redis-sliding-window-rate-limiter"
+import {SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
+import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend"
 
-import {MockIORedis} from './lib/mock-ioredis'
+import {MockIORedis} from "./lib/mock-ioredis"
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
@@ -25,21 +25,21 @@ const limiterBackendOptions: {[backend: string]: any} = {
   SafeRedis: {safe: true, redis, interval: 1},
 }
 
-for (const backend of ['Memory', 'Redis', 'SafeRedis']) {
+for (const backend of ["Memory", "Redis", "SafeRedis"]) {
   Feature(`Test sliding-window-rate-limiter module constructor with ${backend} backend`, () => {
     const options = limiterBackendOptions[backend]
     let limiter: SlidingWindowRateLimiterBackend
 
-    Scenario('basic usage', () => {
-      When('create simple limiter', () => {
+    Scenario("basic usage", () => {
+      When("create simple limiter", () => {
         limiter = SlidingWindowRateLimiter.createLimiter(options)
       })
 
-      Then('limiter exists', () => {
-        limiter.should.have.property('reserve')
+      Then("limiter exists", () => {
+        limiter.should.have.property("reserve")
       })
 
-      And('limiter has correct class', () => {
+      And("limiter has correct class", () => {
         limiter.should.be.instanceOf(backendClasses[backend])
       })
 
@@ -47,7 +47,7 @@ for (const backend of ['Memory', 'Redis', 'SafeRedis']) {
         limiter.destroy()
       })
 
-      if (backend === 'Redis' || backend === 'SafeRedis') {
+      if (backend === "Redis" || backend === "SafeRedis") {
         After(() => {
           redis.disconnect()
         })

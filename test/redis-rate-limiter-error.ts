@@ -1,11 +1,11 @@
-import {After, And, Feature, Given, Scenario, Then, When} from './lib/steps'
+import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
 
-import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from '../src/sliding-window-rate-limiter'
+import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
 
-import {MockIORedis} from './lib/mock-ioredis'
+import {MockIORedis} from "./lib/mock-ioredis"
 
-Feature('Test sliding-window-rate-limiter module error with Redis backend', () => {
-  Scenario('Redis returns error', () => {
+Feature("Test sliding-window-rate-limiter module error with Redis backend", () => {
+  Scenario("Redis returns error", () => {
     const defaultLimit = 1
 
     let key: string
@@ -13,22 +13,22 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     let error: Error
     let redis: Redis
 
-    Given('mock redis connection', () => {
+    Given("mock redis connection", () => {
       redis = new MockIORedis()
     })
 
-    And('limiter object', () => {
+    And("limiter object", () => {
       limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
         redis,
       })
     })
 
-    And('key', () => {
-      key = 'error'
+    And("key", () => {
+      key = "error"
     })
 
-    When('I try to make one reservation', async () => {
+    When("I try to make one reservation", async () => {
       try {
         await limiter.reserve(key, defaultLimit)
       } catch (e) {
@@ -36,10 +36,10 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
       }
     })
 
-    Then('reservation is rejected', () => {
+    Then("reservation is rejected", () => {
       error.should.be
-        .an('Error')
-        .and.has.property('message')
+        .an("Error")
+        .and.has.property("message")
         .that.matches(/ERR Error running script/)
     })
 
@@ -48,7 +48,7 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     })
   })
 
-  Scenario('Redis throws an exception', () => {
+  Scenario("Redis throws an exception", () => {
     const defaultLimit = 1
 
     let key: string
@@ -56,22 +56,22 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
     let error: Error
     let redis: Redis
 
-    Given('mock redis connection', () => {
+    Given("mock redis connection", () => {
       redis = new MockIORedis()
     })
 
-    And('limiter object', () => {
+    And("limiter object", () => {
       limiter = SlidingWindowRateLimiter.createLimiter({
         interval: 1,
         redis,
       })
     })
 
-    And('key', () => {
-      key = 'exception'
+    And("key", () => {
+      key = "exception"
     })
 
-    When('I try to make one reservation', async () => {
+    When("I try to make one reservation", async () => {
       try {
         await limiter.reserve(key, defaultLimit)
       } catch (e) {
@@ -79,8 +79,8 @@ Feature('Test sliding-window-rate-limiter module error with Redis backend', () =
       }
     })
 
-    Then('limiter throws an exception', () => {
-      error.should.be.an('Error', 'Redis throws an exception')
+    Then("limiter throws an exception", () => {
+      error.should.be.an("Error", "Redis throws an exception")
     })
 
     After(() => {

@@ -5,35 +5,35 @@
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 
-const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
+const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
-import SlidingWindowRateLimiter from '../src/sliding-window-rate-limiter'
+import SlidingWindowRateLimiter from "../src/sliding-window-rate-limiter"
 
 async function main(): Promise<void> {
   const limiter = SlidingWindowRateLimiter.createLimiter({
     interval: INTERVAL,
     redis: REDIS_HOST,
-  }).on('error', err => {
-    console.error('Limiter:', err)
+  }).on("error", err => {
+    console.error("Limiter:", err)
   })
 
-  limiter.redis.on('error', err => {
-    console.error('Redis:', err)
+  limiter.redis.on("error", err => {
+    console.error("Redis:", err)
   })
 
-  const key = 'limiter'
+  const key = "limiter"
 
   for (let i = 1; i <= ATTEMPTS; i++) {
     try {
       await limiter.reserve(key, ATTEMPTS)
     } catch (e) {
-      console.error('Benchmark:', e)
+      console.error("Benchmark:", e)
     }
     try {
       const usage = await limiter.check(key, ATTEMPTS)
       console.info(usage)
     } catch (e) {
-      console.error('Benchmark:', e)
+      console.error("Benchmark:", e)
     }
   }
 

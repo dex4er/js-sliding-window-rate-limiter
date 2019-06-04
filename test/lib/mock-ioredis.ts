@@ -1,5 +1,5 @@
-import crypto from 'crypto'
-import IORedis from 'ioredis'
+import crypto from "crypto"
+import IORedis from "ioredis"
 
 type ms = number
 
@@ -21,7 +21,7 @@ export class MockIORedis extends IORedis {
   constructor(protected options: MockIORedisOptions | string = {}) {
     super()
 
-    if (typeof options === 'string') {
+    if (typeof options === "string") {
       this.options = options = {host: options}
     }
 
@@ -43,7 +43,7 @@ export class MockIORedis extends IORedis {
 
   quit(): Promise<string> {
     this.disconnect()
-    return Promise.resolve('OK')
+    return Promise.resolve("OK")
   }
 
   // naive implementation of limiter
@@ -52,25 +52,25 @@ export class MockIORedis extends IORedis {
       this.buckets[key] = []
     }
 
-    if (key === 'exception') {
-      throw new Error('Redis throws an exception')
+    if (key === "exception") {
+      throw new Error("Redis throws an exception")
     }
 
-    if (key === 'error' || !this.connected) {
+    if (key === "error" || !this.connected) {
       const sha1sum = crypto
-        .createHash('sha1')
+        .createHash("sha1")
         .update(String(Math.random()))
-        .digest('hex')
+        .digest("hex")
 
       const error = Object.assign(
         new Error(
           `ERR Error running script (call to f_${sha1sum}): @user_script:1: user_script:1: attempt to call field 'replicate_commands' (a nil value) `,
         ),
         {
-          name: 'ReplyError',
+          name: "ReplyError",
           command: {
-            name: 'evalsha',
-            args: [sha1sum, '1', key, interval, limit, mode, toRemove, ''],
+            name: "evalsha",
+            args: [sha1sum, "1", key, interval, limit, mode, toRemove, ""],
           },
         },
       )

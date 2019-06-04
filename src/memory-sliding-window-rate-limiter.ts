@@ -1,11 +1,11 @@
 /// <reference types="node" />
 
-import {EventEmitter} from 'events'
+import {EventEmitter} from "events"
 
 import {
   SlidingWindowRateLimiterBackend,
   SlidingWindowRateLimiterBackendOptions,
-} from './sliding-window-rate-limiter-backend'
+} from "./sliding-window-rate-limiter-backend"
 
 type ms = number
 type s = number

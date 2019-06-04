@@ -1,13 +1,13 @@
-import {And, Feature, Given, Scenario, Then} from './lib/steps'
+import {And, Feature, Given, Scenario, Then} from "./lib/steps"
 
-import uuidv1 from 'uuid/v1'
+import uuidv1 from "uuid/v1"
 
-import RedisSlidingWindowRateLimiter from '../src/redis-sliding-window-rate-limiter'
-import {Redis} from '../src/sliding-window-rate-limiter'
+import RedisSlidingWindowRateLimiter from "../src/redis-sliding-window-rate-limiter"
+import {Redis} from "../src/sliding-window-rate-limiter"
 
-import {MockIORedis} from './lib/mock-ioredis'
+import {MockIORedis} from "./lib/mock-ioredis"
 
-Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () => {
+Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () => {
   const defaultLimit = 1
 
   let error: Error | {message: string}
@@ -17,21 +17,21 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
   let operationDelay: number
   let operationTimeout: number
 
-  Scenario('operation timeout', () => {
-    Given('operation timeout shorter then operation delay', () => {
+  Scenario("operation timeout", () => {
+    Given("operation timeout shorter then operation delay", () => {
       operationTimeout = 2 * 1000
       operationDelay = 3 * 1000
     })
 
-    And('reset error', () => {
-      error = {message: ''}
+    And("reset error", () => {
+      error = {message: ""}
     })
 
-    And('redis connection', () => {
+    And("redis connection", () => {
       redis = new MockIORedis({operationDelay})
     })
 
-    And('limiter object', () => {
+    And("limiter object", () => {
       limiter = new RedisSlidingWindowRateLimiter({
         interval: 1,
         redis,
@@ -39,36 +39,36 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
       })
     })
 
-    And('key', () => {
-      key = 'redis-failure:' + uuidv1()
+    And("key", () => {
+      key = "redis-failure:" + uuidv1()
     })
 
-    And('check method is called', () => {
+    And("check method is called", () => {
       return limiter.check(key, defaultLimit).catch(err => {
         error = err
       })
     })
 
-    Then('timeout error was fired', () => {
-      error.should.be.an('Error', 'Operation timed out')
+    Then("timeout error was fired", () => {
+      error.should.be.an("Error", "Operation timed out")
     })
   })
 
-  Scenario('operation timeout not fired', () => {
-    Given('operation timeout longer then operation delay', () => {
+  Scenario("operation timeout not fired", () => {
+    Given("operation timeout longer then operation delay", () => {
       operationTimeout = 3 * 1000
       operationDelay = 2 * 1000
     })
 
-    And('reset error', () => {
-      error = {message: ''}
+    And("reset error", () => {
+      error = {message: ""}
     })
 
-    And('redis connection', () => {
+    And("redis connection", () => {
       redis = new MockIORedis({operationDelay})
     })
 
-    And('limiter object', () => {
+    And("limiter object", () => {
       limiter = new RedisSlidingWindowRateLimiter({
         interval: 1,
         redis,
@@ -76,18 +76,18 @@ Feature('Test sliding-window-rate-limiter Redis failure with safe backend', () =
       })
     })
 
-    And('key', () => {
-      key = 'redis-failure:' + uuidv1()
+    And("key", () => {
+      key = "redis-failure:" + uuidv1()
     })
 
-    And('check method is called', async () => {
+    And("check method is called", async () => {
       return limiter.check(key, defaultLimit).catch(err => {
         error = err
       })
     })
 
-    Then('timeout error was not fired', () => {
-      error.should.be.not.an('Error')
+    Then("timeout error was not fired", () => {
+      error.should.be.not.an("Error")
     })
   })
 })
