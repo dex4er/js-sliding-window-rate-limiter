@@ -10,6 +10,7 @@ import {
   SlidingWindowRateLimiterBackendOptions,
 } from "./sliding-window-rate-limiter-backend"
 
+type μs = number
 type ms = number
 type s = number
 
@@ -17,11 +18,12 @@ const enum LimiterMode {
   Check,
   Reserve,
   Cancel,
+  Remaining,
 }
 
 // Additional command defined
 export interface Redis extends IORedis.Redis {
-  limiter(key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms>
+  limiter(key: string, mode: LimiterMode, interval: s, limit: number, token: number): Promise<number | μs>
 }
 
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {
@@ -44,7 +46,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
 
     this.interval = Number(options.interval) || (60 as s)
 
-    this.operationTimeout = options.operationTimeout || 0
+    this.operationTimeout = options.operationTimeout || (0 as ms)
 
     if (!options.redis || typeof options.redis === "string") {
       this.redis = new IORedis({
@@ -66,12 +68,16 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     return this.limiter(key, LimiterMode.Check, this.interval, limit, 0)
   }
 
-  reserve(key: string, limit: number): Promise<number | ms> {
+  reserve(key: string, limit: number): Promise<number> {
     return this.limiter(key, LimiterMode.Reserve, this.interval, limit, 0)
   }
 
-  cancel(key: string, ts: ms): Promise<number | ms> {
-    return this.limiter(key, LimiterMode.Cancel, this.interval, 0, ts)
+  cancel(key: string, token: number): Promise<number> {
+    return this.limiter(key, LimiterMode.Cancel, this.interval, 0, token)
+  }
+
+  remaining(key: string, limit: number): Promise<s> {
+    return this.limiter(key, LimiterMode.Remaining, this.interval, limit, 0).then(value => value / 1e6)
   }
 
   destroy(): void {
@@ -86,11 +92,17 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     }
   }
 
-  private async limiter(key: string, mode: LimiterMode, interval: s, limit: number, ts: ms): Promise<number | ms> {
+  private async limiter(
+    key: string,
+    mode: LimiterMode,
+    interval: s,
+    limit: number,
+    token: number,
+  ): Promise<number | μs> {
     if (!this.operationTimeout) {
-      return this.redis.limiter(key, mode, interval, limit, ts)
+      return this.redis.limiter(key, mode, interval, limit, token)
     } else {
-      return this.promiseWithTimeout(this.redis.limiter(key, mode, interval, limit, ts))
+      return this.promiseWithTimeout(this.redis.limiter(key, mode, interval, limit, token))
     }
   }
 
@@ -101,6 +113,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
       timer = setTimeout(() => {
         reject(new Error("Operation timed out"))
       }, this.operationTimeout)
+      timer.unref()
     })
 
     const result = await Promise.race([operationPromise, timeoutPromise])

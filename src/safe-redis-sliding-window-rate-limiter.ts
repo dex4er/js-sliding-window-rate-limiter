@@ -4,6 +4,7 @@ import {RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions} fro
 import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter"
 
 type ms = number
+type s = number
 
 export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWindowRateLimiterOptions {
   safe?: true
@@ -46,7 +47,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
     }
   }
 
-  async reserve(key: string, limit: number): Promise<number | ms> {
+  async reserve(key: string, limit: number): Promise<number> {
     if (this.redisServiceAvailable) {
       return this.promiseErrorHandler(super.reserve(key, limit), this.defaultResponse)
     } else {
@@ -54,9 +55,17 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
     }
   }
 
-  async cancel(key: string, ts: ms): Promise<number | ms> {
+  async cancel(key: string, token: number): Promise<number> {
     if (this.redisServiceAvailable) {
-      return this.promiseErrorHandler(super.cancel(key, ts), this.defaultResponse)
+      return this.promiseErrorHandler(super.cancel(key, token), this.defaultResponse)
+    } else {
+      return this.defaultResponse
+    }
+  }
+
+  async remaining(key: string, limit: number): Promise<s> {
+    if (this.redisServiceAvailable) {
+      return this.promiseErrorHandler(super.remaining(key, limit), this.defaultResponse)
     } else {
       return this.defaultResponse
     }

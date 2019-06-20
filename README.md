@@ -91,28 +91,37 @@ const limiter = SlidingWindowRateLimiter.createLimiter({
 const usage = await limiter.check(key, limit)
 ```
 
-Checks current usage for `key`. If usage is above limit, it returns a negative
-number with current usage. Throws an error if has occurred.
+Checks current usage for `key`. If usage is above `limit`, it returns a
+negative number with current usage. Throws an error if has occurred.
 
 ### reserve
 
 ```js
-const ts = await limiter.reserve(key, limit)
+const token = await limiter.reserve(key, limit)
 ```
 
-Makes a reservation and returns reserved timestamp as `ts`. Returns a negative
-number with current usage if the reservation can't be done because of limit.
+Makes a reservation and returns `token` with a reservation. Returns a negative
+number with current usage if the reservation can't be done because of `limit`.
 Throws an error if has occurred.
 
 ### cancel
 
 ```js
-const canceled = await limiter.cancel(key, ts)
+const canceled = await limiter.cancel(key, token)
 ```
 
-Cancels a reservation for timestamp `ts` and returns number of canceled
+Cancels a reservation for `token` and returns number of canceled
 timestamps. It is a zero if no timestamp previously was reserved or it was
 expired.
+
+### remaining
+
+```js
+const s = await limiter.remaining(key, limit)
+```
+
+Checks after how many seconds (with fractional part) new reservation will be
+possible for the `limit`.
 
 ### destroy
 

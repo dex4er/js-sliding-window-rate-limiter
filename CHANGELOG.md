@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.2.0 2019-06-21
+
+- New method `remaining` returns number of seconds after new reservation will be
+  possible.
+
 ## v2.1.2 2019-06-04
 
 - Updated dependencies.

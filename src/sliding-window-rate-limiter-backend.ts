@@ -1,4 +1,3 @@
-type ms = number
 type s = number
 
 export interface SlidingWindowRateLimiterBackendOptions {
@@ -10,7 +9,8 @@ export interface SlidingWindowRateLimiterBackend {
   readonly interval: s
 
   check(key: string, limit: number): Promise<number>
-  reserve(key: string, limit: number): Promise<number | ms>
-  cancel(key: string, ts: ms): Promise<number | ms>
+  reserve(key: string, limit: number): Promise<number>
+  cancel(key: string, token: number): Promise<number>
+  remaining(key: string, limit: number): Promise<s>
   destroy(): void
 }
