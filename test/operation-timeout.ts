@@ -21,8 +21,8 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
 
   Scenario("operation timeout", () => {
     Given("operation timeout shorter then operation delay", () => {
-      operationTimeout = 2 * 1000
-      operationDelay = 3 * 1000
+      operationTimeout = 1500
+      operationDelay = 3000
     })
 
     And("reset error", () => {
@@ -58,8 +58,8 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
 
   Scenario("operation timeout not fired", () => {
     Given("operation timeout longer then operation delay", () => {
-      operationTimeout = 3 * 1000
-      operationDelay = 2 * 1000
+      operationTimeout = 3000
+      operationDelay = 1500
     })
 
     And("reset error", () => {

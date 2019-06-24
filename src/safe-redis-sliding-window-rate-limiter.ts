@@ -3,12 +3,14 @@
 import {RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions} from "./redis-sliding-window-rate-limiter"
 import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter"
 
+import {CancelResult, CheckResult, ReserveResult} from "./sliding-window-rate-limiter-backend"
+
 type ms = number
 type s = number
 
 export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWindowRateLimiterOptions {
   safe?: true
-  reuseRedisAfter?: number
+  reuseRedisAfter?: ms
   defaultResponse?: number
 }
 
@@ -27,48 +29,58 @@ export interface SafeRedisSlidingWindowRateLimiter {
 export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter
   implements SlidingWindowRateLimiterBackend {
   readonly reuseRedisAfter: number
-  readonly defaultResponse: number
 
-  protected redisServiceAvailable: boolean = true
-  protected reconnectTimer?: NodeJS.Timeout = undefined
+  private redisServiceAvailable = true
+
+  private reconnectTimer?: NodeJS.Timeout
+  private reconnectTimerStart?: ms
 
   constructor(readonly options: SafeRedisSlidingWindowRateLimiterOptions = {}) {
     super(options)
 
     this.reuseRedisAfter = Number(options.reuseRedisAfter) || (2000 as ms)
-    this.defaultResponse = Number(options.defaultResponse) || 0
   }
 
-  async check(key: string, limit: number): Promise<number> {
+  cancel(key: string, token: number): Promise<CancelResult> {
     if (this.redisServiceAvailable) {
-      return this.promiseErrorHandler(super.check(key, limit), this.defaultResponse)
-    } else {
-      return this.defaultResponse
+      try {
+        return super.cancel(key, token).catch(err => {
+          this.handleError(err)
+          return {canceled: 0}
+        })
+      } catch (e) {
+        this.handleError(e)
+      }
     }
+    return Promise.resolve({canceled: 0})
   }
 
-  async reserve(key: string, limit: number): Promise<number> {
+  async check(key: string, limit: number): Promise<CheckResult> {
     if (this.redisServiceAvailable) {
-      return this.promiseErrorHandler(super.reserve(key, limit), this.defaultResponse)
-    } else {
-      return this.defaultResponse
+      try {
+        return super.check(key, limit).catch(err => {
+          this.handleError(err)
+          return this.resultWithReset({usage: 0})
+        })
+      } catch (e) {
+        this.handleError(e)
+      }
     }
+    return Promise.resolve(this.resultWithReset({usage: 0}))
   }
 
-  async cancel(key: string, token: number): Promise<number> {
+  async reserve(key: string, limit: number): Promise<ReserveResult> {
     if (this.redisServiceAvailable) {
-      return this.promiseErrorHandler(super.cancel(key, token), this.defaultResponse)
-    } else {
-      return this.defaultResponse
+      try {
+        return super.reserve(key, limit).catch(err => {
+          this.handleError(err)
+          return this.resultWithReset({usage: 0})
+        })
+      } catch (e) {
+        this.handleError(e)
+      }
     }
-  }
-
-  async remaining(key: string, limit: number): Promise<s> {
-    if (this.redisServiceAvailable) {
-      return this.promiseErrorHandler(super.remaining(key, limit), this.defaultResponse)
-    } else {
-      return this.defaultResponse
-    }
+    return Promise.resolve(this.resultWithReset({usage: 0}))
   }
 
   destroy(): void {
@@ -77,19 +89,6 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
       clearTimeout(this.reconnectTimer)
     }
     this.removeAllListeners("error")
-  }
-
-  private async promiseErrorHandler(
-    originPromise: Promise<number | ms>,
-    defaultResponse: number,
-  ): Promise<number | ms> {
-    try {
-      const successValue = await originPromise
-      return successValue
-    } catch (e) {
-      this.handleError(e)
-      return defaultResponse
-    }
   }
 
   private handleError(error: Error): void {
@@ -104,7 +103,17 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
     }
     this.reconnectTimer = setTimeout(() => {
       this.redisServiceAvailable = true
+      this.reconnectTimerStart = undefined
     }, this.reuseRedisAfter)
+    this.reconnectTimerStart = new Date().getTime()
+  }
+
+  private resultWithReset<T extends CheckResult | ReserveResult>(result: T): T {
+    if (this.reconnectTimerStart) {
+      const now: ms = new Date().getTime()
+      result.reset = ((this.reconnectTimerStart + this.reuseRedisAfter - now) / 1000) as s
+    }
+    return result
   }
 }
 

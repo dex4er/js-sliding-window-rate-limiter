@@ -18,10 +18,8 @@ async function main(): Promise<void> {
   const key = "limiter"
 
   for (let i = 1; i <= ATTEMPTS; i++) {
-    await limiter.reserve(key, LIMIT)
-    const usage = await limiter.check(key, LIMIT)
-    const remaining = await limiter.remaining(key, LIMIT)
-    console.info({usage, remaining})
+    const result = await limiter.reserve(key, LIMIT)
+    console.info(result)
   }
 
   limiter.destroy()

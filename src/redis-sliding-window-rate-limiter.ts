@@ -6,24 +6,29 @@ import IORedis = require("ioredis")
 import path from "path"
 
 import {
+  CancelResult,
+  CheckResult,
+  ReserveResult,
   SlidingWindowRateLimiterBackend,
   SlidingWindowRateLimiterBackendOptions,
 } from "./sliding-window-rate-limiter-backend"
+
+import {TimeoutError} from "./timeout-error"
 
 type μs = number
 type ms = number
 type s = number
 
-const enum LimiterMode {
-  Check,
-  Reserve,
-  Cancel,
-  Remaining,
-}
+type Canceled = number
+type Reset = μs
+type Token = number
+type Usage = number
 
 // Additional command defined
 export interface Redis extends IORedis.Redis {
-  limiter(key: string, mode: LimiterMode, interval: s, limit: number, token: number): Promise<number | μs>
+  limiter_cancel(key: string, token: number): Promise<Canceled>
+  limiter_check(key: string, interval: s, limit: number): Promise<[Usage, Reset]>
+  limiter_reserve(key: string, interval: s, limit: number): Promise<[Token, Usage, Reset]>
 }
 
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {
@@ -32,9 +37,11 @@ export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateL
   operationTimeout?: ms
 }
 
-const lua = process.env.DEBUG_SLIDING_WINDOW_RATELIMITER_LUA
-  ? fs.readFileSync(path.join(__dirname, "../src/sliding-window-rate-limiter.lua"), "utf8")
-  : fs.readFileSync(path.join(__dirname, "../lib/sliding-window-rate-limiter.min.lua"), "utf8")
+const LUA = {
+  cancel: fs.readFileSync(path.join(__dirname, "../src/redis/cancel.lua"), "utf8"),
+  check: fs.readFileSync(path.join(__dirname, "../src/redis/check.lua"), "utf8"),
+  reserve: fs.readFileSync(path.join(__dirname, "../src/redis/reserve.lua"), "utf8"),
+}
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly redis: Redis
@@ -58,26 +65,36 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
       this.redis = options.redis
     }
 
-    this.redis.defineCommand("limiter", {
-      lua,
-      numberOfKeys: 1,
+    this.redis.defineCommand("limiter_cancel", {lua: LUA.cancel, numberOfKeys: 1})
+    this.redis.defineCommand("limiter_check", {lua: LUA.check, numberOfKeys: 1})
+    this.redis.defineCommand("limiter_reserve", {lua: LUA.reserve, numberOfKeys: 1})
+  }
+
+  cancel(key: string, token: number): Promise<CancelResult> {
+    return this.promiseWithTimeoutError(this.redis.limiter_cancel(key, token)).then(canceled => {
+      return {canceled}
     })
   }
 
-  check(key: string, limit: number): Promise<number> {
-    return this.limiter(key, LimiterMode.Check, this.interval, limit, 0)
+  check(key: string, limit: number): Promise<CheckResult> {
+    return this.promiseWithTimeoutError(this.redis.limiter_check(key, this.interval, limit)).then(values => {
+      const result: CheckResult = {
+        usage: values[0],
+      }
+      if (values[1]) result.reset = values[1] / 1e6
+      return result
+    })
   }
 
-  reserve(key: string, limit: number): Promise<number> {
-    return this.limiter(key, LimiterMode.Reserve, this.interval, limit, 0)
-  }
-
-  cancel(key: string, token: number): Promise<number> {
-    return this.limiter(key, LimiterMode.Cancel, this.interval, 0, token)
-  }
-
-  remaining(key: string, limit: number): Promise<s> {
-    return this.limiter(key, LimiterMode.Remaining, this.interval, limit, 0).then(value => value / 1e6)
+  reserve(key: string, limit: number): Promise<ReserveResult> {
+    return this.promiseWithTimeoutError(this.redis.limiter_reserve(key, this.interval, limit)).then(values => {
+      const result: ReserveResult = {
+        usage: values[1],
+      }
+      if (values[0]) result.token = values[0]
+      if (values[2]) result.reset = values[2] / 1e6
+      return result
+    })
   }
 
   destroy(): void {
@@ -92,35 +109,24 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     }
   }
 
-  private async limiter(
-    key: string,
-    mode: LimiterMode,
-    interval: s,
-    limit: number,
-    token: number,
-  ): Promise<number | μs> {
-    if (!this.operationTimeout) {
-      return this.redis.limiter(key, mode, interval, limit, token)
+  private async promiseWithTimeoutError<T>(operationPromise: Promise<T>): Promise<T> {
+    if (this.operationTimeout) {
+      let timer: NodeJS.Timeout | undefined
+
+      const timeoutPromise = new Promise<T>((_resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new TimeoutError())
+        }, this.operationTimeout).unref()
+      })
+
+      const result = await Promise.race([operationPromise, timeoutPromise])
+
+      if (timer) clearTimeout(timer)
+
+      return result
     } else {
-      return this.promiseWithTimeout(this.redis.limiter(key, mode, interval, limit, token))
+      return operationPromise
     }
-  }
-
-  private async promiseWithTimeout<T>(operationPromise: Promise<T>): Promise<T> {
-    let timer: NodeJS.Timeout | undefined
-
-    const timeoutPromise = new Promise<T>((_resolve, reject) => {
-      timer = setTimeout(() => {
-        reject(new Error("Operation timed out"))
-      }, this.operationTimeout)
-      timer.unref()
-    })
-
-    const result = await Promise.race([operationPromise, timeoutPromise])
-
-    if (timer) clearTimeout(timer)
-
-    return result
   }
 }
 

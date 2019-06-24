@@ -26,10 +26,8 @@ async function main(): Promise<void> {
 
   for (let i = 1; i <= ATTEMPTS; i++) {
     try {
-      const reservation = await limiter.reserve(key, LIMIT)
-      const usage = await limiter.check(key, LIMIT)
-      const remaining = await limiter.remaining(key, LIMIT)
-      console.info({reservation, usage, remaining})
+      const result = await limiter.reserve(key, LIMIT)
+      console.info(result)
     } catch (e) {
       console.error("Benchmark:", e)
     }

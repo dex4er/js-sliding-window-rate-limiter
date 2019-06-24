@@ -3,6 +3,9 @@
 import {EventEmitter} from "events"
 
 import {
+  CancelResult,
+  CheckResult,
+  ReserveResult,
   SlidingWindowRateLimiterBackend,
   SlidingWindowRateLimiterBackendOptions,
 } from "./sliding-window-rate-limiter-backend"
@@ -18,38 +21,61 @@ interface Timers {
   [key: string]: NodeJS.Timeout
 }
 
-export type MemorySlidingWindowRateLimiterOptions = SlidingWindowRateLimiterBackendOptions
+export interface MemorySlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {}
 
 export class MemorySlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly interval: s
 
-  protected buckets: Buckets = {}
-  protected timers: Timers = {}
+  private buckets: Buckets = {}
+  private timers: Timers = {}
 
   constructor(readonly options: MemorySlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = Number(options.interval) || (60 as s)
+    this.interval = options.interval || (60 as s)
   }
 
-  async check(key: string, limit: number): Promise<number> {
+  async cancel(key: string, token: number): Promise<CancelResult> {
     this.bucketExpireNow(key)
-
     const usage = this.buckets[key].length
 
-    if (usage > limit) {
-      return -limit
-    } else {
-      return usage
+    let position: number
+    while ((position = this.buckets[key].indexOf(token)) !== -1) {
+      this.buckets[key].splice(position, 1)
+    }
+
+    const usage2 = this.buckets[key].length
+
+    return {
+      canceled: usage - usage2,
     }
   }
 
-  async reserve(key: string, limit: number): Promise<number> {
+  async check(key: string, limit: number): Promise<CheckResult> {
     const now = this.bucketExpireNow(key)
     const usage = this.buckets[key].length
 
-    if (usage >= limit) {
-      return -limit
+    const result: CheckResult = {usage}
+
+    if (usage && usage >= limit) {
+      const reset = this.bucketReset(key, limit, now)
+      if (reset) result.reset = reset
+    }
+
+    return result
+  }
+
+  async reserve(key: string, limit: number): Promise<ReserveResult> {
+    const now = this.bucketExpireNow(key)
+    const usage = this.buckets[key].length
+
+    if (usage && usage >= limit) {
+      const reset = this.bucketReset(key, limit, now)
+      const result: ReserveResult = {usage}
+
+      if (reset) result.reset = reset
+
+      return result
     } else {
       this.buckets[key].push(now)
 
@@ -62,36 +88,18 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
           delete this.timers[key]
         },
         (this.interval * 1000) as ms,
-      )
-      this.timers[key].unref()
+      ).unref()
 
-      return now as number
-    }
-  }
+      const result: ReserveResult = {usage: usage + 1}
 
-  async cancel(key: string, token: number): Promise<number> {
-    this.bucketExpireNow(key)
+      result.token = now
 
-    let canceled = 0
+      if (usage + 1 >= limit) {
+        const reset = this.bucketReset(key, limit, now)
+        if (reset) result.reset = reset
+      }
 
-    const position = this.buckets[key].indexOf(token)
-
-    if (position !== -1) {
-      canceled = this.buckets[key].splice(position, 1).length
-    }
-
-    return canceled
-  }
-
-  async remaining(key: string, limit: number): Promise<s> {
-    const now = this.bucketExpireNow(key)
-    const usage = this.buckets[key].length
-    const lastTimestamp = this.buckets[key][usage - limit]
-
-    if (lastTimestamp) {
-      return ((lastTimestamp + this.interval * (1000 as ms) - now) / 1000) as s
-    } else {
-      return 0
+      return result
     }
   }
 
@@ -99,6 +107,13 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     for (const key of Object.keys(this.timers)) {
       clearTimeout(this.timers[key])
     }
+  }
+
+  private bucketReset(key: string, limit: number, now: ms): ms | undefined {
+    const usage = this.buckets[key].length
+    const oldest = this.buckets[key][usage - limit]
+    if (oldest) return ((((oldest + this.interval * 1000) as ms) - now) / 1000) as s
+    return
   }
 
   private bucketExpireNow(key: string): ms {

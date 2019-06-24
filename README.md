@@ -6,7 +6,7 @@
 
 <!-- markdownlint-enable MD013 -->
 
-Sliding window rate limiter with Redis 3.2 backend or in-memory backend.
+Sliding window rate limiter with Redis >= 3.2 backend or in-memory backend.
 
 ## Requirements
 
@@ -57,11 +57,9 @@ _Options:_
 - `reuseRedisAfter` is a time (milliseconds) to reconnect to Redis server
   after connection failure (only for SafeRedis backend, default value: 2000
   milliseconds)
-- `defaultResponse` is a number value returned when Redis server is not
-  available (only for SafeRedis backend, default value: 0)
 
 If `redis` parameter is a string then new `ioredis` object is created with
-`retryStrategy` set to 1 seconds and `maxRetriesPerRequest` set to 1.
+`retryStrategy` set to 1 second and `maxRetriesPerRequest` set to 1.
 
 _Example:_
 
@@ -88,40 +86,33 @@ const limiter = SlidingWindowRateLimiter.createLimiter({
 ### check
 
 ```js
-const usage = await limiter.check(key, limit)
+const result = await limiter.check(key, limit)
+const {usage, reset} = result
 ```
 
-Checks current usage for `key`. If usage is above `limit`, it returns a
-negative number with current usage. Throws an error if has occurred.
+Checks current usage for `key`. If `usage` is equal or above `limit`,
+additionaly sets `reset` time in seconds.
 
 ### reserve
 
 ```js
-const token = await limiter.reserve(key, limit)
+const result = await limiter.reserve(key, limit)
+const {token, usage, reset} = result
 ```
 
-Makes a reservation and returns `token` with a reservation. Returns a negative
-number with current usage if the reservation can't be done because of `limit`.
-Throws an error if has occurred.
+Makes a reservation and returns `token` with a reservation. If `usage` is equal
+or above `limit`, additionaly sets `reset` time in seconds. Throws an error if
+has occurred.
 
 ### cancel
 
 ```js
-const canceled = await limiter.cancel(key, token)
+const result = await limiter.cancel(key, token)
+const {canceled} = result
 ```
 
-Cancels a reservation for `token` and returns number of canceled
-timestamps. It is a zero if no timestamp previously was reserved or it was
-expired.
-
-### remaining
-
-```js
-const s = await limiter.remaining(key, limit)
-```
-
-Checks after how many seconds (with fractional part) new reservation will be
-possible for the `limit`.
+Cancels a reservation for `token` and returns number of `canceled` tokens. It
+is a zero if no token previously was reserved or it was expired.
 
 ### destroy
 
@@ -161,8 +152,8 @@ limiter can be shared between many clients.
 
 There is extended version of limiter, which behaves gracefully, when Redis
 server is unavailable for any reason. In case of Redis connection failure,
-SafeRedis backend will always return positive response (`defaultResponse`
-value), and will try to use again the Redis server after `reuseRedisAfter`.
+SafeRedis backend will always return positive response object and will try to
+use again the Redis server after `reuseRedisAfter`.
 
 ## License
 

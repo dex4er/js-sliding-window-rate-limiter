@@ -1,7 +1,14 @@
 import crypto from "crypto"
 import IORedis from "ioredis"
 
+type μs = number
 type ms = number
+type s = number
+
+type Canceled = number
+type Reset = μs
+type Token = number
+type Usage = number
 
 interface Buckets {
   [key: string]: number[]
@@ -12,20 +19,18 @@ interface MockIORedisOptions extends IORedis.RedisOptions {
 }
 
 export class MockIORedis extends IORedis {
-  protected host?: string
-  protected operationDelay?: ms
+  private operationDelay?: ms
 
-  protected buckets: Buckets = {}
-  protected connected: boolean = true
+  private buckets: Buckets = {}
+  private connected: boolean = true
 
-  constructor(protected options: MockIORedisOptions | string = {}) {
+  constructor(options: MockIORedisOptions | string = {}) {
     super()
 
     if (typeof options === "string") {
-      this.options = options = {host: options}
+      options = {host: options}
     }
 
-    this.host = options.host
     this.operationDelay = options.operationDelay
   }
 
@@ -47,7 +52,52 @@ export class MockIORedis extends IORedis {
   }
 
   // naive implementation of limiter
-  limiter(key: string, mode: number, interval: number, limit: number, toRemove: number): Promise<number> {
+  limiter_cancel(key: string, token: number): Promise<Canceled> {
+    return this.limiter_prepare(key).then(() => {
+      const usage0 = this.buckets[key].length
+      this.buckets[key] = this.buckets[key].filter(ts => ts !== token)
+      return usage0 - this.buckets[key].length
+    })
+  }
+
+  limiter_check(key: string, interval: s, limit: number): Promise<[Usage, Reset]> {
+    return this.limiter_prepare(key).then(() => {
+      const now = new Date().getTime()
+
+      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000)
+
+      const usage = this.buckets[key].length
+
+      if (usage >= limit) {
+        return [usage, 1]
+      } else {
+        return [usage, 0]
+      }
+    })
+  }
+
+  limiter_reserve(key: string, interval: s, limit: number): Promise<[Token, Usage, Reset]> {
+    return this.limiter_prepare(key).then(() => {
+      const now = new Date().getTime()
+
+      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000)
+
+      const usage = this.buckets[key].length
+
+      if (usage >= limit) {
+        return [0, usage, 1]
+      } else {
+        this.buckets[key].push(now)
+        if (usage + 1 >= limit) {
+          return [now, usage + 1, 1]
+        } else {
+          return [now, usage + 1, 0]
+        }
+      }
+    })
+  }
+
+  private limiter_prepare(key: string): Promise<void> {
     if (!this.buckets[key]) {
       this.buckets[key] = []
     }
@@ -70,7 +120,7 @@ export class MockIORedis extends IORedis {
           name: "ReplyError",
           command: {
             name: "evalsha",
-            args: [sha1sum, "1", key, interval, limit, mode, toRemove, ""],
+            args: [sha1sum, "1", key, ""],
           },
         },
       )
@@ -84,29 +134,6 @@ export class MockIORedis extends IORedis {
         })
       : Promise.resolve()
 
-    return delayPromise.then(() => {
-      const now = new Date().getTime()
-
-      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000)
-
-      let result: number
-      let usage: number
-
-      result = usage = this.buckets[key].length
-
-      if (mode === 2) {
-        const index = this.buckets[key].indexOf(toRemove)
-        result = this.buckets[key].splice(index, 1).length
-      } else if (mode === 1) {
-        if (usage >= limit) {
-          result = usage = -limit
-        } else {
-          this.buckets[key].push(now)
-          result = now
-        }
-      }
-
-      return result
-    })
+    return delayPromise
   }
 }

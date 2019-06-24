@@ -1,9 +1,12 @@
 # Changelog
 
-## v2.2.0 2019-06-21
+## v3.0.0 2019-06-24
 
-- New method `remaining` returns number of seconds after new reservation will be
-  possible.
+- Limiter's methods return result object with `token`, `usage`, `reset` and
+  `canceled` properties.
+- Lua script is split to separate scripts one by method and not minified
+  anymore.
+- Removed `defaultResponse` option from safe Redis backend.
 
 ## v2.1.2 2019-06-04
 

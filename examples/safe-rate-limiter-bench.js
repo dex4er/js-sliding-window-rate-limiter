@@ -29,12 +29,10 @@ async function main() {
   const key = "limiter"
 
   for (let i = 1; i <= ATTEMPTS; i++) {
-    const reservation = await limiter.reserve(key, LIMIT)
-    const usage = await limiter.check(key, LIMIT)
-    const remaining = await limiter.remaining(key, LIMIT)
-    console.info({reservation, usage, remaining})
-    if (!usage) {
-      await delay(100) // slow down because limiter is not available
+    const result = await limiter.reserve(key, LIMIT)
+    console.info(result)
+    if (result.reset) {
+      await delay(result.reset * 1000) // slow down because limiter is not available
     }
   }
 

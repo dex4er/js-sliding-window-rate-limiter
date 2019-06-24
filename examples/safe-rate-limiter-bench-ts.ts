@@ -8,6 +8,8 @@ const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
+type ms = number
+
 import SlidingWindowRateLimiter from "../src/sliding-window-rate-limiter"
 
 import {promisify} from "util"
@@ -29,12 +31,10 @@ async function main(): Promise<void> {
   const key = "limiter"
 
   for (let i = 1; i <= ATTEMPTS; i++) {
-    const reservation = await limiter.reserve(key, LIMIT)
-    const usage = await limiter.check(key, LIMIT)
-    const remaining = await limiter.remaining(key, LIMIT)
-    console.info({reservation, usage, remaining})
-    if (!usage) {
-      await delay(100) // slow down because limiter is not available
+    const result = await limiter.reserve(key, LIMIT)
+    console.info(result)
+    if (result.reset) {
+      await delay((result.reset * 1000) as ms) // slow down because limiter is not available
     }
   }
 

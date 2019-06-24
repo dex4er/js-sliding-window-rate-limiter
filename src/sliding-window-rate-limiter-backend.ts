@@ -4,13 +4,28 @@ export interface SlidingWindowRateLimiterBackendOptions {
   interval?: s
 }
 
+export interface CancelResult {
+  canceled: number
+}
+
+export interface CheckResult {
+  usage: number
+  reset?: s
+}
+
+export interface ReserveResult {
+  token?: number
+  usage: number
+  reset?: s
+}
+
 export interface SlidingWindowRateLimiterBackend {
   readonly options: SlidingWindowRateLimiterBackendOptions
   readonly interval: s
 
-  check(key: string, limit: number): Promise<number>
-  reserve(key: string, limit: number): Promise<number>
-  cancel(key: string, token: number): Promise<number>
-  remaining(key: string, limit: number): Promise<s>
+  cancel(key: string, token: number): Promise<CancelResult>
+  check(key: string, limit: number): Promise<CheckResult>
+  reserve(key: string, limit: number): Promise<ReserveResult>
+
   destroy(): void
 }
