@@ -2,4 +2,4 @@
 !/index.js
 !/tsconfig.json
 !/lib/*
-!/src/*
+!/src/**
