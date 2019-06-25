@@ -32,7 +32,7 @@ async function main() {
     const result = await limiter.reserve(key, LIMIT)
     console.info(result)
     if (result.reset) {
-      await delay(result.reset * 1000) // slow down because limiter is not available
+      await delay(result.reset) // slow down because limiter is not available
     }
   }
 

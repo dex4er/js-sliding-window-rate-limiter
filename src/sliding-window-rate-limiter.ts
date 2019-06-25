@@ -7,6 +7,7 @@ import {
   SafeRedisSlidingWindowRateLimiter,
   SafeRedisSlidingWindowRateLimiterOptions,
 } from "./safe-redis-sliding-window-rate-limiter"
+import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter-backend"
 
 export * from "./memory-sliding-window-rate-limiter"
 export * from "./redis-sliding-window-rate-limiter"
@@ -22,7 +23,7 @@ export class SlidingWindowRateLimiter {
     options: MemorySlidingWindowRateLimiterOptions &
       RedisSlidingWindowRateLimiterOptions &
       SafeRedisSlidingWindowRateLimiterOptions = {},
-  ): any {
+  ): SlidingWindowRateLimiterBackend {
     if (options.safe && options.redis) {
       return new SafeRedisSlidingWindowRateLimiter(options)
     } else if (options.redis) {

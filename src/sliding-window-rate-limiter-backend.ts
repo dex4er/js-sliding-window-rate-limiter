@@ -1,3 +1,4 @@
+type ms = number
 type s = number
 
 export interface SlidingWindowRateLimiterBackendOptions {
@@ -10,13 +11,13 @@ export interface CancelResult {
 
 export interface CheckResult {
   usage: number
-  reset?: s
+  reset?: ms
 }
 
 export interface ReserveResult {
   token?: number
   usage: number
-  reset?: s
+  reset?: ms
 }
 
 export interface SlidingWindowRateLimiterBackend {

@@ -1,24 +1,26 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
-// Usage: time node examples/redis-lua-bench.js 10000 10 5000 >/dev/null
-
-"use strict"
+// Usage: time ts-node examples/redis-lua-bench-ts.ts 10000 10 5000 >/dev/null
 
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60
 const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
-const fs = require("fs")
-const path = require("path")
+import fs from "fs"
+import path from "path"
 
-const Redis = require("ioredis")
+import IORedis from "ioredis"
+
+interface Redis extends IORedis.Redis {
+  limiter_reserve(key: string, interval: number, limit: number): Promise<[number, number, number]>
+}
 
 const lua = fs.readFileSync(path.join(__dirname, "../src/redis/reserve.lua"), "utf8")
 
-async function main() {
-  const redis = new Redis({
+async function main(): Promise<void> {
+  const redis = new IORedis({
     host: process.env.REDIS_HOST,
-  })
+  }) as Redis
 
   redis.defineCommand("limiter_reserve", {
     lua,

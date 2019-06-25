@@ -51,9 +51,9 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
   constructor(readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = Number(options.interval) || (60 as s)
+    this.interval = (Number(options.interval) || 60) as s
 
-    this.operationTimeout = options.operationTimeout || (0 as ms)
+    this.operationTimeout = (options.operationTimeout || 0) as ms
 
     if (!options.redis || typeof options.redis === "string") {
       this.redis = new IORedis({
@@ -81,7 +81,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
       const result: CheckResult = {
         usage: values[0],
       }
-      if (values[1]) result.reset = values[1] / 1e6
+      if (values[1]) result.reset = Math.ceil(values[1] / 1000)
       return result
     })
   }
@@ -92,7 +92,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
         usage: values[1],
       }
       if (values[0]) result.token = values[0]
-      if (values[2]) result.reset = values[2] / 1e6
+      if (values[2]) result.reset = Math.ceil(values[2] / 1000)
       return result
     })
   }

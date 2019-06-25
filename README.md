@@ -91,7 +91,7 @@ const {usage, reset} = result
 ```
 
 Checks current usage for `key`. If `usage` is equal or above `limit`,
-additionaly sets `reset` time in seconds.
+additionaly sets `reset` time in milliseconds.
 
 ### reserve
 
@@ -101,8 +101,8 @@ const {token, usage, reset} = result
 ```
 
 Makes a reservation and returns `token` with a reservation. If `usage` is equal
-or above `limit`, additionaly sets `reset` time in seconds. Throws an error if
-has occurred.
+or above `limit`, additionaly sets `reset` time in milliseconds. Throws an
+error if has occurred.
 
 ### cancel
 

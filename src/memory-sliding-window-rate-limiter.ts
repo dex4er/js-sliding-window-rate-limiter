@@ -32,7 +32,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
   constructor(readonly options: MemorySlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = options.interval || (60 as s)
+    this.interval = (options.interval || 60) as s
   }
 
   async cancel(key: string, token: number): Promise<CancelResult> {
@@ -58,7 +58,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     const result: CheckResult = {usage}
 
     if (usage && usage >= limit) {
-      const reset = this.bucketReset(key, limit, now)
+      const reset = this.bucketResetValue(key, limit, now)
       if (reset) result.reset = reset
     }
 
@@ -70,7 +70,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     const usage = this.buckets[key].length
 
     if (usage && usage >= limit) {
-      const reset = this.bucketReset(key, limit, now)
+      const reset = this.bucketResetValue(key, limit, now)
       const result: ReserveResult = {usage}
 
       if (reset) result.reset = reset
@@ -82,20 +82,17 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
       if (this.timers[key]) {
         clearTimeout(this.timers[key])
       }
-      this.timers[key] = setTimeout(
-        () => {
-          delete this.buckets[key]
-          delete this.timers[key]
-        },
-        (this.interval * 1000) as ms,
-      ).unref()
+      this.timers[key] = setTimeout(() => {
+        delete this.buckets[key]
+        delete this.timers[key]
+      }, this.interval * 1000).unref()
 
       const result: ReserveResult = {usage: usage + 1}
 
       result.token = now
 
       if (usage + 1 >= limit) {
-        const reset = this.bucketReset(key, limit, now)
+        const reset = this.bucketResetValue(key, limit, now)
         if (reset) result.reset = reset
       }
 
@@ -109,19 +106,16 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     }
   }
 
-  private bucketReset(key: string, limit: number, now: ms): ms | undefined {
+  private bucketResetValue(key: string, limit: number, now: ms): ms | undefined {
     const usage = this.buckets[key].length
     const oldest = this.buckets[key][usage - limit]
-    if (oldest) return ((((oldest + this.interval * 1000) as ms) - now) / 1000) as s
-    return
+    return oldest ? oldest + this.interval * 1000 - now : undefined
   }
 
   private bucketExpireNow(key: string): ms {
     const now: ms = new Date().getTime()
 
-    this.buckets[key] = this.buckets[key]
-      ? this.buckets[key].filter(ts => now - ts < ((this.interval * 1000) as ms))
-      : []
+    this.buckets[key] = this.buckets[key] ? this.buckets[key].filter(ts => now - ts < this.interval * 1000) : []
 
     return now
   }

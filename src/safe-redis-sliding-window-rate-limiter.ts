@@ -6,7 +6,6 @@ import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter"
 import {CancelResult, CheckResult, ReserveResult} from "./sliding-window-rate-limiter-backend"
 
 type ms = number
-type s = number
 
 export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWindowRateLimiterOptions {
   safe?: true
@@ -38,7 +37,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
   constructor(readonly options: SafeRedisSlidingWindowRateLimiterOptions = {}) {
     super(options)
 
-    this.reuseRedisAfter = Number(options.reuseRedisAfter) || (2000 as ms)
+    this.reuseRedisAfter = (Number(options.reuseRedisAfter) || 2000) as ms
   }
 
   cancel(key: string, token: number): Promise<CancelResult> {
@@ -111,7 +110,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
   private resultWithReset<T extends CheckResult | ReserveResult>(result: T): T {
     if (this.reconnectTimerStart) {
       const now: ms = new Date().getTime()
-      result.reset = ((this.reconnectTimerStart + this.reuseRedisAfter - now) / 1000) as s
+      result.reset = this.reconnectTimerStart + this.reuseRedisAfter - now
     }
     return result
   }
