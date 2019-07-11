@@ -1,5 +1,3 @@
-import "./environment"
-
 import Mocha from "mocha"
 
 export function Feature(what: string, how: () => void): Mocha.Suite {
