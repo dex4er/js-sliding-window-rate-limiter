@@ -11,7 +11,6 @@ import {
 } from "./sliding-window-rate-limiter-backend"
 
 type ms = number
-type s = number
 
 interface Buckets {
   [key: string]: ms[]
@@ -24,7 +23,7 @@ interface Timers {
 export interface MemorySlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {}
 
 export class MemorySlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
-  readonly interval: s
+  readonly interval: ms
 
   private buckets: Buckets = {}
   private timers: Timers = {}
@@ -32,7 +31,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
   constructor(readonly options: MemorySlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = (options.interval || 60) as s
+    this.interval = options.interval || 60000
   }
 
   async cancel(key: string, token: number): Promise<CancelResult> {
@@ -85,7 +84,7 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
       this.timers[key] = setTimeout(() => {
         delete this.buckets[key]
         delete this.timers[key]
-      }, this.interval * 1000).unref()
+      }, this.interval).unref()
 
       const result: ReserveResult = {usage: usage + 1}
 
@@ -109,13 +108,13 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
   private bucketResetValue(key: string, limit: number, now: ms): ms | undefined {
     const usage = this.buckets[key].length
     const oldest = this.buckets[key][usage - limit]
-    return oldest ? oldest + this.interval * 1000 - now : undefined
+    return oldest ? oldest + this.interval - now : undefined
   }
 
   private bucketExpireNow(key: string): ms {
-    const now: ms = new Date().getTime()
+    const now = new Date().getTime()
 
-    this.buckets[key] = this.buckets[key] ? this.buckets[key].filter(ts => now - ts < this.interval * 1000) : []
+    this.buckets[key] = this.buckets[key] ? this.buckets[key].filter(ts => now - ts < this.interval) : []
 
     return now
   }

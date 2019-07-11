@@ -3,7 +3,6 @@ import IORedis from "ioredis"
 
 type μs = number
 type ms = number
-type s = number
 
 type Canceled = number
 type Reset = μs
@@ -60,11 +59,11 @@ export class MockIORedis extends IORedis {
     })
   }
 
-  limiter_check(key: string, interval: s, limit: number): Promise<[Usage, Reset]> {
+  limiter_check(key: string, interval: ms, limit: number): Promise<[Usage, Reset]> {
     return this.limiter_prepare(key).then(() => {
       const now = new Date().getTime()
 
-      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000)
+      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval)
 
       const usage = this.buckets[key].length
 
@@ -76,11 +75,11 @@ export class MockIORedis extends IORedis {
     })
   }
 
-  limiter_reserve(key: string, interval: s, limit: number): Promise<[Token, Usage, Reset]> {
+  limiter_reserve(key: string, interval: ms, limit: number): Promise<[Token, Usage, Reset]> {
     return this.limiter_prepare(key).then(() => {
       const now = new Date().getTime()
 
-      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval * 1000)
+      this.buckets[key] = this.buckets[key].filter(ts => now - ts < interval)
 
       const usage = this.buckets[key].length
 

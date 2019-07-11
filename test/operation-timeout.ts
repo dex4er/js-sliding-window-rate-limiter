@@ -35,7 +35,7 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
 
     And("limiter object", () => {
       limiter = new RedisSlidingWindowRateLimiter({
-        interval: 1,
+        interval: 1000,
         redis,
         operationTimeout,
       })
@@ -72,7 +72,7 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
 
     And("limiter object", () => {
       limiter = new RedisSlidingWindowRateLimiter({
-        interval: 1,
+        interval: 1000,
         redis,
         operationTimeout,
       })

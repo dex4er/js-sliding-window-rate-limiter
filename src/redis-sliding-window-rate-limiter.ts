@@ -17,7 +17,6 @@ import {TimeoutError} from "./timeout-error"
 
 type μs = number
 type ms = number
-type s = number
 
 type Canceled = number
 type Reset = μs
@@ -27,13 +26,13 @@ type Usage = number
 // Additional command defined
 export interface Redis extends IORedis.Redis {
   limiter_cancel(key: string, token: number): Promise<Canceled>
-  limiter_check(key: string, interval: s, limit: number): Promise<[Usage, Reset]>
-  limiter_reserve(key: string, interval: s, limit: number): Promise<[Token, Usage, Reset]>
+  limiter_check(key: string, interval: ms, limit: number): Promise<[Usage, Reset]>
+  limiter_reserve(key: string, interval: ms, limit: number): Promise<[Token, Usage, Reset]>
 }
 
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {
   redis?: Redis | string
-  interval?: s
+  interval?: ms
   operationTimeout?: ms
 }
 
@@ -45,20 +44,20 @@ const LUA = {
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly redis: Redis
-  readonly interval: s
+  readonly interval: ms
   readonly operationTimeout: ms
 
   constructor(readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
 
-    this.interval = (Number(options.interval) || 60) as s
+    this.interval = Number(options.interval) || 60000
 
-    this.operationTimeout = (options.operationTimeout || 0) as ms
+    this.operationTimeout = options.operationTimeout || 0
 
     if (!options.redis || typeof options.redis === "string") {
       this.redis = new IORedis({
         host: options.redis,
-        retryStrategy: _times => 1000 as ms,
+        retryStrategy: _times => 1000,
         maxRetriesPerRequest: 1,
       }) as Redis
     } else {

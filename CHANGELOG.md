@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.0 2019-07-11
+
+- Breaking change: `interval` parameter is milliseconds now.
+
 ## v3.0.0 2019-06-24
 
 - Limiter's methods return result object with `token`, `usage`, `reset` and

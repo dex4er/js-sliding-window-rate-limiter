@@ -37,7 +37,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
   constructor(readonly options: SafeRedisSlidingWindowRateLimiterOptions = {}) {
     super(options)
 
-    this.reuseRedisAfter = (Number(options.reuseRedisAfter) || 2000) as ms
+    this.reuseRedisAfter = Number(options.reuseRedisAfter) || 2000
   }
 
   cancel(key: string, token: number): Promise<CancelResult> {

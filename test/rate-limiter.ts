@@ -14,15 +14,13 @@ import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limite
 import {delay} from "./lib/delay"
 import {MockIORedis} from "./lib/mock-ioredis"
 
-type ms = number
-
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
 
 const limiterBackendOptions: {[backend: string]: any} = {
-  Memory: {interval: 1},
-  Redis: {redis, interval: 1},
-  SafeRedis: {safe: true, redis, interval: 1},
+  Memory: {interval: 1000},
+  Redis: {redis, interval: 1000},
+  SafeRedis: {safe: true, redis, interval: 1000},
 }
 
 Feature("Test sliding-window-rate-limiter module with promises", () => {
@@ -184,7 +182,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       When("I wait more than interval", async () => {
-        await delay(1500 as ms)
+        await delay(1500)
       })
 
       And("I try to make another above limit", async () => {

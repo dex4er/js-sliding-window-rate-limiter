@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-// Usage: time node examples/memory-rate-limiter-bench.js 10000 10 5000 >/dev/null
+// Usage: time node examples/memory-rate-limiter-bench.js 10000 10000 5000 >/dev/null
 
 const ATTEMPTS = Number(process.argv[2]) || 1
-const INTERVAL = Number(process.argv[3]) || 60
+const INTERVAL = Number(process.argv[3]) || 60000
 const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
 const {SlidingWindowRateLimiter} = require("../lib/sliding-window-rate-limiter")

@@ -48,7 +48,7 @@ const limiter = SlidingWindowRateLimiter.createLimiter(options)
 
 _Options:_
 
-- `interval` is a number of seconds in a sliding window
+- `interval` is a number of milliseconds in a sliding window
 - `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (only for Redis backend)
 - `operationTimeout` is a time in milliseconds after Redis operation is canceled
@@ -65,7 +65,7 @@ _Example:_
 
 ```js
 const limiter = SlidingWindowRateLimiter.createLimiter({
-  interval: 60,
+  interval: 60000,
 })
 ```
 
@@ -73,7 +73,7 @@ or
 
 ```js
 const limiter = SlidingWindowRateLimiter.createLimiter({
-  interval: 60,
+  interval: 60000,
   redis: new Redis({
     host: "redis-server",
     retryStrategy: _times => 1000,
