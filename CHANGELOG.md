@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.0.0 2019-07-11
+## v4.0.0 2019-07-11
 
 - Breaking change: `interval` parameter is milliseconds now.
 
