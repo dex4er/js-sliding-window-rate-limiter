@@ -27,7 +27,7 @@ export interface SafeRedisSlidingWindowRateLimiter {
 
 export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter
   implements SlidingWindowRateLimiterBackend {
-  readonly reuseRedisAfter: number
+  readonly reuseRedisAfter = Number(this.options.reuseRedisAfter) || 2000
 
   private redisServiceAvailable = true
 
@@ -36,8 +36,7 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
 
   constructor(readonly options: SafeRedisSlidingWindowRateLimiterOptions = {}) {
     super(options)
-
-    this.reuseRedisAfter = Number(options.reuseRedisAfter) || 2000
+    this.on("error", this.errorHandler)
   }
 
   cancel(key: string, token: number): Promise<CancelResult> {
@@ -88,6 +87,10 @@ export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLim
       clearTimeout(this.reconnectTimer)
     }
     this.removeAllListeners("error")
+  }
+
+  private errorHandler(_error: Error): void {
+    // ignore
   }
 
   private handleError(error: Error): void {

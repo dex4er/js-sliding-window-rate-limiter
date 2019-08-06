@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.1.0 2019-08-06
+
+- Safe limiter registers own listener for `error` event so errors are ignored
+  by default.
+
 ## v4.0.0 2019-07-11
 
 - Breaking change: `interval` parameter is milliseconds now.
