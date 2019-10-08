@@ -39,7 +39,7 @@
     "chai": "^4.2.0",
     "changelog-parser": "^2.8.0",
     "coveralls": "^3.0.6",
-    "cross-env": "^5.2.1",
+    "cross-env": "^6.0.3",
     "dirty-chai": "^2.0.1",
     "eslint": "^6.5.1",
     "eslint-config-prettier": "^6.4.0",
