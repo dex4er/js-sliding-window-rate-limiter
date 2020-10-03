@@ -25,7 +25,8 @@ export interface SafeRedisSlidingWindowRateLimiter {
   removeListener(event: "error", listener: (err: Error) => void): this
 }
 
-export class SafeRedisSlidingWindowRateLimiter extends RedisSlidingWindowRateLimiter
+export class SafeRedisSlidingWindowRateLimiter
+  extends RedisSlidingWindowRateLimiter
   implements SlidingWindowRateLimiterBackend {
   readonly reuseRedisAfter = Number(this.options.reuseRedisAfter) || 2000
 
