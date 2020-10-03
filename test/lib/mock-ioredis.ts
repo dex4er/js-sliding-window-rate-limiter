@@ -45,7 +45,7 @@ export class MockIORedis extends IORedis {
     this.connected = false
   }
 
-  quit(): Promise<string> {
+  quit(): Promise<"OK"> {
     this.disconnect()
     return Promise.resolve("OK")
   }
