@@ -3,6 +3,7 @@
 ## v5.0.0 YYYY-MM-DD
 
 - Requires Node >= 10.
+- Converted from tslint to eslint.
 
 ## v4.1.1 2019-10-08
 

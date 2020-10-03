@@ -1,7 +1,5 @@
-type ms = number
-
 export interface SlidingWindowRateLimiterBackendOptions {
-  interval?: ms
+  interval?: number
 }
 
 export interface CancelResult {
@@ -10,18 +8,18 @@ export interface CancelResult {
 
 export interface CheckResult {
   usage: number
-  reset?: ms
+  reset?: number
 }
 
 export interface ReserveResult {
   token?: number
   usage: number
-  reset?: ms
+  reset?: number
 }
 
 export interface SlidingWindowRateLimiterBackend {
   readonly options: SlidingWindowRateLimiterBackendOptions
-  readonly interval: ms
+  readonly interval: number
 
   cancel(key: string, token: number): Promise<CancelResult>
   check(key: string, limit: number): Promise<CheckResult>

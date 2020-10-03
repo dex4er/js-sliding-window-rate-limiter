@@ -1,9 +1,10 @@
 import {expect} from "chai"
 
-import {And, Feature, Given, Scenario, Then, When} from "./lib/steps"
-
 import uuidv1 from "uuid/v1"
 import {CheckResult, Redis, ReserveResult, SafeRedisSlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
+
+import {And, Feature, Given, Scenario, Then, When} from "./lib/steps"
+
 import {MockIORedis} from "./lib/mock-ioredis"
 
 Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () => {

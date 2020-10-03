@@ -5,11 +5,9 @@ import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter"
 
 import {CancelResult, CheckResult, ReserveResult} from "./sliding-window-rate-limiter-backend"
 
-type ms = number
-
 export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWindowRateLimiterOptions {
   safe?: true
-  reuseRedisAfter?: ms
+  reuseRedisAfter?: number
   defaultResponse?: number
 }
 
@@ -33,7 +31,7 @@ export class SafeRedisSlidingWindowRateLimiter
   private redisServiceAvailable = true
 
   private reconnectTimer?: NodeJS.Timeout
-  private reconnectTimerStart?: ms
+  private reconnectTimerStart?: number
 
   constructor(readonly options: SafeRedisSlidingWindowRateLimiterOptions = {}) {
     super(options)
@@ -113,7 +111,7 @@ export class SafeRedisSlidingWindowRateLimiter
 
   private resultWithReset<T extends CheckResult | ReserveResult>(result: T): T {
     if (this.reconnectTimerStart) {
-      const now: ms = new Date().getTime()
+      const now: number = new Date().getTime()
       result.reset = this.reconnectTimerStart + this.reuseRedisAfter - now
     }
     return result

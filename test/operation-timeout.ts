@@ -1,11 +1,11 @@
 import {expect} from "chai"
 
-import {And, Feature, Given, Scenario, Then} from "./lib/steps"
-
 import uuidv1 from "uuid/v1"
 
 import RedisSlidingWindowRateLimiter from "../src/redis-sliding-window-rate-limiter"
 import {Redis} from "../src/sliding-window-rate-limiter"
+
+import {And, Feature, Given, Scenario, Then} from "./lib/steps"
 
 import {MockIORedis} from "./lib/mock-ioredis"
 
@@ -45,11 +45,11 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
       key = "redis-failure:" + uuidv1()
     })
 
-    And("check method is called", () => {
-      return limiter.check(key, defaultLimit).catch(err => {
+    And("check method is called", () =>
+      limiter.check(key, defaultLimit).catch(err => {
         error = err
-      })
-    })
+      }),
+    )
 
     Then("timeout error was fired", () => {
       expect(error).to.be.an("Error", "Operation timed out")
@@ -82,11 +82,11 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
       key = "redis-failure:" + uuidv1()
     })
 
-    And("check method is called", async () => {
-      return limiter.check(key, defaultLimit).catch(err => {
+    And("check method is called", async () =>
+      limiter.check(key, defaultLimit).catch(err => {
         error = err
-      })
-    })
+      }),
+    )
 
     Then("timeout error was not fired", () => {
       expect(error).to.be.not.an("Error")

@@ -1,7 +1,5 @@
 import {expect} from "chai"
 
-import {After, And, Feature, Scenario, Then, When} from "./lib/steps"
-
 import IORedis from "ioredis"
 
 import {MemorySlidingWindowRateLimiter} from "../src/memory-sliding-window-rate-limiter"
@@ -10,20 +8,28 @@ import {SafeRedisSlidingWindowRateLimiter} from "../src/safe-redis-sliding-windo
 import {SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
 import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend"
 
+import {After, And, Feature, Scenario, Then, When} from "./lib/steps"
+
 import {MockIORedis} from "./lib/mock-ioredis"
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
 
 const backendClasses: {[backend: string]: any} = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   Memory: MemorySlidingWindowRateLimiter,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   Redis: RedisSlidingWindowRateLimiter,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   SafeRedis: SafeRedisSlidingWindowRateLimiter,
 }
 
 const limiterBackendOptions: {[backend: string]: any} = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   Memory: {interval: 1},
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   Redis: {redis, interval: 1},
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   SafeRedis: {safe: true, redis, interval: 1},
 }
 

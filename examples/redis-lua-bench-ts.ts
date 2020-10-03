@@ -12,6 +12,7 @@ import path from "path"
 import IORedis from "ioredis"
 
 interface Redis extends IORedis.Redis {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   limiter_reserve(key: string, interval: number, limit: number): Promise<[number, number, number]>
 }
 
