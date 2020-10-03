@@ -2,8 +2,8 @@
 
 import {EventEmitter} from "events"
 import fs from "fs"
-import IORedis = require("ioredis")
 import path from "path"
+import IORedis = require("ioredis")
 
 import {
   CancelResult,
@@ -15,25 +15,25 @@ import {
 
 import {TimeoutError} from "./timeout-error"
 
-type μs = number
-type ms = number
-
 type Canceled = number
-type Reset = μs
+type Reset = number
 type Token = number
 type Usage = number
 
 // Additional command defined
 export interface Redis extends IORedis.Redis {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   limiter_cancel(key: string, token: number): Promise<Canceled>
-  limiter_check(key: string, interval: ms, limit: number): Promise<[Usage, Reset]>
-  limiter_reserve(key: string, interval: ms, limit: number): Promise<[Token, Usage, Reset]>
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  limiter_check(key: string, interval: number, limit: number): Promise<[Usage, Reset]>
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  limiter_reserve(key: string, interval: number, limit: number): Promise<[Token, Usage, Reset]>
 }
 
 export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {
   redis?: Redis | string
-  interval?: ms
-  operationTimeout?: ms
+  interval?: number
+  operationTimeout?: number
 }
 
 const LUA = {
@@ -44,8 +44,8 @@ const LUA = {
 
 export class RedisSlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
   readonly redis: Redis
-  readonly interval: ms
-  readonly operationTimeout: ms
+  readonly interval: number
+  readonly operationTimeout: number
 
   constructor(readonly options: RedisSlidingWindowRateLimiterOptions = {}) {
     super()
@@ -70,9 +70,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
   }
 
   cancel(key: string, token: number): Promise<CancelResult> {
-    return this.promiseWithTimeoutError(this.redis.limiter_cancel(key, token)).then(canceled => {
-      return {canceled}
-    })
+    return this.promiseWithTimeoutError(this.redis.limiter_cancel(key, token)).then(canceled => ({canceled}))
   }
 
   check(key: string, limit: number): Promise<CheckResult> {

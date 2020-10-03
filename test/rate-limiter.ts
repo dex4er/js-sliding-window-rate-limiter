@@ -3,13 +3,13 @@ import chai, {expect} from "chai"
 import dirtyChai from "dirty-chai"
 chai.use(dirtyChai)
 
-import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
-
 import IORedis from "ioredis"
 import uuidv1 from "uuid/v1"
 
 import {CancelResult, CheckResult, ReserveResult, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
 import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend"
+
+import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
 
 import {delay} from "./lib/delay"
 import {MockIORedis} from "./lib/mock-ioredis"
@@ -18,8 +18,11 @@ const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
 
 const limiterBackendOptions: {[backend: string]: any} = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   Memory: {interval: 1000},
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   Redis: {redis, interval: 1000},
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   SafeRedis: {safe: true, redis, interval: 1000},
 }
 

@@ -10,10 +10,8 @@ import {
   SlidingWindowRateLimiterBackendOptions,
 } from "./sliding-window-rate-limiter-backend"
 
-type ms = number
-
 interface Buckets {
-  [key: string]: ms[]
+  [key: string]: number[]
 }
 
 interface Timers {
@@ -23,7 +21,7 @@ interface Timers {
 export interface MemorySlidingWindowRateLimiterOptions extends SlidingWindowRateLimiterBackendOptions {}
 
 export class MemorySlidingWindowRateLimiter extends EventEmitter implements SlidingWindowRateLimiterBackend {
-  readonly interval: ms
+  readonly interval: number
 
   private buckets: Buckets = {}
   private timers: Timers = {}
@@ -105,13 +103,13 @@ export class MemorySlidingWindowRateLimiter extends EventEmitter implements Slid
     }
   }
 
-  private bucketResetValue(key: string, limit: number, now: ms): ms | undefined {
+  private bucketResetValue(key: string, limit: number, now: number): number | undefined {
     const usage = this.buckets[key].length
     const oldest = this.buckets[key][usage - limit]
     return oldest ? oldest + this.interval - now : undefined
   }
 
-  private bucketExpireNow(key: string): ms {
+  private bucketExpireNow(key: string): number {
     const now = new Date().getTime()
 
     this.buckets[key] = this.buckets[key] ? this.buckets[key].filter(ts => now - ts < this.interval) : []

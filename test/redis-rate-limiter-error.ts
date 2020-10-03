@@ -1,8 +1,8 @@
 import {expect} from "chai"
 
-import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
-
 import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
+
+import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
 
 import {MockIORedis} from "./lib/mock-ioredis"
 
