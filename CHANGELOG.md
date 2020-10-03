@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.0.0 ????-??-??
+## v5.0.0 YYYY-MM-DD
 
 - Requires Node >= 10.
 
