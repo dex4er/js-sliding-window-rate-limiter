@@ -106,10 +106,7 @@ export class MockIORedis extends IORedis {
     }
 
     if (key === "error" || !this.connected) {
-      const sha1sum = crypto
-        .createHash("sha1")
-        .update(String(Math.random()))
-        .digest("hex")
+      const sha1sum = crypto.createHash("sha1").update(String(Math.random())).digest("hex")
 
       const error = Object.assign(
         new Error(
