@@ -1,6 +1,6 @@
 import {expect} from "chai"
 
-import uuidv1 from "uuid/v1"
+import {v1 as uuidv1} from "uuid"
 
 import RedisSlidingWindowRateLimiter from "../src/redis-sliding-window-rate-limiter"
 import {Redis} from "../src/sliding-window-rate-limiter"
