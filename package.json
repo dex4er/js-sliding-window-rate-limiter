@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "ioredis": "^4.14.1",
-    "tslib": "^1.10.0"
+    "tslib": "^2.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.3",
