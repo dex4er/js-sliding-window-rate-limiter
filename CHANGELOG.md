@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.0.0 YYYY-MM-DD
+## v5.0.0 2020-10-04
 
 - Requires Node >= 10.
 - Converted from tslint to eslint.
