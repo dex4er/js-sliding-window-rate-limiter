@@ -4,6 +4,7 @@
 
 - Requires Node >= 10.
 - Converted from tslint to eslint.
+- Deep requires are deprecated for uuid@8.
 
 ## v4.1.1 2019-10-08
 

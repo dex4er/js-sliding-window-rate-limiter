@@ -4,7 +4,7 @@ import dirtyChai from "dirty-chai"
 chai.use(dirtyChai)
 
 import IORedis from "ioredis"
-import uuidv1 from "uuid/v1"
+import {v1 as uuidv1} from "uuid"
 
 import {CancelResult, CheckResult, ReserveResult, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
 import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend"
