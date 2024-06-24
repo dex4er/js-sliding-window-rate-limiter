@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename)
 const lua = fs.readFileSync(path.join(__dirname, "../src/redis/reserve.lua"), "utf8")
 
 async function main(): Promise<void> {
-  const redis = new IORedis({
+  const redis = new IORedis.Redis({
     host: process.env.REDIS_HOST,
   }) as Redis
 

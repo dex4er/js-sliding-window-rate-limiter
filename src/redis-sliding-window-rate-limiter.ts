@@ -4,7 +4,7 @@ import {EventEmitter} from "node:events"
 import * as fs from "node:fs"
 import * as path from "node:path"
 import * as url from "node:url"
-import IORedis = require("ioredis")
+import IORedis from "ioredis"
 
 import {
   CancelResult,
@@ -23,11 +23,8 @@ type Usage = number
 
 // Additional command defined
 export interface Redis extends IORedis.Redis {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   limiter_cancel(key: string, token: number): Promise<Canceled>
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   limiter_check(key: string, interval: number, limit: number): Promise<[Usage, Reset]>
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   limiter_reserve(key: string, interval: number, limit: number): Promise<[Token, Usage, Reset]>
 }
 
@@ -59,7 +56,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
     this.operationTimeout = options.operationTimeout || 0
 
     if (!options.redis || typeof options.redis === "string") {
-      this.redis = new IORedis({
+      this.redis = new IORedis.Redis({
         host: options.redis,
         retryStrategy: _times => 1000,
         maxRetriesPerRequest: 1,

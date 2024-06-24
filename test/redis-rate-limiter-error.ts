@@ -4,7 +4,7 @@ import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from "..
 
 import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps.js"
 
-import {MockIORedis} from "./lib/mock-ioredis.js"
+import {MockRedis} from "./lib/mock-ioredis.js"
 
 Feature("Test sliding-window-rate-limiter module error with Redis backend", () => {
   Scenario("Redis returns error", () => {
@@ -16,7 +16,7 @@ Feature("Test sliding-window-rate-limiter module error with Redis backend", () =
     let redis: Redis
 
     Given("mock redis connection", () => {
-      redis = new MockIORedis()
+      redis = new MockRedis()
     })
 
     And("limiter object", () => {
@@ -59,7 +59,7 @@ Feature("Test sliding-window-rate-limiter module error with Redis backend", () =
     let redis: Redis
 
     Given("mock redis connection", () => {
-      redis = new MockIORedis()
+      redis = new MockRedis()
     })
 
     And("limiter object", () => {

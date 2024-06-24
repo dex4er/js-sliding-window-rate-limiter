@@ -10,7 +10,7 @@ import {
 
 import {And, Feature, Given, Scenario, Then, When} from "./lib/steps.js"
 
-import {MockIORedis} from "./lib/mock-ioredis.js"
+import {MockRedis} from "./lib/mock-ioredis.js"
 
 Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () => {
   Scenario("Redis failure with error listener", () => {
@@ -24,7 +24,7 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
     let reserveResult: ReserveResult
 
     Given("redis connection", () => {
-      redis = new MockIORedis()
+      redis = new MockRedis()
     })
 
     And("limiter object", () => {
@@ -83,7 +83,7 @@ Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () =
     let reserveResult: ReserveResult
 
     Given("redis connection", () => {
-      redis = new MockIORedis()
+      redis = new MockRedis()
     })
 
     And("limiter object", () => {

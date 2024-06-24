@@ -8,9 +8,9 @@ const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
-const {promisify} = require("util")
+import {promisify} from "util"
 
-const {SlidingWindowRateLimiter} = require("../lib/sliding-window-rate-limiter")
+import SlidingWindowRateLimiter from "../lib/sliding-window-rate-limiter.js"
 
 const delay = promisify(setTimeout)
 
@@ -40,4 +40,4 @@ async function main() {
   limiter.destroy()
 }
 
-main().catch(console.error)
+void main().catch(console.error)

@@ -1,4 +1,4 @@
-import crypto from "crypto"
+import * as crypto from "node:crypto"
 import IORedis from "ioredis"
 
 type μs = number
@@ -13,17 +13,17 @@ interface Buckets {
   [key: string]: number[]
 }
 
-interface MockIORedisOptions extends IORedis.RedisOptions {
+interface MockRedisOptions extends IORedis.RedisOptions {
   operationDelay?: ms
 }
 
-export class MockIORedis extends IORedis {
+export class MockRedis extends IORedis.Redis {
   private operationDelay?: ms
 
   private buckets: Buckets = {}
   private connected: boolean = true
 
-  constructor(options: MockIORedisOptions | string = {}) {
+  constructor(options: MockRedisOptions | string = {}) {
     super()
 
     if (typeof options === "string") {

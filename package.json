@@ -39,7 +39,6 @@
     "@tsconfig/node16": "^16.1.3",
     "@types/chai": "^4.3.16",
     "@types/eslint__js": "^8.42.3",
-    "@types/ioredis": "^4.17.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.14.7",
     "@types/semver": "^7.5.8",

@@ -4,6 +4,7 @@
 
 - Converted to ESM module.
 - Requires Node >= 16.
+- Uses ioredis@5.
 
 ## v5.0.0 2020-10-04
 

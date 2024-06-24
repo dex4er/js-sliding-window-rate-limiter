@@ -2,21 +2,23 @@
 
 // Usage: time node examples/redis-lua-bench.js 10000 10000 5000 >/dev/null
 
-"use strict"
-
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60000
 const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
-const fs = require("fs")
-const path = require("path")
+import * as fs from "fs"
+import * as path from "path"
+import * as url from "url"
 
-const Redis = require("ioredis")
+import IORedis from "ioredis"
+
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const lua = fs.readFileSync(path.join(__dirname, "../src/redis/reserve.lua"), "utf8")
 
 async function main() {
-  const redis = new Redis({
+  const redis = new IORedis.Redis({
     host: process.env.REDIS_HOST,
   })
 
