@@ -5,10 +5,15 @@
 const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60000
 const LIMIT = Number(process.argv[4]) || ATTEMPTS
+const DELAY = Number(process.argv[5]) || undefined
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
-const {SlidingWindowRateLimiter} = require("../lib/sliding-window-rate-limiter")
+import {promisify} from "util"
+
+import SlidingWindowRateLimiter from "../lib/sliding-window-rate-limiter.js"
+
+const delay = promisify(setTimeout)
 
 async function main() {
   const limiter = SlidingWindowRateLimiter.createLimiter({
@@ -28,6 +33,9 @@ async function main() {
     try {
       const result = await limiter.reserve(key, LIMIT)
       console.info(result)
+      if (DELAY) {
+        await delay(Number(DELAY))
+      }
     } catch (e) {
       console.error("Benchmark:", e)
     }
@@ -36,4 +44,4 @@ async function main() {
   limiter.destroy()
 }
 
-main().catch(console.error)
+void main().catch(console.error)

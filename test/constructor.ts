@@ -10,10 +10,10 @@ import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limite
 
 import {After, And, Feature, Scenario, Then, When} from "./lib/steps.js"
 
-import {MockIORedis} from "./lib/mock-ioredis.js"
+import {MockRedis} from "./lib/mock-ioredis.js"
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
-const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
+const redis = TEST_REDIS_URL ? new IORedis.Redis(TEST_REDIS_URL) : new MockRedis(TEST_REDIS_URL)
 
 const backendClasses: {[backend: string]: any} = {
   // eslint-disable-next-line @typescript-eslint/naming-convention

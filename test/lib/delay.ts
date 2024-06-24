@@ -1,5 +1,2 @@
-export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms)
-  })
-}
+import * as util from "node:util"
+export const delay = util.promisify(setTimeout)
