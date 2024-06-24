@@ -1,18 +1,21 @@
 import {
   MemorySlidingWindowRateLimiter,
   MemorySlidingWindowRateLimiterOptions,
-} from "./memory-sliding-window-rate-limiter"
-import {RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions} from "./redis-sliding-window-rate-limiter"
+} from "./memory-sliding-window-rate-limiter.js"
+import {
+  RedisSlidingWindowRateLimiter,
+  RedisSlidingWindowRateLimiterOptions,
+} from "./redis-sliding-window-rate-limiter.js"
 import {
   SafeRedisSlidingWindowRateLimiter,
   SafeRedisSlidingWindowRateLimiterOptions,
-} from "./safe-redis-sliding-window-rate-limiter"
-import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter-backend"
+} from "./safe-redis-sliding-window-rate-limiter.js"
+import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter-backend.js"
 
-export * from "./memory-sliding-window-rate-limiter"
-export * from "./redis-sliding-window-rate-limiter"
-export * from "./safe-redis-sliding-window-rate-limiter"
-export * from "./sliding-window-rate-limiter-backend"
+export * from "./memory-sliding-window-rate-limiter.js"
+export * from "./redis-sliding-window-rate-limiter.js"
+export * from "./safe-redis-sliding-window-rate-limiter.js"
+export * from "./sliding-window-rate-limiter-backend.js"
 
 export class SlidingWindowRateLimiter {
   static createLimiter(options?: MemorySlidingWindowRateLimiterOptions): MemorySlidingWindowRateLimiter

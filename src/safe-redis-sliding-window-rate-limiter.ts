@@ -1,9 +1,12 @@
 /// <reference types="node" />
 
-import {RedisSlidingWindowRateLimiter, RedisSlidingWindowRateLimiterOptions} from "./redis-sliding-window-rate-limiter"
-import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter"
+import {
+  RedisSlidingWindowRateLimiter,
+  RedisSlidingWindowRateLimiterOptions,
+} from "./redis-sliding-window-rate-limiter.js"
+import {SlidingWindowRateLimiterBackend} from "./sliding-window-rate-limiter.js"
 
-import {CancelResult, CheckResult, ReserveResult} from "./sliding-window-rate-limiter-backend"
+import {CancelResult, CheckResult, ReserveResult} from "./sliding-window-rate-limiter-backend.js"
 
 export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWindowRateLimiterOptions {
   safe?: true
@@ -11,6 +14,7 @@ export interface SafeRedisSlidingWindowRateLimiterOptions extends RedisSlidingWi
   defaultResponse?: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface SafeRedisSlidingWindowRateLimiter {
   addListener(event: "error", listener: (err: Error) => void): this
   emit(event: "error", error: Error): boolean
@@ -23,9 +27,11 @@ export interface SafeRedisSlidingWindowRateLimiter {
   removeListener(event: "error", listener: (err: Error) => void): this
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class SafeRedisSlidingWindowRateLimiter
   extends RedisSlidingWindowRateLimiter
-  implements SlidingWindowRateLimiterBackend {
+  implements SlidingWindowRateLimiterBackend
+{
   readonly reuseRedisAfter = Number(this.options.reuseRedisAfter) || 2000
 
   private redisServiceAvailable = true
@@ -46,7 +52,11 @@ export class SafeRedisSlidingWindowRateLimiter
           return {canceled: 0}
         })
       } catch (e) {
-        this.handleError(e)
+        if (e instanceof Error) {
+          this.handleError(e)
+        } else {
+          throw e
+        }
       }
     }
     return Promise.resolve({canceled: 0})
@@ -60,7 +70,11 @@ export class SafeRedisSlidingWindowRateLimiter
           return this.resultWithReset({usage: 0})
         })
       } catch (e) {
-        this.handleError(e)
+        if (e instanceof Error) {
+          this.handleError(e)
+        } else {
+          throw e
+        }
       }
     }
     return Promise.resolve(this.resultWithReset({usage: 0}))
@@ -74,7 +88,11 @@ export class SafeRedisSlidingWindowRateLimiter
           return this.resultWithReset({usage: 0})
         })
       } catch (e) {
-        this.handleError(e)
+        if (e instanceof Error) {
+          this.handleError(e)
+        } else {
+          throw e
+        }
       }
     }
     return Promise.resolve(this.resultWithReset({usage: 0}))

@@ -1,18 +1,15 @@
-import chai, {expect} from "chai"
-
-import dirtyChai from "dirty-chai"
-chai.use(dirtyChai)
+import {expect} from "chai"
 
 import IORedis from "ioredis"
 import {v1 as uuidv1} from "uuid"
 
-import {CancelResult, CheckResult, ReserveResult, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
-import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend"
+import {CancelResult, CheckResult, ReserveResult, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter.js"
+import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend.js"
 
-import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
+import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps.js"
 
-import {delay} from "./lib/delay"
-import {MockIORedis} from "./lib/mock-ioredis"
+import {delay} from "./lib/delay.js"
+import {MockIORedis} from "./lib/mock-ioredis.js"
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)
@@ -66,7 +63,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       And("reset time is missing", () => {
-        expect(reserveResult.reset).to.be.undefined()
+        expect(reserveResult.reset).to.be.undefined
       })
 
       When("I check usage", async () => {
@@ -128,7 +125,7 @@ Feature("Test sliding-window-rate-limiter module with promises", () => {
       })
 
       Then("token is missing", () => {
-        expect(reserveResult.token).to.be.undefined()
+        expect(reserveResult.token).to.be.undefined
       })
 
       And("usage is 1", () => {

@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm
 
 // Usage: time ts-node examples/redis-lua-bench-ts.ts 10000 10000 5000 >/dev/null
 
@@ -6,15 +6,18 @@ const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60000
 const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
-import fs from "fs"
-import path from "path"
+import * as fs from "fs"
+import * as path from "path"
+import * as url from "url"
 
 import IORedis from "ioredis"
 
 interface Redis extends IORedis.Redis {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   limiter_reserve(key: string, interval: number, limit: number): Promise<[number, number, number]>
 }
+
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const lua = fs.readFileSync(path.join(__dirname, "../src/redis/reserve.lua"), "utf8")
 

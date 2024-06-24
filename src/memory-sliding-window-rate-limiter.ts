@@ -8,7 +8,7 @@ import {
   ReserveResult,
   SlidingWindowRateLimiterBackend,
   SlidingWindowRateLimiterBackendOptions,
-} from "./sliding-window-rate-limiter-backend"
+} from "./sliding-window-rate-limiter-backend.js"
 
 interface Buckets {
   [key: string]: number[]

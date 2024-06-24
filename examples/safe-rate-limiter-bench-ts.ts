@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm
 
 // Usage: time ts-node examples/safe-rate-limiter-bench-ts.ts 10000 10000 5000 >/dev/null
 
@@ -10,7 +10,7 @@ const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
 import {promisify} from "util"
 
-import SlidingWindowRateLimiter from "../src/sliding-window-rate-limiter"
+import SlidingWindowRateLimiter from "../src/sliding-window-rate-limiter.js"
 
 const delay = promisify(setTimeout)
 
@@ -19,11 +19,11 @@ async function main(): Promise<void> {
     interval: INTERVAL,
     redis: REDIS_HOST,
     safe: true,
-  }).on("error", err => {
+  }).on("error", (err: Error) => {
     console.error("Limiter:", err)
   })
 
-  limiter.redis.on("error", err => {
+  limiter.redis.on("error", (err: Error) => {
     console.error("Redis:", err)
   })
 

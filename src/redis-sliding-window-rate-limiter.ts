@@ -1,8 +1,9 @@
 /// <reference types="node" />
 
-import {EventEmitter} from "events"
-import fs from "fs"
-import path from "path"
+import {EventEmitter} from "node:events"
+import * as fs from "node:fs"
+import * as path from "node:path"
+import * as url from "node:url"
 import IORedis = require("ioredis")
 
 import {
@@ -11,9 +12,9 @@ import {
   ReserveResult,
   SlidingWindowRateLimiterBackend,
   SlidingWindowRateLimiterBackendOptions,
-} from "./sliding-window-rate-limiter-backend"
+} from "./sliding-window-rate-limiter-backend.js"
 
-import {TimeoutError} from "./timeout-error"
+import {TimeoutError} from "./timeout-error.js"
 
 type Canceled = number
 type Reset = number
@@ -35,6 +36,9 @@ export interface RedisSlidingWindowRateLimiterOptions extends SlidingWindowRateL
   interval?: number
   operationTimeout?: number
 }
+
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const LUA = {
   cancel: fs.readFileSync(path.join(__dirname, "../src/redis/cancel.lua"), "utf8"),
@@ -100,7 +104,7 @@ export class RedisSlidingWindowRateLimiter extends EventEmitter implements Slidi
         this.redis.quit().catch(() => {
           this.redis.disconnect()
         })
-      } catch (e) {
+      } catch (_e) {
         this.redis.disconnect()
       }
     }

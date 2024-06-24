@@ -1,10 +1,10 @@
 import {expect} from "chai"
 
-import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
+import {Redis, RedisSlidingWindowRateLimiter, SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter.js"
 
-import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps"
+import {After, And, Feature, Given, Scenario, Then, When} from "./lib/steps.js"
 
-import {MockIORedis} from "./lib/mock-ioredis"
+import {MockIORedis} from "./lib/mock-ioredis.js"
 
 Feature("Test sliding-window-rate-limiter module error with Redis backend", () => {
   Scenario("Redis returns error", () => {
@@ -12,7 +12,7 @@ Feature("Test sliding-window-rate-limiter module error with Redis backend", () =
 
     let key: string
     let limiter: RedisSlidingWindowRateLimiter
-    let error: Error
+    let error: any
     let redis: Redis
 
     Given("mock redis connection", () => {
@@ -55,7 +55,7 @@ Feature("Test sliding-window-rate-limiter module error with Redis backend", () =
 
     let key: string
     let limiter: RedisSlidingWindowRateLimiter
-    let error: Error
+    let error: any
     let redis: Redis
 
     Given("mock redis connection", () => {

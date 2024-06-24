@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2017-2020 Piotr Roszatycki <piotr.roszatycki@gmail.com>
+Copyright (c) 2017-2024 Piotr Roszatycki <piotr.roszatycki@gmail.com>
 
 Based on Lua script from <https://github.com/3hedgehogs/inredis-ratelimiter>
 

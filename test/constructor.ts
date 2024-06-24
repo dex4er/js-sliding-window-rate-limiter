@@ -2,15 +2,15 @@ import {expect} from "chai"
 
 import IORedis from "ioredis"
 
-import {MemorySlidingWindowRateLimiter} from "../src/memory-sliding-window-rate-limiter"
-import {RedisSlidingWindowRateLimiter} from "../src/redis-sliding-window-rate-limiter"
-import {SafeRedisSlidingWindowRateLimiter} from "../src/safe-redis-sliding-window-rate-limiter"
-import {SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
-import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend"
+import {MemorySlidingWindowRateLimiter} from "../src/memory-sliding-window-rate-limiter.js"
+import {RedisSlidingWindowRateLimiter} from "../src/redis-sliding-window-rate-limiter.js"
+import {SafeRedisSlidingWindowRateLimiter} from "../src/safe-redis-sliding-window-rate-limiter.js"
+import {SlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter.js"
+import {SlidingWindowRateLimiterBackend} from "../src/sliding-window-rate-limiter-backend.js"
 
-import {After, And, Feature, Scenario, Then, When} from "./lib/steps"
+import {After, And, Feature, Scenario, Then, When} from "./lib/steps.js"
 
-import {MockIORedis} from "./lib/mock-ioredis"
+import {MockIORedis} from "./lib/mock-ioredis.js"
 
 const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis(TEST_REDIS_URL) : new MockIORedis(TEST_REDIS_URL)

@@ -1,11 +1,16 @@
 import {expect} from "chai"
 
 import {v1 as uuidv1} from "uuid"
-import {CheckResult, Redis, ReserveResult, SafeRedisSlidingWindowRateLimiter} from "../src/sliding-window-rate-limiter"
+import {
+  CheckResult,
+  Redis,
+  ReserveResult,
+  SafeRedisSlidingWindowRateLimiter,
+} from "../src/sliding-window-rate-limiter.js"
 
-import {And, Feature, Given, Scenario, Then, When} from "./lib/steps"
+import {And, Feature, Given, Scenario, Then, When} from "./lib/steps.js"
 
-import {MockIORedis} from "./lib/mock-ioredis"
+import {MockIORedis} from "./lib/mock-ioredis.js"
 
 Feature("Test sliding-window-rate-limiter Redis failure with safe backend", () => {
   Scenario("Redis failure with error listener", () => {
