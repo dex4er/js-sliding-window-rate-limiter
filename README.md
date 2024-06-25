@@ -55,14 +55,14 @@ _Options:_
 - `interval` is a number of milliseconds in a sliding window
 - `redis` is an instance of [`ioredis`](https://www.npmjs.com/package/ioredis)
   or URL string to Redis server (only for Redis backend)
-- `operationTimeout` is a time in milliseconds after Redis operation is canceled
+- `operationTimeout` is the time in milliseconds after Redis operation is canceled
   (for Redis and SafeRedis backends, optional)
 - `safe`: `true` (only for SafeRedis backend)
-- `reuseRedisAfter` is a time (milliseconds) to reconnect to the Redis server
+  `reuseRedisAfter` is the time (milliseconds) to reconnect to the Redis server
   after connection failure (only for SafeRedis backend, default value: 2000
   milliseconds)
 
-If `redis` parameter is a string then new `ioredis` object is created with
+If `redis` parameter is a string then a new `ioredis` object is created with
 `retryStrategy` set to 1 second and `maxRetriesPerRequest` set to 1.
 
 _Example:_
@@ -124,8 +124,8 @@ tokens. It is a zero if no token previously was reserved or it was expired.
 limiter.destroy()
 ```
 
-Frees resources used by limiter (timers and Redis connection if was created
-by limiter itself).
+Frees resources used by limiter (timers and Redis connection if created by
+limiter itself).
 
 ## Errors
 
