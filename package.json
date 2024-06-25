@@ -1,6 +1,6 @@
 {
   "name": "sliding-window-rate-limiter",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Sliding window rate limiter with Redis 3.2 backend",
   "type": "module",
   "exports": {

@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.1 2024-06-24
+
+- Use `node:` prefix for Node modules.
+
 ## v6.0.0 2024-06-24
 
 - Converted to ESM module.

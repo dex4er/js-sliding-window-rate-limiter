@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import {EventEmitter} from "events"
+import {EventEmitter} from "node:events"
 
 import {
   CancelResult,

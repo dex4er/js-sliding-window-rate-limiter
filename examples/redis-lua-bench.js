@@ -6,9 +6,9 @@ const ATTEMPTS = Number(process.argv[2]) || 1
 const INTERVAL = Number(process.argv[3]) || 60000
 const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
-import * as fs from "fs"
-import * as path from "path"
-import * as url from "url"
+import * as fs from "node:fs"
+import * as path from "node:path"
+import * as url from "node:url"
 
 import IORedis from "ioredis"
 

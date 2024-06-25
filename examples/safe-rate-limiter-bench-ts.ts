@@ -8,7 +8,7 @@ const LIMIT = Number(process.argv[4]) || ATTEMPTS
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost"
 
-import {promisify} from "util"
+import {promisify} from "node:util"
 
 import SlidingWindowRateLimiter from "../src/sliding-window-rate-limiter.js"
 
