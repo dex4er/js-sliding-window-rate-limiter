@@ -18,12 +18,12 @@ redis.call("ZREMRANGEBYSCORE", key, "-inf", startwindow)
 local usage = tonumber(redis.call("ZCOUNT", key, "-inf", now)) or 0
 
 if usage >= limit then
-    local oldest = tonumber(redis.call("ZRANGEBYSCORE", key, "-inf", "+inf", "LIMIT", usage - limit, 1)[1]) or 0
+	local oldest = tonumber(redis.call("ZRANGEBYSCORE", key, "-inf", "+inf", "LIMIT", usage - limit, 1)[1]) or 0
 
-    if oldest > 0 then
-        local reset = oldest + interval * 1000 - now
-        return {usage, reset}
-    end
+	if oldest > 0 then
+		local reset = oldest + interval * 1000 - now
+		return { usage, reset }
+	end
 end
 
-return {usage, 0}
+return { usage, 0 }
