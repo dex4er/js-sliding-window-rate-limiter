@@ -20,13 +20,13 @@ lint:
     - renovate
   enabled:
     - actionlint@1.7.1
-    - checkov@3.2.140
-    - eslint@8.57.0
+    - checkov@3.2.144
+    - eslint@9.5.0
     - git-diff-check
     - markdownlint@0.41.0
     - prettier@3.3.2
     - trivy@0.52.2
-    - trufflehog@3.78.1
+    - trufflehog@3.78.2
     - yamllint@1.35.1
 actions:
   enabled:

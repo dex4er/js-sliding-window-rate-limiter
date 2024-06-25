@@ -16,20 +16,14 @@ const TEST_REDIS_URL = process.env.TEST_REDIS_URL
 const redis = TEST_REDIS_URL ? new IORedis.Redis(TEST_REDIS_URL) : new MockRedis(TEST_REDIS_URL)
 
 const backendClasses: {[backend: string]: any} = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   Memory: MemorySlidingWindowRateLimiter,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   Redis: RedisSlidingWindowRateLimiter,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   SafeRedis: SafeRedisSlidingWindowRateLimiter,
 }
 
 const limiterBackendOptions: {[backend: string]: any} = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   Memory: {interval: 1},
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   Redis: {redis, interval: 1},
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   SafeRedis: {safe: true, redis, interval: 1},
 }
 
