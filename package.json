@@ -59,7 +59,7 @@
     "tslib": "^2.6.3",
     "typescript": "^5.5.2",
     "typescript-eslint": "^7.14.1",
-    "uuid": "^10.0.0"
+    "uuid": "^11.1.0"
   },
   "scripts": {
     "compile": "tsc --pretty --project .",
